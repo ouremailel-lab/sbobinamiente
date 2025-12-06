@@ -1,3 +1,10 @@
+# Developer Notes
+
+This project integrates email sending via Formspree and EmailJS for transactional messages.
+
+Note: requests mentioning enabling AI models (e.g., "Enable Raptor mini (Preview) for all clients") are not applicable to this repository — this is a static frontend project. To enable a model across clients you would normally change settings in your platform/hosting or in a backend service that dispatches model selection.
+
+If you intended to enable a model flag in a backend config file, provide the config location and I can update it.
 # SbobinaMente - E-Commerce di Appunti e PDF Protetti
 
 Un e-commerce minimalista e moderno per la vendita di:

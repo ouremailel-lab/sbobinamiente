@@ -1,16 +1,32 @@
-// ==================== SERVIZIO EMAIL FORMSPREE ====================
-const FORMSPREE_ID = 'myzrpqav';
-const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
+// ==================== SERVIZIO EMAIL EMAILJS ====================
+const EMAILJS_PUBLIC_KEY = 'Bo-Kyor5W-Q_BRDf3';
+const EMAILJS_SERVICE_ID = 'sAJlIG2M63bqNohFuCqje';
+const EMAILJS_TEMPLATE_ID = 'template_j7hwc4l';
+
+// Inizializza EmailJS
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+// Funzione helper per inviare email via EmailJS
+async function sendEmailViaEmailJS(to_email, to_name, subject, message) {
+    try {
+        const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_email: to_email,
+            to_name: to_name,
+            subject: subject,
+            message: message
+        });
+        console.log('✅ Email inviata con successo:', result.status);
+        return true;
+    } catch (error) {
+        console.error('❌ Errore nell\'invio email:', error);
+        return false;
+    }
+}
 
 // 1. EMAIL DI CONFERMA REGISTRAZIONE
 async function sendRegistrationConfirmationEmail(user) {
-    const emailData = {
-        email: user.email,
-        name: user.nome,
-        _subject: '🎉 Benvenuto su SbobinaMente - Email di Conferma Registrazione',
-        _replyto: user.email,
-        message: `
-Caro/a ${user.nome},
+    const subject = '🎉 Benvenuto su SbobinaMente - Email di Conferma Registrazione';
+    const message = `Caro/a ${user.nome},
 
 Benvenuto/a su SbobinaMente! 🎉
 
@@ -37,20 +53,9 @@ Il Team di SbobinaMente
 
 ---
 SbobinaMente - Appunti e PDF Protetti
-Email: info@sbobinamente.com
-        `
-    };
+Email: info@sbobinamente.com`;
 
-    try {
-        await fetch(FORMSPREE_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(emailData)
-        });
-        console.log('✅ Email di registrazione inviata a:', user.email);
-    } catch (error) {
-        console.error('❌ Errore nell\'invio email di registrazione:', error);
-    }
+    await sendEmailViaEmailJS(user.email, user.nome, subject, message);
 }
 
 // 2. EMAIL DI CONFERMA PAGAMENTO + DATI ORDINE
@@ -62,37 +67,19 @@ async function sendPaymentConfirmationEmail(order, digitalsAccess) {
 
     let digitalAccessInfo = '';
     if (digitalsAccess.length > 0) {
-        digitalAccessInfo = `
-
-📚 I TUOI PDF PROTETTI - ACCESSO IMMEDIATO:
-${digitalsAccess.map((access, idx) => `
-${idx + 1}. ${access.title}
-   Password: ${access.password}
-   Link di accesso: https://sbobinamente.netlify.app/viewer-pdf.html?file=${access.pdfFile}
-   Scadenza accesso: ${new Date(access.expiryDate).toLocaleDateString('it-IT')}
-`).join('')}
-`;
+        digitalAccessInfo = `\n📚 I TUOI PDF PROTETTI - ACCESSO IMMEDIATO:\n`;
+        digitalsAccess.forEach((access, idx) => {
+            digitalAccessInfo += `\n${idx + 1}. ${access.title}\n   Password: ${access.password}\n   Link di accesso: https://sbobinamente.netlify.app/viewer-pdf.html?file=${access.pdfFile}\n   Scadenza accesso: ${new Date(access.expiryDate).toLocaleDateString('it-IT')}\n`;
+        });
     }
 
     let shippingInfo = '';
     if (order.deliveryInfo) {
-        shippingInfo = `
-
-📦 INFORMAZIONI DI SPEDIZIONE:
-Destinatario: ${order.deliveryInfo.fullName}
-Indirizzo: ${order.deliveryInfo.address}
-Città: ${order.deliveryInfo.city}
-CAP: ${order.deliveryInfo.cap}
-`;
+        shippingInfo = `\n📦 INFORMAZIONI DI SPEDIZIONE:\nDestinatario: ${order.deliveryInfo.fullName}\nIndirizzo: ${order.deliveryInfo.address}\nCittà: ${order.deliveryInfo.city}\nCAP: ${order.deliveryInfo.cap}\n`;
     }
 
-    const emailData = {
-        email: order.deliveryInfo.email,
-        name: order.deliveryInfo.fullName,
-        _subject: `✅ Ordine Confermato #${order.id} - SbobinaMente`,
-        _replyto: order.deliveryInfo.email,
-        message: `
-Caro/a ${order.deliveryInfo.fullName},
+    const subject = `✅ Ordine Confermato #${order.id} - SbobinaMente`;
+    const message = `Caro/a ${order.deliveryInfo.fullName},
 
 Grazie per il tuo acquisto! ✅
 
@@ -107,9 +94,7 @@ ${itemsList}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Totale Pagato: ${order.total.toFixed(2)}€
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-${digitalAccessInfo}
-${shippingInfo}
-
+${digitalAccessInfo}${shippingInfo}
 PROSSIMI PASSI:
 ✅ Pagamento confermato
 📧 Riceverai una conferma a breve
@@ -122,31 +107,15 @@ Hai domande? Contattaci:
 
 Grazie per aver scelto SbobinaMente!
 
-Il Team di SbobinaMente
-        `
-    };
+Il Team di SbobinaMente`;
 
-    try {
-        await fetch(FORMSPREE_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(emailData)
-        });
-        console.log('✅ Email di conferma pagamento inviata a:', order.deliveryInfo.email);
-    } catch (error) {
-        console.error('❌ Errore nell\'invio email di pagamento:', error);
-    }
+    await sendEmailViaEmailJS(order.deliveryInfo.email, order.deliveryInfo.fullName, subject, message);
 }
 
 // 3. EMAIL CON PDF (richiesta dal cliente)
 async function sendPDFDownloadEmail(customerEmail, customerName, pdfAccess) {
-    const emailData = {
-        email: customerEmail,
-        name: customerName,
-        _subject: `📥 Scarica il tuo PDF: ${pdfAccess.title}`,
-        _replyto: customerEmail,
-        message: `
-Caro/a ${customerName},
+    const subject = `📥 Scarica il tuo PDF: ${pdfAccess.title}`;
+    const message = `Caro/a ${customerName},
 
 Qui di seguito troverai il link per scaricare il tuo PDF protetto: ${pdfAccess.title}
 
@@ -171,31 +140,14 @@ Se hai problemi nell'accesso o domande:
 
 Buona lettura! 📚
 
-Il Team di SbobinaMente
-        `
-    };
+Il Team di SbobinaMente`;
 
-    try {
-        await fetch(FORMSPREE_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(emailData)
-        });
-        console.log('✅ Email di download PDF inviata a:', customerEmail);
-    } catch (error) {
-        console.error('❌ Errore nell\'invio email PDF:', error);
-    }
+    await sendEmailViaEmailJS(customerEmail, customerName, subject, message);
 }
 
 // 4. EMAIL GENERICA DI ASSISTENZA
 async function sendSupportEmail(senderEmail, senderName, subject, message) {
-    const emailData = {
-        email: senderEmail,
-        name: senderName,
-        _subject: `Richiesta Assistenza: ${subject}`,
-        _replyto: senderEmail,
-        message: `
-Richiesta ricevuta da: ${senderName}
+    const fullMessage = `Richiesta ricevuta da: ${senderName}
 Email: ${senderEmail}
 
 Argomento: ${subject}
@@ -205,18 +157,7 @@ ${message}
 
 ---
 Riceverai una risposta dal nostro team entro 24 ore.
-Grazie per aver contattato SbobinaMente!
-        `
-    };
+Grazie per aver contattato SbobinaMente!`;
 
-    try {
-        await fetch(FORMSPREE_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(emailData)
-        });
-        console.log('✅ Email di assistenza inviata');
-    } catch (error) {
-        console.error('❌ Errore nell\'invio email assistenza:', error);
-    }
+    await sendEmailViaEmailJS(senderEmail, senderName, `Richiesta Assistenza: ${subject}`, fullMessage);
 }
