@@ -10,8 +10,8 @@ emailjs.init(EMAILJS_PUBLIC_KEY);
 async function sendEmailViaEmailJS(to_email, to_name, subject, message) {
     try {
         const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-            to_email: to_email,
-            to_name: to_name,
+            email: to_email,
+            name: to_name,
             subject: subject,
             message: message
         });
