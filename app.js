@@ -406,10 +406,16 @@ function payWithPayPal() {
         }
     };
 
-    // Salva i dati dell'ordine temporaneamente
+    // Salva l'ordine in sospeso
     localStorage.setItem('pendingOrder', JSON.stringify(orderData));
 
-    // Crea il form PayPal
+    // Se l'importo è 0€ (test), completa direttamente
+    if (total === 0) {
+        showPaymentModal(orderData);
+        return;
+    }
+
+    // Altrimenti reindirizza a PayPal (importo reale)
     const paypalForm = document.createElement('form');
     paypalForm.method = 'POST';
     paypalForm.action = 'https://www.paypal.com/cgi-bin/webscr';
@@ -424,10 +430,96 @@ function payWithPayPal() {
         'currency_code': 'EUR',
         'invoice': `${Date.now()}`,
         'custom': JSON.stringify(orderData),
-        'return': window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/') + '/index.html?payment=success',
+        'return': window.location.origin + window.location.pathname + '?payment=success',
         'cancel_return': window.location.origin + window.location.pathname,
         'rm': '2',
         'no_shipping': '2',
+        'charset': 'utf-8'
+    };
+
+    for (let key in inputs) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = inputs[key];
+        paypalForm.appendChild(input);
+    }
+
+    document.body.appendChild(paypalForm);
+    paypalForm.submit();
+}
+
+function showPaymentModal(orderData) {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5000;
+    `;
+
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background-color: white;
+        padding: 40px;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+    `;
+
+    content.innerHTML = `
+        <h2 style="color: #4a6fa5; margin-bottom: 20px;">💳 Conferma Pagamento</h2>
+        <p style="font-size: 16px; margin-bottom: 10px;">Importo totale: <strong style="color: #7cb342; font-size: 24px;">${orderData.total}€</strong></p>
+        <p style="color: #888; font-size: 13px; margin-bottom: 30px;">Verrai reindirizzato a PayPal per completare il pagamento</p>
+        
+        <button onclick="confirmPayPalPayment('${JSON.stringify(orderData).replace(/'/g, "&#39;")}'); this.disabled=true; this.textContent='Elaborando...'" 
+            style="padding: 12px 32px; background-color: #0070ba; color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 16px; cursor: pointer; margin-right: 12px;">
+            Paga con PayPal
+        </button>
+        <button onclick="this.closest('div').parentElement.remove()" 
+            style="padding: 12px 32px; background-color: #ccc; color: black; border: none; border-radius: 6px; font-weight: 600; font-size: 16px; cursor: pointer;">
+            Annulla
+        </button>
+    `;
+
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+}
+
+function confirmPayPalPayment(orderDataStr) {
+    const orderData = JSON.parse(orderDataStr);
+    const total = parseFloat(orderData.total);
+
+    // Se è 0€, simula il pagamento completato
+    if (total === 0) {
+        processOrder();
+        return;
+    }
+
+    // Altrimenti reindirizza a PayPal
+    const paypalForm = document.createElement('form');
+    paypalForm.method = 'POST';
+    paypalForm.action = 'https://www.paypal.com/cgi-bin/webscr';
+    paypalForm.style.display = 'none';
+    
+    const inputs = {
+        'cmd': '_xclick',
+        'business': 'iannonelsia@gmail.com',
+        'item_name': 'Ordine SbobinaMente',
+        'item_number': `ORD-${Date.now()}`,
+        'amount': total.toFixed(2),
+        'currency_code': 'EUR',
+        'invoice': `${Date.now()}`,
+        'return': window.location.origin + window.location.pathname + '?payment=success',
+        'cancel_return': window.location.origin + window.location.pathname,
+        'rm': '2',
         'charset': 'utf-8'
     };
 
