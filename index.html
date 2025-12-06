@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SbobinaMente - Appunti e PDF Protetti</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header e Navigazione -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SbobinaMente</h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+                <nav class="nav">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#prodotti" class="nav-link">Prodotti</a>
+                    <a href="cartaceo.html" class="nav-link">Acquista Cartaceo</a>
+                    <a href="#" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
+                    <a href="#" class="nav-link" id="userLink">Accedi</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h2>I Tuoi Appunti, Sempre con Te</h2>
+                <p>Acquista PDF protetti e appunti rilegati professionalmente</p>
+                <button class="btn btn-primary" onclick="scrollToProdotti()">Scopri i Prodotti</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sezione Prodotti -->
+    <section class="products-section" id="prodotti">
+        <div class="container">
+            <h2>I Nostri Prodotti</h2>
+            
+            <!-- Filtri -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Tipo:</label>
+                    <select id="filterType" onchange="applyFilters()">
+                        <option value="">Tutti</option>
+                        <option value="digitale">PDF Protetti</option>
+                        <option value="fisico">Appunti Stampati</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Materia:</label>
+                    <select id="filterMateria" onchange="applyFilters()">
+                        <option value="">Tutte</option>
+                        <option value="matematica">Matematica</option>
+                        <option value="storia">Storia</option>
+                        <option value="lingue">Lingue</option>
+                        <option value="scienze">Scienze</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Prezzo max:</label>
+                    <input type="range" id="filterPrezzo" min="0" max="50" onchange="applyFilters()">
+                    <span id="prezzoDisplay">50€</span>
+                </div>
+            </div>
+
+            <!-- Griglia Prodotti -->
+            <div class="products-grid" id="productsGrid">
+                <!-- I prodotti verranno inseriti via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Carrello -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content modal-lg">
+            <span class="close" onclick="closeCart()">&times;</span>
+            <h2>Carrello</h2>
+            <div class="cart-items" id="cartItems">
+                <p class="empty-message">Il carrello è vuoto</p>
+            </div>
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Totale:</span>
+                    <span class="total-price">0€</span>
+                </div>
+                <button class="btn btn-primary" onclick="proceedToCheckout()">Procedi al Pagamento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Prodotto -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeProductModal()">&times;</span>
+            <div class="product-detail" id="productDetail">
+                <!-- Dettagli prodotto via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Login/Registrazione -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuth()">&times;</span>
+            <div class="auth-container" id="authContainer">
+                <!-- Form di login/registrazione via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Checkout -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content modal-lg">
+            <span class="close" onclick="closeCheckout()">&times;</span>
+            <h2>Checkout</h2>
+            <form id="checkoutForm" onsubmit="submitCheckout(event)">
+                <div class="form-group">
+                    <label>Nome Completo:</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Indirizzo (per spedizioni):</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>Città:</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>CAP:</label>
+                    <input type="text">
+                </div>
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Totale:</span>
+                        <span class="checkout-total">0€</span>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="payWithPayPal()">Paga con PayPal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
+            <p>Per domande: <a href="mailto:info@sbobinamante.com">info@sbobinamante.com</a></p>
+        </div>
+    </footer>
+
+    <script src="products-data.js"></script>
+    <script src="app.js"></script>
+    <script src="paypal-handler.js"></script>
+</body>
+</html>

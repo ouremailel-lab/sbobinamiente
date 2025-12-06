@@ -1,0 +1,17 @@
+{
+  "name": "sbobinamiente",
+  "version": "1.0.0",
+  "description": "E-commerce di appunti e PDF protetti",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000"
+  },
+  "keywords": ["ecommerce", "appunti", "pdf", "sbobinamiente"],
+  "author": "Elisai Iannone",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elisaiannone/sbobinamiente.git"
+  }
+}
