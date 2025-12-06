@@ -413,21 +413,22 @@ function payWithPayPal() {
     const paypalForm = document.createElement('form');
     paypalForm.method = 'POST';
     paypalForm.action = 'https://www.paypal.com/cgi-bin/webscr';
+    paypalForm.style.display = 'none';
     
     const inputs = {
         'cmd': '_xclick',
         'business': 'iannonelsia@gmail.com',
-        'item_name': `Ordine SbobinaMente #${Date.now()}`,
-        'item_number': Date.now(),
+        'item_name': 'Ordine SbobinaMente',
+        'item_number': `ORD-${Date.now()}`,
         'amount': total.toFixed(2),
         'currency_code': 'EUR',
-        'invoice': Date.now(),
+        'invoice': `${Date.now()}`,
         'custom': JSON.stringify(orderData),
-        'return': window.location.origin + window.location.pathname + '?payment=success',
+        'return': window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/') + '/index.html?payment=success',
         'cancel_return': window.location.origin + window.location.pathname,
-        'notify_url': window.location.origin + '/process_ipn.php',
         'rm': '2',
-        'no_shipping': '2'
+        'no_shipping': '2',
+        'charset': 'utf-8'
     };
 
     for (let key in inputs) {
