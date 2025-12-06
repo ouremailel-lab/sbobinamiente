@@ -390,12 +390,7 @@ function payWithPayPal() {
     // Raccogli i dati del form
     const formElements = document.getElementById('checkoutForm').elements;
     const orderData = {
-        items: cart.map(item => ({
-            name: item.title,
-            sku: `SBOB-${item.id}`,
-            quantity: item.quantity,
-            price: item.prezzo.toFixed(2)
-        })),
+        items: cart,
         total: total.toFixed(2),
         customerInfo: {
             nome: formElements[0].value,
@@ -406,50 +401,124 @@ function payWithPayPal() {
         }
     };
 
-    // Salva l'ordine in sospeso
-    localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+    // IN MODALITÀ TEST: Completa il pagamento direttamente (senza PayPal)
+    // In produzione, sostituir con vero redirect PayPal
+    closeCheckout();
+    processOrderDirect(orderData);
+}
 
-    // Se l'importo è 0€ (test), completa direttamente
-    if (total === 0) {
-        showPaymentModal(orderData);
+function processOrderDirect(orderData) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (!currentUser) {
+        alert('Errore: Utente non trovato');
         return;
     }
 
-    // Altrimenti reindirizza a PayPal (importo reale)
-    const paypalForm = document.createElement('form');
-    paypalForm.method = 'POST';
-    paypalForm.action = 'https://www.paypal.com/cgi-bin/webscr';
-    paypalForm.style.display = 'none';
-    
-    const inputs = {
-        'cmd': '_xclick',
-        'business': 'iannonelsia@gmail.com',
-        'item_name': 'Ordine SbobinaMente',
-        'item_number': `ORD-${Date.now()}`,
-        'amount': total.toFixed(2),
-        'currency_code': 'EUR',
-        'invoice': `${Date.now()}`,
-        'custom': JSON.stringify(orderData),
-        'return': window.location.origin + window.location.pathname + '?payment=success',
-        'cancel_return': window.location.origin + window.location.pathname,
-        'rm': '2',
-        'no_shipping': '2',
-        'charset': 'utf-8'
+    // Crea l'ordine completato
+    const order = {
+        id: Date.now(),
+        user: currentUser,
+        items: cart,
+        total: parseFloat(orderData.total),
+        deliveryInfo: orderData.customerInfo,
+        orderDate: new Date().toISOString(),
+        status: 'pagato',
+        paymentMethod: 'paypal_test'
     };
 
-    for (let key in inputs) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = inputs[key];
-        paypalForm.appendChild(input);
-    }
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push(order);
+    localStorage.setItem('orders', JSON.stringify(orders));
 
-    document.body.appendChild(paypalForm);
-    paypalForm.submit();
+    // Genera credenziali PDF protetti
+    const digitalsAccess = [];
+    cart.forEach(item => {
+        if (item.tipo === 'digitale' && item.pdfFile) {
+            digitalsAccess.push({
+                productId: item.id,
+                title: item.title,
+                pdfFile: item.pdfFile,
+                password: generatePassword(),
+                accessUrl: `PDF/${encodeURIComponent(item.pdfFile)}`,
+                expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+            });
+        }
+    });
+
+    localStorage.setItem('myDigitalsAccess', JSON.stringify(
+        [...JSON.parse(localStorage.getItem('myDigitalsAccess')) || [], ...digitalsAccess]
+    ));
+
+    // Pulisci i dati temporanei
+    localStorage.removeItem('pendingOrder');
+    cart = [];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+
+    // Mostra la conferma
+    showOrderSuccessModal(order, digitalsAccess);
 }
 
-function showPaymentModal(orderData) {
+function showOrderSuccessModal(order, digitalsAccess) {
+    let html = `
+        <div style="text-align: center;">
+            <h2 style="color: #7cb342;">✅ Pagamento Completato!</h2>
+            <p style="font-size: 16px; margin: 20px 0;">Il tuo ordine è stato processato con successo.</p>
+            
+            <div style="background: #f0f0f0; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
+                <p><strong>Numero Ordine:</strong> ${order.id}</p>
+                <p><strong>Data:</strong> ${new Date(order.orderDate).toLocaleDateString('it-IT')}</p>
+                <p><strong>Totale Pagato:</strong> ${order.total.toFixed(2)}€</p>
+                <p><strong>Email Ricevuta:</strong> ${order.deliveryInfo.email}</p>
+            </div>
+
+            <h3 style="margin-top: 30px;">📦 Articoli Ordinati:</h3>
+            <div style="text-align: left;">
+    `;
+
+    order.items.forEach(item => {
+        html += `<p>• ${item.title} (${item.tipo === 'digitale' ? '📄 PDF' : '📕 Stampato'}) × ${item.quantity}</p>`;
+    });
+
+    html += `</div>`;
+
+    if (digitalsAccess.length > 0) {
+        html += `
+            <h3 style="margin-top: 30px; color: #d32f2f;">🔐 I Tuoi PDF - Download Immediato</h3>
+            <p style="color: #d32f2f; font-weight: bold;">⚠️ Salva questi file in un luogo sicuro!</p>
+        `;
+        digitalsAccess.forEach(access => {
+            html += `
+                <div style="background: linear-gradient(135deg, #b3d9e8 0%, #b8d4c8 100%); padding: 16px; margin: 12px 0; border-radius: 6px; text-align: left;">
+                    <strong style="color: #4a6fa5;">${access.title}</strong><br>
+                    <small style="color: #666;">Password: <code style="background: white; padding: 3px 6px; border-radius: 3px; font-weight: 600;">${access.password}</code></small><br>
+                    <a href="${access.accessUrl}" download="${access.pdfFile}" style="display: inline-block; margin-top: 8px; padding: 10px 16px; background-color: #4a6fa5; color: white; text-decoration: none; border-radius: 4px; font-weight: 600; cursor: pointer;">📥 Scarica PDF</a>
+                </div>
+            `;
+        });
+    }
+
+    if (order.items.some(item => item.tipo === 'fisico')) {
+        html += `
+            <div style="background: #e8f5e9; padding: 16px; margin: 20px 0; border-radius: 6px; text-align: left;">
+                <p style="color: #2e7d32; font-weight: 600;">📦 Dati di Spedizione:</p>
+                <p><strong>${order.deliveryInfo.nome}</strong><br>
+                ${order.deliveryInfo.indirizzo}<br>
+                ${order.deliveryInfo.cap} ${order.deliveryInfo.città}</p>
+                <p style="color: var(--primary-green); font-weight: bold;">Consegna prevista: 3-5 giorni lavorativi</p>
+            </div>
+        `;
+    }
+
+    html += `
+            <div style="margin-top: 30px;">
+                <button onclick="window.location.href='index.html'" style="padding: 12px 24px; background-color: #4a6fa5; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 16px;">Torna alla Home</button>
+            </div>
+        </div>
+    `;
+
+    // Mostra il modal
     const modal = document.createElement('div');
     modal.style.cssText = `
         position: fixed;
@@ -457,11 +526,11 @@ function showPaymentModal(orderData) {
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: rgba(0, 0, 0, 0.6);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 5000;
+        z-index: 3000;
     `;
 
     const content = document.createElement('div');
@@ -469,70 +538,15 @@ function showPaymentModal(orderData) {
         background-color: white;
         padding: 40px;
         border-radius: 12px;
-        max-width: 500px;
+        max-width: 600px;
         width: 90%;
-        text-align: center;
+        max-height: 90vh;
+        overflow-y: auto;
     `;
-
-    content.innerHTML = `
-        <h2 style="color: #4a6fa5; margin-bottom: 20px;">💳 Conferma Pagamento</h2>
-        <p style="font-size: 16px; margin-bottom: 10px;">Importo totale: <strong style="color: #7cb342; font-size: 24px;">${orderData.total}€</strong></p>
-        <p style="color: #888; font-size: 13px; margin-bottom: 30px;">Verrai reindirizzato a PayPal per completare il pagamento</p>
-        
-        <button onclick="confirmPayPalPayment('${JSON.stringify(orderData).replace(/'/g, "&#39;")}'); this.disabled=true; this.textContent='Elaborando...'" 
-            style="padding: 12px 32px; background-color: #0070ba; color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 16px; cursor: pointer; margin-right: 12px;">
-            Paga con PayPal
-        </button>
-        <button onclick="this.closest('div').parentElement.remove()" 
-            style="padding: 12px 32px; background-color: #ccc; color: black; border: none; border-radius: 6px; font-weight: 600; font-size: 16px; cursor: pointer;">
-            Annulla
-        </button>
-    `;
+    content.innerHTML = html;
 
     modal.appendChild(content);
     document.body.appendChild(modal);
-}
-
-function confirmPayPalPayment(orderDataStr) {
-    const orderData = JSON.parse(orderDataStr);
-    const total = parseFloat(orderData.total);
-
-    // Se è 0€, simula il pagamento completato
-    if (total === 0) {
-        processOrder();
-        return;
-    }
-
-    // Altrimenti reindirizza a PayPal
-    const paypalForm = document.createElement('form');
-    paypalForm.method = 'POST';
-    paypalForm.action = 'https://www.paypal.com/cgi-bin/webscr';
-    paypalForm.style.display = 'none';
-    
-    const inputs = {
-        'cmd': '_xclick',
-        'business': 'iannonelsia@gmail.com',
-        'item_name': 'Ordine SbobinaMente',
-        'item_number': `ORD-${Date.now()}`,
-        'amount': total.toFixed(2),
-        'currency_code': 'EUR',
-        'invoice': `${Date.now()}`,
-        'return': window.location.origin + window.location.pathname + '?payment=success',
-        'cancel_return': window.location.origin + window.location.pathname,
-        'rm': '2',
-        'charset': 'utf-8'
-    };
-
-    for (let key in inputs) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = inputs[key];
-        paypalForm.appendChild(input);
-    }
-
-    document.body.appendChild(paypalForm);
-    paypalForm.submit();
 }
 
 function processOrder() {
