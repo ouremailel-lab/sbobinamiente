@@ -67,6 +67,9 @@ function handlePayPalSuccess() {
     cart = [];
     localStorage.setItem('cart', JSON.stringify(cart));
 
+    // INVIA EMAIL DI CONFERMA PAGAMENTO
+    sendPaymentConfirmationEmail(order, digitalsAccess);
+
     // Mostra la conferma
     showPaymentSuccessModal(order, digitalsAccess);
 }
@@ -105,7 +108,10 @@ function showPaymentSuccessModal(order, digitalsAccess) {
                 <div style="background: linear-gradient(135deg, #b3d9e8 0%, #b8d4c8 100%); padding: 16px; margin: 12px 0; border-radius: 6px; text-align: left;">
                     <strong style="color: #4a6fa5;">${access.title}</strong><br>
                     <small style="color: #666;">Password: <code style="background: white; padding: 3px 6px; border-radius: 3px; font-weight: 600;">${access.password}</code></small><br>
-                    <a href="${access.accessUrl}" download="${access.pdfFile}" style="display: inline-block; margin-top: 8px; padding: 10px 16px; background-color: #4a6fa5; color: white; text-decoration: none; border-radius: 4px; font-weight: 600; cursor: pointer;">📥 Scarica PDF</a>
+                    <div style="margin-top: 8px; display: flex; gap: 8px;">
+                        <a href="${access.accessUrl}" download="${access.pdfFile}" style="flex: 1; display: inline-block; padding: 10px 16px; background-color: #4a6fa5; color: white; text-decoration: none; border-radius: 4px; font-weight: 600; cursor: pointer; text-align: center;">📥 Scarica PDF</a>
+                        <button onclick="sendPDFEmailModal('${access.title}', '${access.pdfFile}', '${access.password}')" style="padding: 10px 16px; background-color: #7cb342; color: white; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">📧 Invia via Email</button>
+                    </div>
                 </div>
             `;
         });
@@ -156,6 +162,82 @@ function showPaymentSuccessModal(order, digitalsAccess) {
 
     modal.appendChild(content);
     document.body.appendChild(modal);
+}
+
+// Funzione per mostrare un modal di invio email PDF
+function sendPDFEmailModal(title, pdfFile, password) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3001;
+    `;
+
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 400px;
+        width: 90%;
+    `;
+    
+    content.innerHTML = `
+        <h2 style="margin-top: 0;">📧 Invia PDF via Email</h2>
+        <p>Quale email devo usare per inviare il PDF "${title}"?</p>
+        
+        <input type="email" id="emailPDFInput" placeholder="tua@email.com" value="${currentUser?.email || ''}" 
+               style="width: 100%; padding: 10px; margin: 12px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="closeSendPDFModal()" style="flex: 1; padding: 10px; background-color: #ccc; border: none; border-radius: 4px; cursor: pointer;">Annulla</button>
+            <button onclick="sendPDFNow('${title}', '${pdfFile}', '${password}')" style="flex: 1; padding: 10px; background-color: #7cb342; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Invia Email</button>
+        </div>
+    `;
+
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+    modal.id = 'sendPDFModal';
+}
+
+function closeSendPDFModal() {
+    const modal = document.getElementById('sendPDFModal');
+    if (modal) modal.remove();
+}
+
+async function sendPDFNow(title, pdfFile, password) {
+    const emailInput = document.getElementById('emailPDFInput');
+    const customerEmail = emailInput.value.trim();
+    
+    if (!customerEmail || !customerEmail.includes('@')) {
+        alert('Inserisci un email valido');
+        return;
+    }
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const customerName = currentUser?.nome || 'Cliente';
+    
+    const pdfAccess = {
+        title: title,
+        pdfFile: pdfFile,
+        password: password,
+        expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+    };
+    
+    // Invia l'email
+    await sendPDFDownloadEmail(customerEmail, customerName, pdfAccess);
+    
+    closeSendPDFModal();
+    alert('✅ Email inviata con successo a ' + customerEmail + '!');
 }
 
 function generatePassword() {

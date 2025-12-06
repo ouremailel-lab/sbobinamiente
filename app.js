@@ -332,6 +332,9 @@ function handleRegister(e) {
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
     
+    // INVIA EMAIL DI CONFERMA REGISTRAZIONE
+    sendRegistrationConfirmationEmail(newUser);
+    
     closeAuth();
     showNotification('Registrazione completata! Controlla la tua email per la verifica. (Simulato: clicca qui per verificare)');
     
