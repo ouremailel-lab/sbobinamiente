@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Email - SbobinaMente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-test {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-test:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-back {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .status.loading {
+            background: #cfe2ff;
+            color: #084298;
+            display: block;
+        }
+        
+        .info-box {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✉️ Test Email</h1>
+        <p class="subtitle">Testa il sistema di invio email Formspree</p>
+        
+        <div class="info-box">
+            📧 Invia un'email di test per verificare che il sistema funziona correttamente. L'email sarà inviata a Formspree e girerà indietro a te.
+        </div>
+        
+        <form id="testEmailForm">
+            <div class="form-group">
+                <label for="testEmail">📧 La tua Email:</label>
+                <input type="email" id="testEmail" placeholder="tua@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="testName">👤 Il tuo Nome:</label>
+                <input type="text" id="testName" placeholder="Inserisci il tuo nome" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="testSubject">📝 Oggetto:</label>
+                <input type="text" id="testSubject" placeholder="Oggetto email" value="Test Email da SbobinaMente" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="testMessage">💬 Messaggio:</label>
+                <textarea id="testMessage" placeholder="Scrivi il messaggio di test..." required>Ciao,
+
+Questo è un email di test per verificare che il sistema Formspree funziona correttamente.
+
+Se ricevi questo messaggio, significa che le email sono attive! 🎉
+
+Cordiali saluti,
+Il Team di SbobinaMente</textarea>
+            </div>
+            
+            <div class="button-group">
+                <button type="button" class="btn-back" onclick="window.location.href='index.html'">← Torna Home</button>
+                <button type="submit" class="btn-test">🚀 Invia Email Test</button>
+            </div>
+            
+            <div id="status" class="status"></div>
+        </form>
+    </div>
+
+    <script src="email-service.js"></script>
+    <script>
+        document.getElementById('testEmailForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('testEmail').value;
+            const name = document.getElementById('testName').value;
+            const subject = document.getElementById('testSubject').value;
+            const message = document.getElementById('testMessage').value;
+            const statusDiv = document.getElementById('status');
+            
+            // Mostra loading
+            statusDiv.className = 'status loading';
+            statusDiv.textContent = '⏳ Invio email in corso...';
+            
+            try {
+                // Usa la funzione generica di supporto
+                await sendSupportEmail(email, name, subject, message);
+                
+                // Mostra successo
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `
+                    ✅ <strong>Email inviata con successo!</strong><br>
+                    Controlla la tua casella email (${email})<br>
+                    Se non arriva, guarda nella cartella SPAM
+                `;
+                
+                // Resetta form
+                document.getElementById('testEmailForm').reset();
+                
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+                
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    ❌ <strong>Errore nell'invio:</strong><br>
+                    ${error.message}
+                `;
+            }
+        });
+        
+        // Pre-riempi con email se è stata già usata
+        window.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser && currentUser.email) {
+                document.getElementById('testEmail').value = currentUser.email;
+                document.getElementById('testName').value = currentUser.nome || '';
+            }
+        });
+    </script>
+</body>
+</html>
