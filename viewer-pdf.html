@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizzatore PDF Protetto - SbobinaMente</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         body {
@@ -17,6 +22,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            -webkit-touch-callout: none;
         }
 
         .viewer-header {
@@ -27,6 +33,8 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .viewer-header h1 {
@@ -39,6 +47,7 @@
             gap: 16px;
             align-items: center;
             font-size: 13px;
+            flex-wrap: wrap;
         }
 
         .viewer-header-info span {
@@ -65,10 +74,10 @@
         .viewer-container {
             flex: 1;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             padding: 20px;
-            overflow: auto;
+            overflow-y: auto;
         }
 
         .pdf-viewer {
@@ -77,10 +86,47 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             max-width: 900px;
             width: 100%;
-            height: auto;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            padding: 12px 16px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .controls button {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .controls button:hover {
+            background-color: #3a5a95;
+        }
+
+        .controls button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .page-counter {
+            font-size: 13px;
+            color: #666;
+            min-width: 120px;
+            text-align: center;
         }
 
         .pdf-content {
@@ -90,39 +136,40 @@
             align-items: center;
             background-color: #f5f5f5;
             position: relative;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+            overflow: auto;
+            padding: 20px;
         }
 
-        .pdf-content img {
+        .pdf-page {
+            position: relative;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pdf-page canvas {
             max-width: 100%;
-            max-height: 600px;
+            height: auto;
+            display: block;
             pointer-events: none;
-            -webkit-user-drag: none;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
-        .pdf-content embed,
-        .pdf-content iframe {
-            width: 100%;
-            height: 600px;
-            border: none;
-        }
-
-        .watermark {
+        .pdf-page-watermark {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 72px;
-            color: rgba(200, 200, 200, 0.1);
+            font-size: 60px;
+            color: rgba(200, 200, 200, 0.15);
             font-weight: bold;
             pointer-events: none;
             white-space: nowrap;
             z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .access-info {
@@ -195,38 +242,20 @@
         @media (max-width: 768px) {
             .viewer-header {
                 flex-direction: column;
-                gap: 12px;
                 text-align: center;
             }
 
-            .viewer-header-info {
-                flex-direction: column;
-                justify-content: center;
-                gap: 8px;
+            .viewer-header h1 {
+                font-size: 16px;
             }
 
-            .pdf-content img,
-            .pdf-content embed,
-            .pdf-content iframe {
-                max-height: 400px;
-                height: 400px;
+            .controls {
+                flex-wrap: wrap;
             }
 
-            .watermark {
-                font-size: 48px;
+            .pdf-page-watermark {
+                font-size: 40px;
             }
-        }
-
-        /* Disabilita protezioni di copia */
-        .pdf-content {
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        .pdf-content::selection {
-            background-color: transparent;
         }
     </style>
 </head>
@@ -239,98 +268,255 @@
         </div>
     </div>
 
-    <div class="viewer-container">
-        <div id="content">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <p>Caricamento del documento...</p>
-            </div>
+    <div class="viewer-container" id="viewerContainer">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Caricamento del documento...</p>
         </div>
     </div>
 
     <script>
-        // Disabilita protezioni comuni
+        // ============ PROTEZIONI RIGOROSE ============
+        
+        // Disabilita right-click
         document.addEventListener('contextmenu', (e) => e.preventDefault());
+        
+        // Disabilita mouse button destro
+        document.addEventListener('mousedown', (e) => {
+            if (e.button === 2) e.preventDefault();
+        });
+        
+        // Disabilita scorciatoie da tastiera
         document.addEventListener('keydown', (e) => {
-            // Disabilita F12, Ctrl+Shift+I, Ctrl+Shift+C
-            if (e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
-                (e.ctrlKey && e.shiftKey && e.key === 'C') ||
-                (e.ctrlKey && e.key === 's')) {
+            const disabledKeys = {
+                'F12': true,
+                'F11': true,
+                'PrintScreen': true,
+                'F2': true,
+                'I': e.ctrlKey && e.shiftKey,
+                'C': e.ctrlKey && e.shiftKey,
+                'J': e.ctrlKey && e.shiftKey,
+                'K': e.ctrlKey && e.shiftKey,
+                'U': e.ctrlKey,
+                's': e.ctrlKey,
+                'S': e.ctrlKey,
+                'p': e.ctrlKey,
+                'P': e.ctrlKey,
+                'a': e.ctrlKey,
+                'A': e.ctrlKey,
+                'c': e.ctrlKey,
+                'C': e.ctrlKey,
+                'x': e.ctrlKey,
+                'X': e.ctrlKey,
+            };
+            
+            if (disabledKeys[e.key] || e.key === 'F12') {
                 e.preventDefault();
+                return false;
             }
         });
-        document.addEventListener('copy', (e) => e.preventDefault());
-        document.addEventListener('dragstart', (e) => e.preventDefault());
+        
+        // Disabilita copy, cut, paste
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('cut', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('paste', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Disabilita drag and drop
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('drag', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Disabilita touchmove per mobile
+        document.addEventListener('touchmove', (e) => {
+            // Consenti scroll del viewer
+            if (!e.target.closest('.pdf-content')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Monitora DevTools
+        let devtoolsOpen = false;
+        setInterval(() => {
+            const threshold = 160;
+            if (window.outerHeight - window.innerHeight > threshold ||
+                window.outerWidth - window.innerWidth > threshold) {
+                if (!devtoolsOpen) {
+                    devtoolsOpen = true;
+                    console.warn('⚠️ DevTools rilevato');
+                    window.close();
+                }
+            } else {
+                devtoolsOpen = false;
+            }
+        }, 500);
 
-        // Ottieni parametri dall'URL
-        const params = new URLSearchParams(window.location.search);
-        const orderId = params.get('order');
-        const password = params.get('pwd');
-        const productId = params.get('product');
+        // ============ PDF.JS INITIALIZATION ============
+        
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // Verifica che i parametri siano presenti
+        // Variabili globali
+        let pdfDoc = null;
+        let currentPage = 1;
+        let totalPages = 0;
+        let currentOrderId = null;
+
+        // Ottieni parametri URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('order');
+        const password = urlParams.get('pwd');
+        const productId = urlParams.get('product');
+
         if (!orderId || !password || !productId) {
             showError('Link di accesso non valido. Parametri mancanti.');
         } else {
             loadPDF();
         }
 
-        function loadPDF() {
-            // Recupera i dati degli ordini dal localStorage
-            const orders = JSON.parse(localStorage.getItem('orders')) || [];
-            const products = JSON.parse(localStorage.getItem('products')) || 
-                (typeof window.products !== 'undefined' ? window.products : []);
+        async function loadPDF() {
+            try {
+                // Carica dati ordini
+                const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                const order = orders.find(o => o.id == orderId);
 
-            // Cerca l'ordine
-            const order = orders.find(o => o.id == orderId);
-            if (!order) {
-                showError('Ordine non trovato.');
-                return;
+                if (!order) {
+                    showError('Ordine non trovato nel sistema.');
+                    return;
+                }
+
+                currentOrderId = orderId;
+
+                // Trova il prodotto nell'ordine
+                const product = order.items.find(item => item.id == productId);
+                if (!product || product.tipo !== 'digitale') {
+                    showError('Prodotto non disponibile in questo ordine.');
+                    return;
+                }
+
+                // Aggiorna il nome del prodotto
+                document.getElementById('productName').textContent = `📄 ${product.title}`;
+
+                // Carica il PDF
+                const pdfPath = `/PDF/${product.pdfFile || product.file}`;
+                const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
+                pdfDoc = pdfData;
+                totalPages = pdfDoc.numPages;
+
+                // Crea UI
+                createViewerUI();
+                
+                // Renderizza prima pagina
+                renderPage(1);
+            } catch (error) {
+                console.error('Errore caricamento PDF:', error);
+                showError('Errore nel caricamento del PDF: ' + error.message);
             }
+        }
 
-            // Verifica il prodotto nell'ordine
-            const orderItem = order.items.find(item => item.id == productId);
-            if (!orderItem || orderItem.tipo !== 'digitale') {
-                showError('Prodotto non disponibile in questo ordine.');
-                return;
-            }
-
-            // Mostra il nome del prodotto
-            document.getElementById('productName').textContent = `📄 ${orderItem.title}`;
-
-            // Carica il PDF
-            const filePath = `/PDF/${orderItem.pdfFile || orderItem.file}`;
-            
-            // Mostra il PDF in un iframe con protezione
-            const contentDiv = document.getElementById('content');
-            contentDiv.innerHTML = `
+        function createViewerUI() {
+            const container = document.getElementById('viewerContainer');
+            container.innerHTML = `
                 <div class="pdf-viewer">
-                    <div class="pdf-content">
-                        <div class="watermark">🔒 PROTETTO</div>
-                        <iframe src="${filePath}#toolbar=0&navpanes=0&scrollbar=0" allow=""></iframe>
+                    <div class="controls">
+                        <button onclick="previousPage()" id="prevBtn" disabled>⬅️ Precedente</button>
+                        <span class="page-counter"><span id="currentPage">1</span> / <span id="totalPages">${totalPages}</span></span>
+                        <button onclick="nextPage()" id="nextBtn">Successiva ➡️</button>
+                    </div>
+                    <div class="pdf-content" id="pdfContent">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Rendering pagina...</p>
+                        </div>
                     </div>
                     <div class="access-info">
-                        ✅ Accesso autorizzato | Ordine #${orderId} | Password: ****** | 🔒 Documento protetto - download e copia disabilitati
+                        ✅ Accesso autorizzato | Ordine #${currentOrderId} | 🔒 Documento protetto - copy, download, stampa disabilitati
                     </div>
                 </div>
             `;
-
-            // Disabilita le protezioni sull'iframe
-            disableIframeProtections();
         }
 
-        function disableIframeProtections() {
-            // Tenta di disabilitare la protezione all'interno dell'iframe
-            const iframes = document.querySelectorAll('iframe');
-            iframes.forEach(iframe => {
-                iframe.sandbox.add('allow-same-origin', 'allow-scripts');
-            });
+        async function renderPage(pageNum) {
+            if (!pdfDoc || pageNum < 1 || pageNum > totalPages) return;
+
+            try {
+                const page = await pdfDoc.getPage(pageNum);
+                const scale = window.innerWidth < 768 ? 1.5 : 2;
+                const viewport = page.getViewport({ scale: scale });
+
+                // Crea canvas
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                // Renderizza pagina nel canvas
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+
+                // Crea contenitore pagina
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'pdf-page';
+                pageDiv.appendChild(canvas);
+
+                // Aggiungi watermark
+                const watermark = document.createElement('div');
+                watermark.className = 'pdf-page-watermark';
+                watermark.textContent = '🔒 PROTETTO';
+                pageDiv.appendChild(watermark);
+
+                // Mostra la pagina
+                const pdfContent = document.getElementById('pdfContent');
+                pdfContent.innerHTML = '';
+                pdfContent.appendChild(pageDiv);
+
+                // Aggiorna stato
+                currentPage = pageNum;
+                document.getElementById('currentPage').textContent = pageNum;
+                document.getElementById('prevBtn').disabled = pageNum <= 1;
+                document.getElementById('nextBtn').disabled = pageNum >= totalPages;
+            } catch (error) {
+                console.error('Errore rendering:', error);
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                renderPage(currentPage + 1);
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                renderPage(currentPage - 1);
+            }
         }
 
         function showError(message) {
-            const contentDiv = document.getElementById('content');
-            contentDiv.innerHTML = `
+            const container = document.getElementById('viewerContainer');
+            container.innerHTML = `
                 <div class="error-container">
                     <h2>❌ Accesso Negato</h2>
                     <p>${message}</p>
