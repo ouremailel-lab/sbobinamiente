@@ -558,15 +558,21 @@ function processOrderDirect(orderData) {
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
 
-    // Genera credenziali di accesso ai PDF (solo per prodotti digitali)
-    const digitalsAccess = {};
+    // Genera credenziali di accesso ai PDF protetti con link al viewer
+    const digitalsAccess = [];
     cart.forEach(item => {
-        if (item.tipo === 'digitale') {
-            digitalsAccess[item.id] = {
-                fileName: item.file,
-                password: generateRandomPassword(),
+        if (item.tipo === 'digitale' && item.pdfFile) {
+            const password = generateRandomPassword();
+            const viewerUrl = `${window.location.origin}${window.location.pathname.replace('cartaceo.html', '')}viewer-pdf.html?order=${order.id}&pwd=${password}&product=${item.id}`;
+            
+            digitalsAccess.push({
+                productId: item.id,
+                title: item.title,
+                pdfFile: item.pdfFile,
+                password: password,
+                accessUrl: viewerUrl,
                 downloadedAt: new Date().toISOString()
-            };
+            });
         }
     });
 
@@ -577,7 +583,7 @@ function processOrderDirect(orderData) {
     }
     userAccess[currentUser.email].push({
         orderId: order.id,
-        ...digitalsAccess
+        items: digitalsAccess
     });
     localStorage.setItem('userPdfAccess', JSON.stringify(userAccess));
 
@@ -617,26 +623,26 @@ function showOrderSuccessModal(order, digitalsAccess) {
     `;
 
     let digitalsHtml = '';
-    if (Object.keys(digitalsAccess).length > 0) {
+    if (digitalsAccess.length > 0) {
         digitalsHtml = `
-            <h4 style="color: #7cb342; margin-top: 20px;">📥 Scarica i tuoi PDF</h4>
+            <h4 style="color: #2e7d32; margin-top: 20px;">🔐 I Tuoi PDF Protetti - Accesso Immediato</h4>
+            <p style="color: #666; font-size: 13px;">Clicca sul link sottostante per accedere al viewer protetto</p>
             <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin: 12px 0;">
         `;
         
-        for (const [productId, access] of Object.entries(digitalsAccess)) {
-            const product = products.find(p => p.id === parseInt(productId));
-            if (product) {
-                digitalsHtml += `
-                    <div style="padding: 12px; border-bottom: 1px solid #ddd;">
-                        <p><strong>${product.title}</strong></p>
-                        <p style="font-size: 12px; color: #888;">Password: <code style="background: #e8e8e8; padding: 2px 6px; border-radius: 3px;">${access.password}</code></p>
-                        <a href="/PDF/${access.fileName}" download style="color: #0070ba; text-decoration: none; font-weight: 600;">↓ Scarica PDF</a>
-                    </div>
-                `;
-            }
-        }
+        digitalsAccess.forEach(access => {
+            digitalsHtml += `
+                <div style="padding: 12px; border-bottom: 1px solid #ddd;">
+                    <p><strong>📄 ${access.title}</strong></p>
+                    <p style="font-size: 12px; color: #888;">Password: <code style="background: white; padding: 3px 6px; border-radius: 3px;">${access.password}</code></p>
+                    <a href="${access.accessUrl}" target="_blank" style="color: #0070ba; text-decoration: none; font-weight: 600;">🔗 Apri Viewer Protetto</a>
+                </div>
+            `;
+        });
         
-        digitalsHtml += `</div>`;
+        digitalsHtml += `</div>
+            <p style="color: #ff9800; font-size: 12px;">⚠️ <strong>Importante:</strong> Il PDF è protetto da copia e download. Puoi visualizzarlo nel browser protetto.</p>
+        `;
     }
 
     const content = document.createElement('div');

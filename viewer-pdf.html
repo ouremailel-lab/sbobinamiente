@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizzatore PDF Protetto - SbobinaMente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #b3d9e8 0%, #b8d4c8 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .viewer-header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .viewer-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .viewer-header-info {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .viewer-header-info span {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .viewer-header-info .close-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .viewer-header-info .close-btn:hover {
+            background-color: #ff5252;
+        }
+
+        .viewer-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .pdf-viewer {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .pdf-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .pdf-content img {
+            max-width: 100%;
+            max-height: 600px;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .pdf-content embed,
+        .pdf-content iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 72px;
+            color: rgba(200, 200, 200, 0.1);
+            font-weight: bold;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 1;
+        }
+
+        .access-info {
+            background-color: #f0f7ff;
+            padding: 12px 16px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
+        .error-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .error-container h2 {
+            color: #ff6b6b;
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        .error-container p {
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .error-container .btn {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .error-container .btn:hover {
+            background-color: #3a5a95;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #4a6fa5;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4a6fa5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .viewer-header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .viewer-header-info {
+                flex-direction: column;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .pdf-content img,
+            .pdf-content embed,
+            .pdf-content iframe {
+                max-height: 400px;
+                height: 400px;
+            }
+
+            .watermark {
+                font-size: 48px;
+            }
+        }
+
+        /* Disabilita protezioni di copia */
+        .pdf-content {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .pdf-content::selection {
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="viewer-header">
+        <h1>📖 Visualizzatore PDF Protetto</h1>
+        <div class="viewer-header-info">
+            <span id="productName">Caricamento...</span>
+            <button class="close-btn" onclick="window.close()">Chiudi</button>
+        </div>
+    </div>
+
+    <div class="viewer-container">
+        <div id="content">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Caricamento del documento...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Disabilita protezioni comuni
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            // Disabilita F12, Ctrl+Shift+I, Ctrl+Shift+C
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                (e.ctrlKey && e.key === 's')) {
+                e.preventDefault();
+            }
+        });
+        document.addEventListener('copy', (e) => e.preventDefault());
+        document.addEventListener('dragstart', (e) => e.preventDefault());
+
+        // Ottieni parametri dall'URL
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('order');
+        const password = params.get('pwd');
+        const productId = params.get('product');
+
+        // Verifica che i parametri siano presenti
+        if (!orderId || !password || !productId) {
+            showError('Link di accesso non valido. Parametri mancanti.');
+        } else {
+            loadPDF();
+        }
+
+        function loadPDF() {
+            // Recupera i dati degli ordini dal localStorage
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const products = JSON.parse(localStorage.getItem('products')) || 
+                (typeof window.products !== 'undefined' ? window.products : []);
+
+            // Cerca l'ordine
+            const order = orders.find(o => o.id == orderId);
+            if (!order) {
+                showError('Ordine non trovato.');
+                return;
+            }
+
+            // Verifica il prodotto nell'ordine
+            const orderItem = order.items.find(item => item.id == productId);
+            if (!orderItem || orderItem.tipo !== 'digitale') {
+                showError('Prodotto non disponibile in questo ordine.');
+                return;
+            }
+
+            // Mostra il nome del prodotto
+            document.getElementById('productName').textContent = `📄 ${orderItem.title}`;
+
+            // Carica il PDF
+            const filePath = `/PDF/${orderItem.pdfFile || orderItem.file}`;
+            
+            // Mostra il PDF in un iframe con protezione
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = `
+                <div class="pdf-viewer">
+                    <div class="pdf-content">
+                        <div class="watermark">🔒 PROTETTO</div>
+                        <iframe src="${filePath}#toolbar=0&navpanes=0&scrollbar=0" allow=""></iframe>
+                    </div>
+                    <div class="access-info">
+                        ✅ Accesso autorizzato | Ordine #${orderId} | Password: ****** | 🔒 Documento protetto - download e copia disabilitati
+                    </div>
+                </div>
+            `;
+
+            // Disabilita le protezioni sull'iframe
+            disableIframeProtections();
+        }
+
+        function disableIframeProtections() {
+            // Tenta di disabilitare la protezione all'interno dell'iframe
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.sandbox.add('allow-same-origin', 'allow-scripts');
+            });
+        }
+
+        function showError(message) {
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = `
+                <div class="error-container">
+                    <h2>❌ Accesso Negato</h2>
+                    <p>${message}</p>
+                    <p style="color: #999; font-size: 12px;">Il link potrebbe essere scaduto o non valido.</p>
+                    <button class="btn" onclick="window.close()">Chiudi</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

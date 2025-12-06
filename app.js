@@ -431,16 +431,19 @@ function processOrderDirect(orderData) {
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
 
-    // Genera credenziali PDF protetti
+    // Genera credenziali PDF protetti con link al viewer
     const digitalsAccess = [];
     cart.forEach(item => {
         if (item.tipo === 'digitale' && item.pdfFile) {
+            const password = generatePassword();
+            const viewerUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}viewer-pdf.html?order=${order.id}&pwd=${password}&product=${item.id}`;
+            
             digitalsAccess.push({
                 productId: item.id,
                 title: item.title,
                 pdfFile: item.pdfFile,
-                password: generatePassword(),
-                accessUrl: `PDF/${encodeURIComponent(item.pdfFile)}`,
+                password: password,
+                accessUrl: viewerUrl,
                 expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
             });
         }
@@ -485,18 +488,21 @@ function showOrderSuccessModal(order, digitalsAccess) {
 
     if (digitalsAccess.length > 0) {
         html += `
-            <h3 style="margin-top: 30px; color: #d32f2f;">🔐 I Tuoi PDF - Download Immediato</h3>
-            <p style="color: #d32f2f; font-weight: bold;">⚠️ Salva questi file in un luogo sicuro!</p>
+            <h3 style="margin-top: 30px; color: #2e7d32;">🔐 I Tuoi PDF Protetti - Accesso Immediato</h3>
+            <p style="color: #666; font-size: 13px;">Clicca sul link sottostante per accedere al viewer protetto</p>
         `;
         digitalsAccess.forEach(access => {
             html += `
                 <div style="background: linear-gradient(135deg, #b3d9e8 0%, #b8d4c8 100%); padding: 16px; margin: 12px 0; border-radius: 6px; text-align: left;">
-                    <strong style="color: #4a6fa5;">${access.title}</strong><br>
+                    <strong style="color: #4a6fa5;">📄 ${access.title}</strong><br>
                     <small style="color: #666;">Password: <code style="background: white; padding: 3px 6px; border-radius: 3px; font-weight: 600;">${access.password}</code></small><br>
-                    <a href="${access.accessUrl}" download="${access.pdfFile}" style="display: inline-block; margin-top: 8px; padding: 10px 16px; background-color: #4a6fa5; color: white; text-decoration: none; border-radius: 4px; font-weight: 600; cursor: pointer;">📥 Scarica PDF</a>
+                    <a href="${access.accessUrl}" target="_blank" style="display: inline-block; margin-top: 8px; padding: 10px 16px; background-color: #4a6fa5; color: white; text-decoration: none; border-radius: 4px; font-weight: 600; cursor: pointer;">🔗 Apri Viewer Protetto</a>
                 </div>
             `;
         });
+        html += `
+            <p style="color: #ff9800; font-size: 12px; margin-top: 16px;">⚠️ <strong>Importante:</strong> Il PDF è protetto da copia e download. Puoi visualizzarlo nel browser protetto.</p>
+        `;
     }
 
     if (order.items.some(item => item.tipo === 'fisico')) {
