@@ -307,6 +307,15 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    background: #f5a6c9;
+    color: white;
+    box-shadow: 0 4px 15px rgba(245, 166, 201, 0.3);
+}
+
+.pdf-btn:hover {
+    background: #4a90e2;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
 }
 
 .pdf-view-btn {
@@ -316,33 +325,33 @@ body {
 }
 
 .pdf-view-btn:hover {
-    background: #f28bb8;
+    background: #4a90e2;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(245, 166, 201, 0.4);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
 }
 
 .pdf-email-btn {
-    background: #4a90e2;
+    background: #f5a6c9;
     color: white;
-    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+    box-shadow: 0 4px 15px rgba(245, 166, 201, 0.3);
 }
 
 .pdf-email-btn:hover {
-    background: #357abd;
+    background: #4a90e2;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
 }
 
 .pdf-buy-btn {
-    background: #0f172a;
+    background: #f5a6c9;
     color: white;
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
+    box-shadow: 0 4px 15px rgba(245, 166, 201, 0.3);
 }
 
 .pdf-buy-btn:hover {
-    background: #1e293b;
+    background: #4a90e2;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.4);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
 }
 
 /* ==================== SEZIONE PRODOTTI ==================== */
