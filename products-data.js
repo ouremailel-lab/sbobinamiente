@@ -75,9 +75,9 @@ const products = [
         descrizione: "Appunti completi di diritto del lavoro",
         dettagli: "Rilega premium, 150 pagine a colori con schemi e tabelle. Spedizione inclusa.",
         pages: 150,
-        previewImage: "image/infortunio sul lavoro.png",
+        previewImage: "image/copia_cartacea.png",
         previewPages: [
-            "image/previews/diritto-lavoro-1.png",
+            "image/infortunio sul lavoro.png",
             "image/previews/diritto-lavoro-2.png",
             "image/previews/diritto-lavoro-3.png"
         ]
