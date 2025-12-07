@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Ordine - SbobinaMente</title>
+</head>
+<body>
+    <h1>Test Ordine Fittizio</h1>
+    <button onclick="createTestOrder()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+        Crea Ordine Test
+    </button>
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="whatsapp-notifications.js"></script>
+    
+    <script>
+        async function createTestOrder() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Creazione ordine in corso...</p>';
+
+            // Ordine fittizio
+            const testOrder = {
+                order_id: 'TEST-' + Date.now(),
+                user_name: 'Mario Rossi',
+                user_email: 'mario.rossi@example.com',
+                items: [
+                    {
+                        id: 1,
+                        title: "Infortuni sul Lavoro e Malattia Professionale",
+                        tipo: "digitale",
+                        prezzo: 20.00,
+                        quantity: 1
+                    },
+                    {
+                        id: 2,
+                        title: "Invalidità e Inabilità - Appunti Stampati",
+                        tipo: "fisico",
+                        prezzo: 25.00,
+                        quantity: 1
+                    }
+                ],
+                total: 45.00,
+                delivery_info: {
+                    address: "Via Roma 123",
+                    city: "Milano",
+                    cap: "20100",
+                    phone: "3331234567"
+                },
+                order_date: new Date().toISOString(),
+                status: 'pending'
+            };
+
+            try {
+                // Salva su Supabase
+                const { data, error } = await window.supabaseClient
+                    .from('orders')
+                    .insert([testOrder])
+                    .select();
+
+                if (error) throw error;
+
+                console.log('Ordine salvato su Supabase:', data);
+
+                // Salva anche su localStorage
+                let orders = JSON.parse(localStorage.getItem('orders')) || [];
+                orders.push(testOrder);
+                localStorage.setItem('orders', JSON.stringify(orders));
+
+                // Invia notifica WhatsApp
+                if (window.whatsappNotify) {
+                    await window.whatsappNotify.order(testOrder);
+                }
+
+                resultDiv.innerHTML = `
+                    <h3 style="color: green;">✅ Ordine Creato con Successo!</h3>
+                    <p><strong>ID Ordine:</strong> ${testOrder.order_id}</p>
+                    <p><strong>Cliente:</strong> ${testOrder.user_name} (${testOrder.user_email})</p>
+                    <p><strong>Totale:</strong> €${testOrder.total.toFixed(2)}</p>
+                    <p><strong>Prodotti:</strong></p>
+                    <ul>
+                        ${testOrder.items.map(item => 
+                            `<li>${item.title} - €${item.prezzo.toFixed(2)}</li>`
+                        ).join('')}
+                    </ul>
+                    <p><strong>Indirizzo:</strong> ${testOrder.delivery_info.address}, ${testOrder.delivery_info.city} ${testOrder.delivery_info.cap}</p>
+                    <p style="color: #0f172a; margin-top: 10px;">
+                        📱 Notifica WhatsApp inviata!<br>
+                        💾 Salvato su Supabase<br>
+                        💾 Salvato su localStorage
+                    </p>
+                    <p style="margin-top: 15px;">
+                        <a href="admin-ordini.html" style="color: #f5a6c9;">Visualizza in Admin Ordini →</a>
+                    </p>
+                `;
+
+            } catch (error) {
+                console.error('Errore:', error);
+                resultDiv.innerHTML = `
+                    <h3 style="color: red;">❌ Errore</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
