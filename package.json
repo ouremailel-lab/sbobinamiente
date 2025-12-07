@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "E-commerce di appunti e PDF protetti",
   "main": "index.html",
+  "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8000",
     "dev": "python3 -m http.server 8000"
