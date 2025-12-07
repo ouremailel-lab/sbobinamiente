@@ -348,11 +348,30 @@
 
         async function loadPDF() {
             try {
+                // Verifica se è un link diretto (con password nell'URL)
+                const isDirectLink = password && pdfFile;
+                
+                if (isDirectLink) {
+                    // Link diretto - accesso senza localStorage
+                    console.log('✅ Accesso diretto al PDF con password dall\'URL');
+                    document.getElementById('productName').textContent = `📄 ${decodeURIComponent(pdfTitle)}`;
+
+                    const pdfPath = `/PDF/${decodeURIComponent(pdfFile)}`;
+                    const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
+                    pdfDoc = pdfData;
+                    totalPages = fullAccess ? pdfDoc.numPages : 1;
+
+                    createViewerUI();
+                    renderPage(1);
+                    return;
+                }
+
+                // Altrimenti verifica localStorage (metodo vecchio)
                 const tempAccess = JSON.parse(localStorage.getItem('tempPDFAccess')) || {};
                 const access = tempAccess[accessId];
 
                 if (!access) {
-                    showError('Link di accesso non trovato.');
+                    showError('Link di accesso non trovato o scaduto.');
                     return;
                 }
 
