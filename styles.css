@@ -1,9 +1,10 @@
 /* ==================== VARIABILI COLORI MODERNI ==================== */
 :root {
-    --primary-blue: #1e40af;
-    --primary-blue-light: #3b82f6;
+    --primary-blue: #667eea;
+    --primary-blue-light: #764ba2;
     --primary-green: #059669;
     --primary-green-light: #10b981;
+    --accent-yellow: #FFD700;
     --accent-dark: #0f172a;
     --accent-light: #f8fafc;
     --text-primary: #1e293b;
@@ -17,6 +18,56 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== ANIMAZIONI ==================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 /* ==================== RESET E STILI BASE ==================== */
@@ -45,9 +96,12 @@ body {
 
 /* ==================== HEADER ==================== */
 .header {
-    background-color: #ffffff;
-    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: var(--shadow-lg);
     position: sticky;
+    top: 0;
+    z-index: 100;
+    animation: slideInDown 0.5s ease-out;
     top: 0;
     z-index: 100;
 }
@@ -62,16 +116,13 @@ body {
 .logo h1 {
     font-size: 26px;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #ffffff;
     letter-spacing: -0.5px;
 }
 
 .logo .tagline {
     font-size: 11px;
-    color: var(--text-secondary);
+    color: rgba(255,255,255,0.9);
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
@@ -86,14 +137,17 @@ body {
 
 .nav-link {
     text-decoration: none;
-    color: var(--text-primary);
-    font-weight: 500;
+    color: white;
+    font-weight: 600;
     font-size: 14px;
     transition: var(--transition);
     position: relative;
 }
 
 .nav-link:hover {
+    color: #FFD700;
+    transform: translateY(-2px);
+}
     color: var(--primary-blue);
 }
 
@@ -125,7 +179,7 @@ body {
 
 /* ==================== HERO SECTION ==================== */
 .hero {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 120px 20px 100px;
     text-align: center;
     color: white;
@@ -140,7 +194,7 @@ body {
     right: -20%;
     width: 500px;
     height: 500px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 215, 0, 0.1);
     border-radius: 50%;
     animation: float 6s ease-in-out infinite;
 }
@@ -152,14 +206,9 @@ body {
     left: -10%;
     width: 400px;
     height: 400px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 215, 0, 0.08);
     border-radius: 50%;
     animation: float 8s ease-in-out infinite reverse;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(30px); }
 }
 
 .hero-content {
@@ -168,22 +217,12 @@ body {
     animation: fadeInUp 0.8s ease-out;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 .hero-content h2 {
     font-size: 52px;
     font-weight: 800;
     margin-bottom: 16px;
     letter-spacing: -1px;
+    animation: fadeInUp 0.8s ease-out 0.1s both;
 }
 
 .hero-content p {
@@ -191,6 +230,7 @@ body {
     margin-bottom: 32px;
     opacity: 0.95;
     font-weight: 300;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 /* ==================== PULSANTI ==================== */
@@ -208,25 +248,40 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 215, 0, 0.2);
+    transition: left 0.3s ease;
+    z-index: -1;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
 }
 
 .btn-secondary {
-    background-color: var(--accent-light);
-    color: var(--primary-blue);
-    border: 2px solid var(--primary-blue);
+    background-color: white;
+    color: #667eea;
+    border: 2px solid #667eea;
 }
 
 .btn-secondary:hover {
-    background-color: var(--primary-blue);
+    background-color: #667eea;
     color: white;
+    transform: translateY(-2px);
 }
 
 .btn-small {
