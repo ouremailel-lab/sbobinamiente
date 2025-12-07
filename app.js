@@ -526,6 +526,11 @@ function processOrderDirect(orderData) {
     localStorage.setItem('myDigitalsAccess', JSON.stringify(
         [...JSON.parse(localStorage.getItem('myDigitalsAccess')) || [], ...digitalsAccess]
     ));
+    
+    // Invia email di conferma al cliente
+    if (typeof sendPaymentConfirmationEmail === 'function') {
+        sendPaymentConfirmationEmail(order, digitalsAccess);
+    }
 
     // Pulisci i dati temporanei
     localStorage.removeItem('pendingOrder');
@@ -672,6 +677,11 @@ function processOrder() {
     localStorage.setItem('myDigitalsAccess', JSON.stringify(
         [...JSON.parse(localStorage.getItem('myDigitalsAccess')) || [], ...digitalsAccess]
     ));
+    
+    // Invia email di conferma al cliente
+    if (typeof sendPaymentConfirmationEmail === 'function') {
+        sendPaymentConfirmationEmail(order, digitalsAccess);
+    }
 
     closeCheckout();
     cart = [];

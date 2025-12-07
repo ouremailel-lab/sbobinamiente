@@ -32,13 +32,22 @@ async function sendRegistrationConfirmationEmail(user) {
 async function sendPaymentConfirmationEmail(order, digitalsAccess) {
     let itemsList = '';
     order.items.forEach(item => {
-        itemsList += `• ${item.title} × ${item.quantity}\n`;
+        const quantity = item.quantity || 1;
+        itemsList += `• ${item.title} × ${quantity}\n`;
     });
 
     const title = `✅ Ordine Confermato #${order.id}`;
     const message = `Grazie per il tuo acquisto!\n\nOrdine: ${order.id}\nTotale: ${order.total.toFixed(2)}€\n\nArticoli:\n${itemsList}\n\nRiceverai presto i dettagli.`;
     
-    return sendEmailViaEmailJS(order.deliveryInfo.email, order.deliveryInfo.fullName, title, message, EMAILJS_TEMPLATE_ORDER);
+    const customerName = order.deliveryInfo?.fullName || order.deliveryInfo?.nome || 'Cliente';
+    const customerEmail = order.deliveryInfo?.email || order.user?.email;
+    
+    if (!customerEmail) {
+        console.error('❌ Email cliente non trovata nell\'ordine');
+        return false;
+    }
+    
+    return sendEmailViaEmailJS(customerEmail, customerName, title, message, EMAILJS_TEMPLATE_ORDER);
 }
 
 // 3. EMAIL CON PDF (richiesta dal cliente)

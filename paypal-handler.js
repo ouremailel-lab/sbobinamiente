@@ -47,8 +47,6 @@ function handlePayPalSuccess() {
     if (window.saveOrderToSupabase) {
         window.saveOrderToSupabase(order);
     }
-
-    // Genera credenziali PDF protetti
     const digitalsAccess = [];
     order.items.forEach(item => {
         if (item.tipo === 'digitale' && item.pdfFile) {

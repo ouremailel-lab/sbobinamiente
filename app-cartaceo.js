@@ -449,6 +449,11 @@ function processOrder() {
     if (window.saveOrderToSupabase) {
         window.saveOrderToSupabase(order);
     }
+    
+    // Invia email di conferma al cliente
+    if (typeof sendPaymentConfirmationEmail === 'function') {
+        sendPaymentConfirmationEmail(order, []);
+    }
 
     closeCheckout();
     cart = [];
@@ -614,6 +619,11 @@ function processOrderDirect(orderData) {
         items: digitalsAccess
     });
     localStorage.setItem('userPdfAccess', JSON.stringify(userAccess));
+    
+    // Invia email di conferma al cliente
+    if (typeof sendPaymentConfirmationEmail === 'function') {
+        sendPaymentConfirmationEmail(order, digitalsAccess);
+    }
 
     // Svuota il carrello
     cart = [];
