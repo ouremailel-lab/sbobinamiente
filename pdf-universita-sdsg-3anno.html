@@ -438,10 +438,10 @@
                 localStorage.setItem('tempPDFAccess', JSON.stringify(tempAccess));
 
                 // Crea il link protetto
-                const pdfLink = `https://sbobinamiente.vercel.app/viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}&full=true`;
+                const pdfLink = `https://sbobinamiente.vercel.app/viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}&title=${encodeURIComponent(title)}&full=true`;
                 
-                const emailTitle = `📚 Lezione: ${title}`;
-                const emailMessage = `Ciao ${currentUser.nome},\n\nEcco il tuo PDF richiesto:\n\n📄 ${title}\n\nAccedi al PDF qui:\n${pdfLink}\n\nPassword: ${pdfPassword}\n\n🔒 Il file è protetto e non può essere scaricato o condiviso.\nIl link rimane valido indefinitamente.\n\nBuona lettura!\n\nCordiali saluti,\nIl Team di SbobinaMente`;
+                const emailTitle = `📚 Il tuo PDF acquistato: ${title}`;
+                const emailMessage = `Ciao ${currentUser.nome},\n\nGrazie per il tuo acquisto!\n\nEcco il link per accedere al tuo PDF:\n📄 ${title}\n\n🔗 Accedi qui:\n${pdfLink}\n\n🔑 Password: ${pdfPassword}\n\n🔒 Il file è protetto e può essere visualizzato solo attraverso il nostro viewer sicuro.\nIl link rimane valido indefinitamente.\n\nBuona lettura!\n\nCordiali saluti,\nIl Team di SbobinaMente`;
                 
                 // Invia via EmailJS
                 const result = await emailjs.send(
@@ -456,7 +456,7 @@
                 );
 
                 if (result.status === 200) {
-                    alert(`✅ Email inviata a ${currentUser.email}!\n\nIl link al PDF è valido indefinitamente.`);
+                    alert(`✅ Email inviata a ${currentUser.email}!\n\nControlla la tua casella di posta per il link al PDF.`);
                 } else {
                     alert('❌ Errore nell\'invio dell\'email');
                 }
