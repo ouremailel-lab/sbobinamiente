@@ -337,8 +337,16 @@ function handleRegister(e) {
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
     
+    // Salva su Supabase
+    saveUserToSupabase(newUser);
+    
     // INVIA EMAIL DI CONFERMA REGISTRAZIONE
     sendRegistrationEmail(newUser);
+    
+    // INVIA NOTIFICA WHATSAPP
+    if (window.whatsappNotify) {
+        window.whatsappNotify.registration(newUser);
+    }
     
     closeAuth();
     showNotification('✅ Registrazione completata! Ti abbiamo inviato una email di conferma.');
@@ -355,6 +363,28 @@ async function sendRegistrationEmail(user) {
         console.log('✅ Email di registrazione inviata a:', user.email);
     } catch (error) {
         console.error('❌ Errore invio email registrazione:', error);
+    }
+}
+
+async function saveUserToSupabase(user) {
+    try {
+        const userData = {
+            nome: user.nome,
+            email: user.email,
+            password: user.password,
+            verified: user.verified,
+            registration_date: user.registrationDate
+        };
+        
+        const { data, error } = await window.supabaseClient
+            .from('users')
+            .insert([userData])
+            .select();
+        
+        if (error) throw error;
+        console.log('✅ Utente salvato su Supabase:', data);
+    } catch (error) {
+        console.error('❌ Errore salvataggio Supabase:', error);
     }
 }
 
