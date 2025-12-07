@@ -230,8 +230,8 @@
                             👁️ ${isPurchased ? 'Visualizza Completo' : 'Anteprima (1 pagina)'}
                         </button>
                         ${isPurchased ? `
-                        <button onclick="sendPDFViaEmail('${pdf.title.replace(/'/g, "\\'")}', '${pdf.file.replace(/'/g, "\\'")}', true)" class="pdf-btn pdf-email-btn">
-                            📧 Invia via Email
+                        <button onclick="openEmailRequestForm('${pdf.title.replace(/'/g, "\\'")}', '${pdf.id}')" class="pdf-btn pdf-email-btn">
+                            📧 Richiedi via Email
                         </button>
                         ` : `
                         <button onclick="buyPDF('${pdf.id}', '${pdf.title.replace(/'/g, "\\'")}', ${pdf.price})" class="pdf-btn pdf-buy-btn">
@@ -420,6 +420,19 @@
                 console.error('Errore:', error);
                 alert(`❌ Errore nell'invio dell'email: ${error.message || error}`);
             }
+        }
+
+        // Funzione per aprire il form di richiesta email
+        function openEmailRequestForm(pdfTitle, pdfId) {
+            const isPurchased = checkIfPurchased(pdfId);
+            
+            if (!isPurchased) {
+                alert('⚠️ Devi prima acquistare il PDF per richiederlo via email.');
+                return;
+            }
+            
+            // Apri la pagina del form in una nuova finestra
+            window.open(`richiedi-pdf.html?pdf=${encodeURIComponent(pdfTitle)}`, '_blank');
         }
 
         // Carica i PDF al caricamento della pagina
