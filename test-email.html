@@ -12,7 +12,7 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -42,72 +42,61 @@
             font-size: 14px;
         }
         
-        .form-group {
-            margin-bottom: 20px;
+        .field {
+            margin-bottom: 10px;
         }
         
-        label {
+        .field label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 5px;
             font-weight: 600;
-            font-size: 14px;
         }
         
-        input, textarea {
+        .field input,
+        .field textarea {
+            display: block;
             width: 100%;
-            padding: 12px;
+            min-width: 250px;
+            line-height: 1.5;
+            font-size: 14px;
+            padding: 10px;
             border: 2px solid #e0e0e0;
             border-radius: 6px;
             font-family: inherit;
-            font-size: 14px;
             transition: border-color 0.3s;
         }
         
-        input:focus, textarea:focus {
+        .field input:focus,
+        .field textarea:focus {
             outline: none;
             border-color: #667eea;
         }
         
-        textarea {
+        .field textarea {
             min-height: 120px;
             resize: vertical;
         }
         
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-        
-        button {
-            flex: 1;
-            padding: 12px;
+        input[type="submit"] {
+            display: block;
+            padding: 12px 30px;
+            font-size: 14px;
+            background-color: #667eea;
+            color: #fff;
             border: none;
             border-radius: 6px;
-            font-weight: 600;
             cursor: pointer;
-            font-size: 14px;
+            font-weight: 600;
+            margin-top: 20px;
+            width: 100%;
             transition: all 0.3s;
         }
         
-        .btn-test {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-test:hover {
+        input[type="submit"]:hover {
+            background-color: #764ba2;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-back {
-            background: #f0f0f0;
-            color: #333;
-        }
-        
-        .btn-back:hover {
-            background: #e0e0e0;
         }
         
         .status {
@@ -116,6 +105,7 @@
             border-radius: 6px;
             text-align: center;
             display: none;
+            font-weight: 600;
         }
         
         .status.success {
@@ -135,119 +125,73 @@
             color: #084298;
             display: block;
         }
-        
-        .info-box {
-            background: #f9f9f9;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            font-size: 13px;
-            color: #555;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>✉️ Test Email</h1>
-        <p class="subtitle">Testa il sistema di invio email Formspree</p>
+        <p class="subtitle">Testa il sistema di invio email</p>
         
-        <div class="info-box">
-            📧 Invia un'email di test per verificare che il sistema funziona correttamente. L'email sarà inviata a Formspree e girerà indietro a te.
-        </div>
-        
-        <form id="testEmailForm">
-            <div class="form-group">
-                <label for="testEmail">📧 La tua Email:</label>
-                <input type="email" id="testEmail" placeholder="tua@email.com" required>
+        <form id="form">
+            <div class="field">
+                <label for="name">name</label>
+                <input type="text" name="name" id="name" required>
             </div>
             
-            <div class="form-group">
-                <label for="testName">👤 Il tuo Nome:</label>
-                <input type="text" id="testName" placeholder="Inserisci il tuo nome" required>
+            <div class="field">
+                <label for="title">title</label>
+                <input type="text" name="title" id="title" required>
             </div>
             
-            <div class="form-group">
-                <label for="testSubject">📝 Oggetto:</label>
-                <input type="text" id="testSubject" placeholder="Oggetto email" value="Test Email da SbobinaMente" required>
+            <div class="field">
+                <label for="email">email</label>
+                <input type="text" name="email" id="email" required>
             </div>
             
-            <div class="form-group">
-                <label for="testMessage">💬 Messaggio:</label>
-                <textarea id="testMessage" placeholder="Scrivi il messaggio di test..." required>Ciao,
-
-Questo è un email di test per verificare che il sistema Formspree funziona correttamente.
-
-Se ricevi questo messaggio, significa che le email sono attive! 🎉
-
-Cordiali saluti,
-Il Team di SbobinaMente</textarea>
+            <div class="field">
+                <label for="message">message</label>
+                <textarea name="message" id="message" required>Questo è un email di test da SbobinaMente.</textarea>
             </div>
             
-            <div class="button-group">
-                <button type="button" class="btn-back" onclick="window.location.href='index.html'">← Torna Home</button>
-                <button type="submit" class="btn-test">🚀 Invia Email Test</button>
-            </div>
-            
+            <input type="submit" id="button" value="Send Email">
             <div id="status" class="status"></div>
         </form>
     </div>
 
-    <script src="email-service.js"></script>
-    <script>
-        document.getElementById('testEmailForm').addEventListener('submit', async function(e) {
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init('Bo-Kyor5W-Q_BRDf3');
+        
+        document.getElementById('form').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('testEmail').value;
-            const name = document.getElementById('testName').value;
-            const subject = document.getElementById('testSubject').value;
-            const message = document.getElementById('testMessage').value;
             const statusDiv = document.getElementById('status');
-            
-            // Mostra loading
             statusDiv.className = 'status loading';
             statusDiv.textContent = '⏳ Invio email in corso...';
             
-            try {
-                // Usa la funzione generica di supporto
-                await sendSupportEmail(email, name, subject, message);
-                
-                // Mostra successo
-                statusDiv.className = 'status success';
-                statusDiv.innerHTML = `
-                    ✅ <strong>Email inviata con successo!</strong><br>
-                    Controlla la tua casella email (${email})<br>
-                    Se non arriva, guarda nella cartella SPAM
-                `;
-                
-                // Resetta form
-                document.getElementById('testEmailForm').reset();
-                
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 5000);
-                
-            } catch (error) {
-                statusDiv.className = 'status error';
-                statusDiv.innerHTML = `
-                    ❌ <strong>Errore nell'invio:</strong><br>
-                    ${error.message}
-                `;
-            }
-        });
-        
-        // Pre-riempi con email se è stata già usata
-        window.addEventListener('DOMContentLoaded', function() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (currentUser && currentUser.email) {
-                document.getElementById('testEmail').value = currentUser.email;
-                document.getElementById('testName').value = currentUser.nome || '';
-            }
+            const templateParams = {
+                name: document.getElementById('name').value,
+                title: document.getElementById('title').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+            
+            emailjs.send('sAJlIG2M63bqNohFuCqje', 'template_j7hwc4l', templateParams)
+                .then(function(response) {
+                    console.log('✅ Email inviata!', response.status, response.text);
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ Email inviata con successo! Controlla la tua inbox.';
+                    document.getElementById('form').reset();
+                    
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 5000);
+                }, function(error) {
+                    console.error('❌ Errore:', error);
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ Errore nell\'invio: ' + JSON.stringify(error);
+                });
         });
     </script>
-
-    <!-- EmailJS Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/index.min.js"></script>
-    <script src="email-service.js"></script>
 </body>
 </html>
