@@ -338,6 +338,7 @@
         const password = urlParams.get('pwd');
         const pdfFile = urlParams.get('file');
         const pdfTitle = urlParams.get('title') || 'Lezione PDF';
+        const fullAccess = urlParams.get('full') === 'true';
 
         if (!accessId || !password || !pdfFile) {
             showError('Link di accesso non valido. Parametri mancanti.');
@@ -365,7 +366,7 @@
                 const pdfPath = `/PDF/${decodeURIComponent(pdfFile)}`;
                 const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
                 pdfDoc = pdfData;
-                totalPages = pdfDoc.numPages;
+                totalPages = fullAccess ? pdfDoc.numPages : 1; // Solo 1 pagina in preview
 
                 createViewerUI();
                 renderPage(1);
@@ -377,12 +378,16 @@
 
         function createViewerUI() {
             const container = document.getElementById('viewerContainer');
+            const accessInfo = fullAccess 
+                ? '✅ Accesso autorizzato | 🔒 Documento protetto - copy, download, stampa disabilitati'
+                : '👁️ ANTEPRIMA - Solo prima pagina | 🛒 Acquista per visualizzare il PDF completo';
+            
             container.innerHTML = `
                 <div class="pdf-viewer">
                     <div class="controls">
                         <button onclick="previousPage()" id="prevBtn" disabled>⬅️ Precedente</button>
                         <span class="page-counter"><span id="currentPage">1</span> / <span id="totalPages">${totalPages}</span></span>
-                        <button onclick="nextPage()" id="nextBtn">Successiva ➡️</button>
+                        <button onclick="nextPage()" id="nextBtn" ${totalPages <= 1 ? 'disabled' : ''}>Successiva ➡️</button>
                     </div>
                     <div class="pdf-content" id="pdfContent">
                         <div class="loading">
@@ -391,7 +396,7 @@
                         </div>
                     </div>
                     <div class="access-info">
-                        ✅ Accesso autorizzato | 🔒 Documento protetto - copy, download, stampa disabilitati
+                        ${accessInfo}
                     </div>
                 </div>
             `;

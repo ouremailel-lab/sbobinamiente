@@ -76,6 +76,13 @@
             line-height: 1.4;
         }
 
+        .pdf-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4facfe;
+            margin-bottom: 15px;
+        }
+
         .pdf-actions {
             display: flex;
             gap: 10px;
@@ -113,6 +120,16 @@
         .pdf-email-btn:hover {
             background: #4facfe;
             color: white;
+        }
+
+        .pdf-buy-btn {
+            background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+            color: white;
+        }
+
+        .pdf-buy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(124, 179, 66, 0.3);
         }
 
         .empty-state {
@@ -206,20 +223,28 @@
         // Lista dei PDF del terzo anno
         const pdfList = [
             {
+                id: 'pdf_infortuni',
                 title: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE",
-                file: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE.pdf"
+                file: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE.pdf",
+                price: 18.00
             },
             {
+                id: 'pdf_invalidita',
                 title: "Invalidità e inabilità",
-                file: "Invalidità e inabilità.pdf"
+                file: "Invalidità e inabilità.pdf",
+                price: 18.00
             },
             {
+                id: 'pdf_pensione',
                 title: "PENSIONE",
-                file: "PENSIONE.pdf"
+                file: "PENSIONE.pdf",
+                price: 18.00
             },
             {
+                id: 'pdf_disoccupazione',
                 title: "Disoccupazione",
-                file: "disoccupazione.pdf"
+                file: "disoccupazione.pdf",
+                price: 18.00
             }
         ];
 
@@ -237,20 +262,29 @@
                 return;
             }
 
-            grid.innerHTML = pdfList.map((pdf, index) => `
+            grid.innerHTML = pdfList.map((pdf, index) => {
+                const isPurchased = checkIfPurchased(pdf.id);
+                return `
                 <div class="pdf-card">
                     <div class="pdf-icon">📄</div>
                     <h3 class="pdf-title">${pdf.title}</h3>
+                    <div class="pdf-price">${pdf.price.toFixed(2)}€</div>
                     <div class="pdf-actions">
-                        <button onclick="viewPDFProtected('${pdf.title.replace(/'/g, "\\'")}', '${pdf.file.replace(/'/g, "\\'")}')" class="pdf-btn pdf-view-btn">
-                            👁️ Visualizza PDF
+                        <button onclick="viewPDFPreview('${pdf.title.replace(/'/g, "\\'")}', '${pdf.file.replace(/'/g, "\\'")}', '${pdf.id}')" class="pdf-btn pdf-view-btn">
+                            👁️ ${isPurchased ? 'Visualizza Completo' : 'Anteprima (1 pagina)'}
                         </button>
-                        <button onclick="sendPDFViaEmail('${pdf.title.replace(/'/g, "\\'")}', '${pdf.file.replace(/'/g, "\\'")}')" class="pdf-btn pdf-email-btn">
+                        ${isPurchased ? `
+                        <button onclick="sendPDFViaEmail('${pdf.title.replace(/'/g, "\\'")}', '${pdf.file.replace(/'/g, "\\'")}', true)" class="pdf-btn pdf-email-btn">
                             📧 Invia via Email
                         </button>
+                        ` : `
+                        <button onclick="buyPDF('${pdf.id}', '${pdf.title.replace(/'/g, "\\'")}', ${pdf.price})" class="pdf-btn pdf-buy-btn">
+                            🛒 Acquista PDF
+                        </button>
+                        `}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function generateRandomPassword() {
@@ -271,6 +305,36 @@
                 return;
             }
 
+            // Crea accesso completo
+            const accessId = Date.now();
+            const pdfPassword = generateRandomPassword();
+            
+            let tempAccess = JSON.parse(localStorage.getItem('tempPDFAccess')) || {};
+            tempAccess[accessId] = {
+                file: file,
+                password: pdfPassword,
+                user: currentUser.email,
+                timestamp: new Date().toISOString(),
+                fullAccess: true
+            };
+            localStorage.setItem('tempPDFAccess', JSON.stringify(tempAccess));
+
+            // Apri viewer completo
+            const pdfLink = `viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}&title=${encodeURIComponent(title)}&full=true`;
+            window.open(pdfLink, 'pdfViewer', 'width=1000,height=700');
+        }
+
+        function viewPDFPreview(title, file, pdfId) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                alert('❌ Devi fare il login per visualizzare l\'anteprima');
+                window.location.href = 'index.html#login';
+                return;
+            }
+
+            const isPurchased = checkIfPurchased(pdfId);
+
             // Crea accesso
             const accessId = Date.now();
             const pdfPassword = generateRandomPassword();
@@ -280,21 +344,80 @@
                 file: file,
                 password: pdfPassword,
                 user: currentUser.email,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                fullAccess: isPurchased,
+                previewOnly: !isPurchased
             };
             localStorage.setItem('tempPDFAccess', JSON.stringify(tempAccess));
 
             // Apri viewer
-            const pdfLink = `viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}&title=${encodeURIComponent(title)}`;
+            const pdfLink = `viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}&title=${encodeURIComponent(title)}&full=${isPurchased}`;
             window.open(pdfLink, 'pdfViewer', 'width=1000,height=700');
         }
 
-        async function sendPDFViaEmail(title, file) {
+        function checkIfPurchased(pdfId) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return false;
+            
+            const purchasedPDFs = JSON.parse(localStorage.getItem('purchasedPDFs')) || {};
+            return purchasedPDFs[currentUser.email]?.includes(pdfId) || false;
+        }
+
+        function buyPDF(pdfId, title, price) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                alert('❌ Devi fare il login per acquistare');
+                window.location.href = 'index.html#login';
+                return;
+            }
+
+            if (confirm(`Acquistare "${title}" per ${price.toFixed(2)}€?\n\nSarai reindirizzato a PayPal per completare il pagamento.`)) {
+                // Salva il PDF da acquistare
+                localStorage.setItem('pendingPDFPurchase', JSON.stringify({
+                    pdfId: pdfId,
+                    title: title,
+                    price: price,
+                    userEmail: currentUser.email
+                }));
+
+                // Simula PayPal (in produzione useresti l'API PayPal reale)
+                alert('🔄 Reindirizzamento a PayPal...\n\n[DEMO MODE: Acquisto simulato]');
+                
+                // Simula acquisto completato
+                setTimeout(() => {
+                    completePDFPurchase(pdfId, currentUser.email);
+                    alert(`✅ Acquisto completato!\n\nOra puoi visualizzare il PDF completo di "${title}"`);
+                    loadPDFs(); // Ricarica i PDF per mostrare l'acquisto
+                }, 1000);
+            }
+        }
+
+        function completePDFPurchase(pdfId, userEmail) {
+            let purchasedPDFs = JSON.parse(localStorage.getItem('purchasedPDFs')) || {};
+            
+            if (!purchasedPDFs[userEmail]) {
+                purchasedPDFs[userEmail] = [];
+            }
+            
+            if (!purchasedPDFs[userEmail].includes(pdfId)) {
+                purchasedPDFs[userEmail].push(pdfId);
+            }
+            
+            localStorage.setItem('purchasedPDFs', JSON.stringify(purchasedPDFs));
+        }
+
+        async function sendPDFViaEmail(title, file, fullAccess = false) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             
             if (!currentUser) {
                 alert('❌ Devi fare il login per inviare il PDF via email');
                 window.location.href = 'index.html#login';
+                return;
+            }
+
+            if (!fullAccess) {
+                alert('❌ Devi acquistare il PDF per riceverlo via email');
                 return;
             }
 
@@ -309,12 +432,13 @@
                     file: file,
                     password: pdfPassword,
                     user: currentUser.email,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    fullAccess: true
                 };
                 localStorage.setItem('tempPDFAccess', JSON.stringify(tempAccess));
 
                 // Crea il link protetto
-                const pdfLink = `https://sbobinamiente.vercel.app/viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}`;
+                const pdfLink = `https://sbobinamiente.vercel.app/viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}&full=true`;
                 
                 const emailTitle = `📚 Lezione: ${title}`;
                 const emailMessage = `Ciao ${currentUser.nome},\n\nEcco il tuo PDF richiesto:\n\n📄 ${title}\n\nAccedi al PDF qui:\n${pdfLink}\n\nPassword: ${pdfPassword}\n\n🔒 Il file è protetto e non può essere scaricato o condiviso.\nIl link rimane valido indefinitamente.\n\nBuona lettura!\n\nCordiali saluti,\nIl Team di SbobinaMente`;
