@@ -32,8 +32,14 @@ function renderProducts(productsToRender) {
     productsToRender.forEach(product => {
         const card = document.createElement('div');
         card.className = 'product-card';
+        
+        // Usa previewImage se disponibile, altrimenti emoji
+        const imageContent = product.previewImage 
+            ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover;">`
+            : product.emoji;
+        
         card.innerHTML = `
-            <div class="product-image">${product.emoji}</div>
+            <div class="product-image">${imageContent}</div>
             <div class="product-content">
                 <span class="product-type fisico">📕 Stampato</span>
                 <h3 class="product-title">${product.title}</h3>
@@ -54,8 +60,14 @@ function viewProduct(productId) {
     if (!product) return;
 
     const detailDiv = document.getElementById('productDetail');
+    
+    // Usa previewImage se disponibile, altrimenti emoji
+    const imageContent = product.previewImage 
+        ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`
+        : product.emoji;
+    
     detailDiv.innerHTML = `
-        <div class="detail-image">${product.emoji}</div>
+        <div class="detail-image" style="${product.previewImage ? 'font-size: 1px; padding: 0;' : ''}">${imageContent}</div>
         <h2 class="detail-title">${product.title}</h2>
         <span class="product-type fisico">📕 Stampato</span>
         <p class="detail-price">${product.prezzo.toFixed(2)}€</p>
