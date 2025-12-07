@@ -77,9 +77,7 @@ const products = [
         pages: 150,
         previewImage: "image/copia_cartacea.png",
         previewPages: [
-            "image/infortunio sul lavoro.png",
-            "image/previews/diritto-lavoro-2.png",
-            "image/previews/diritto-lavoro-3.png"
+            "image/infortunio sul lavoro.png"
         ]
     }
 ];
