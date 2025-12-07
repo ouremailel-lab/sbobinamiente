@@ -440,13 +440,13 @@
                 // Crea il link protetto
                 const pdfLink = `https://sbobinamiente.vercel.app/viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}&title=${encodeURIComponent(title)}&full=true`;
                 
-                const emailTitle = `📚 Il tuo PDF acquistato: ${title}`;
-                const emailMessage = `Ciao ${currentUser.nome},\n\nGrazie per il tuo acquisto!\n\nEcco il link per accedere al tuo PDF:\n📄 ${title}\n\n🔗 Accedi qui:\n${pdfLink}\n\n🔑 Password: ${pdfPassword}\n\n🔒 Il file è protetto e può essere visualizzato solo attraverso il nostro viewer sicuro.\nIl link rimane valido indefinitamente.\n\nBuona lettura!\n\nCordiali saluti,\nIl Team di SbobinaMente`;
+                const emailTitle = `✅ Ordine Confermato - SbobinaMente`;
+                const emailMessage = `Ciao ${currentUser.nome}! 🎉\n\nGrazie per il tuo acquisto!\n\n📚 Ecco il tuo PDF: ${pdfLink}\n\n🔑 Password di accesso: ${pdfPassword}\n\nIl link è protetto e rimane valido per sempre.\n\nBuona lettura!\n\nElisa&Luigi di SbobinaMente`;
                 
-                // Invia via EmailJS
+                // Invia via EmailJS usando template_b69xo05
                 const result = await emailjs.send(
                     'service_a410o74',
-                    'template_j7hwc4l',
+                    'template_b69xo05',
                     {
                         email: currentUser.email,
                         name: currentUser.nome,
