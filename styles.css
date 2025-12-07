@@ -294,6 +294,57 @@ body {
     font-size: 12px;
 }
 
+/* ==================== BOTTONI PDF ==================== */
+.pdf-btn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pdf-view-btn {
+    background: #f5a6c9;
+    color: white;
+    box-shadow: 0 4px 15px rgba(245, 166, 201, 0.3);
+}
+
+.pdf-view-btn:hover {
+    background: #f28bb8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 166, 201, 0.4);
+}
+
+.pdf-email-btn {
+    background: #4a90e2;
+    color: white;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+.pdf-email-btn:hover {
+    background: #357abd;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+}
+
+.pdf-buy-btn {
+    background: #0f172a;
+    color: white;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
+}
+
+.pdf-buy-btn:hover {
+    background: #1e293b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.4);
+}
+
 /* ==================== SEZIONE PRODOTTI ==================== */
 .products-section {
     padding: 80px 20px;
