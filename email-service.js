@@ -53,3 +53,49 @@ async function sendPDFDownloadEmail(customerEmail, customerName, pdfAccess) {
 async function sendSupportEmail(senderEmail, senderName, subject, message) {
     return sendEmailViaEmailJS(senderEmail, senderName, `Assistenza: ${subject}`, message, EMAILJS_TEMPLATE_REGISTRATION);
 }
+
+// 5. REPORT MENSILE REGISTRAZIONI
+async function sendMonthlyRegistrationReport() {
+    try {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        
+        if (users.length === 0) {
+            console.log('⚠️ Nessun utente registrato questo mese');
+            return false;
+        }
+
+        // Filtra utenti registrati questo mese
+        const now = new Date();
+        const thisMonthUsers = users.filter(u => {
+            const regDate = new Date(u.registrationDate);
+            return regDate.getMonth() === now.getMonth() && regDate.getFullYear() === now.getFullYear();
+        });
+
+        // Crea lista in formato tabella
+        let usersList = 'EMAIL | NOME | COGNOME | DATA REGISTRAZIONE\n';
+        usersList += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+        
+        thisMonthUsers.forEach(user => {
+            const regDate = new Date(user.registrationDate).toLocaleDateString('it-IT');
+            usersList += `${user.email} | ${user.nome} | - | ${regDate}\n`;
+        });
+
+        usersList += `\nTotale registrazioni questo mese: ${thisMonthUsers.length}`;
+
+        const title = `📊 Report Registrazioni ${now.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}`;
+        const message = `Ciao!\n\nEcco il report mensile delle registrazioni:\n\n${usersList}\n\nAccedi al pannello admin per maggiori dettagli.\n\nTeam SbobinaMente`;
+
+        await emailjs.send('service_a410o74', 'template_iljizfb', {
+            email: 'ouremailel@gmail.com',
+            name: 'Admin SbobinaMente',
+            title: title,
+            message: message
+        });
+
+        console.log('✅ Report mensile inviato a ouremailel@gmail.com');
+        return true;
+    } catch (error) {
+        console.error('❌ Errore invio report:', error);
+        return false;
+    }
+}
