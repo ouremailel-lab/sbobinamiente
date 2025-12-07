@@ -280,12 +280,13 @@
             try {
                 // Invia email tramite EmailJS
                 await emailjs.send('service_62kj0wd', 'template_iljizfb', {
+                    to_name: 'SbobinaMente Team',
                     to_email: 'ouremailel@gmail.com',
-                    from_name: `${formData.nome} ${formData.cognome}`,
-                    from_email: formData.email,
-                    phone: formData.cellulare,
-                    exam_name: formData.esame,
-                    message: `Richiesta PDF per l'esame: ${formData.esame}\n\nDati richiedente:\nNome: ${formData.nome} ${formData.cognome}\nEmail: ${formData.email}\nCellulare: ${formData.cellulare}`
+                    user_name: `${formData.nome} ${formData.cognome}`,
+                    user_email: formData.email,
+                    user_phone: formData.cellulare,
+                    pdf_title: formData.esame,
+                    reply_to: formData.email
                 });
 
                 // Mostra messaggio di successo
