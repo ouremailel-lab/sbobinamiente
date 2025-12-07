@@ -22,7 +22,12 @@ const products = [
         descrizione: "Appunti stampati e rilegati professionalmente",
         dettagli: "Formato A4, rilega a spirale, 50 pagine a colori. Spedizione inclusa.",
         pages: 50,
-        previewImage: "image/copia_cartacea.png"
+        previewImage: "image/copia_cartacea.png",
+        previewPages: [
+            "image/previews/invalidita-1.png",
+            "image/previews/invalidita-2.png",
+            "image/previews/invalidita-3.png"
+        ]
     },
     {
         id: 3,
@@ -70,6 +75,11 @@ const products = [
         descrizione: "Appunti completi di diritto del lavoro",
         dettagli: "Rilega premium, 150 pagine a colori con schemi e tabelle. Spedizione inclusa.",
         pages: 150,
-        previewImage: "image/copia_cartacea.png"
+        previewImage: "image/copia_cartacea.png",
+        previewPages: [
+            "image/previews/diritto-lavoro-1.png",
+            "image/previews/diritto-lavoro-2.png",
+            "image/previews/diritto-lavoro-3.png"
+        ]
     }
 ];

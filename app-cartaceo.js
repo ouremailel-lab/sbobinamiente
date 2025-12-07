@@ -38,6 +38,11 @@ function renderProducts(productsToRender) {
             ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover;">`
             : product.emoji;
         
+        // Bottone anteprima se disponibile
+        const previewButton = product.previewPages && product.previewPages.length > 0
+            ? `<button class="btn-preview" onclick="showPreview(${product.id})" style="margin-bottom: 12px; width: 100%; padding: 8px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s;">👁️ Vedi Anteprima</button>`
+            : '';
+        
         card.innerHTML = `
             <div class="product-image">${imageContent}</div>
             <div class="product-content">
@@ -45,6 +50,7 @@ function renderProducts(productsToRender) {
                 <h3 class="product-title">${product.title}</h3>
                 <p class="product-materia">${product.materia.charAt(0).toUpperCase() + product.materia.slice(1)}</p>
                 <p class="product-description">${product.descrizione}</p>
+                ${previewButton}
                 <div class="product-footer">
                     <span class="product-price">${product.prezzo.toFixed(2)}€</span>
                     <button class="add-to-cart-btn btn-small" onclick="viewProduct(${product.id})">Dettagli</button>
@@ -707,4 +713,35 @@ function showOrderSuccessModal(order, digitalsAccess) {
 
     modal.appendChild(content);
     document.body.appendChild(modal);
+}
+
+// ==================== ANTEPRIMA PAGINE ====================
+
+function showPreview(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product || !product.previewPages || product.previewPages.length === 0) {
+        alert('Anteprima non disponibile per questo prodotto');
+        return;
+    }
+
+    const previewContent = document.getElementById('previewContent');
+    previewContent.innerHTML = '';
+
+    product.previewPages.forEach((imagePath, index) => {
+        const pageDiv = document.createElement('div');
+        pageDiv.style.cssText = 'text-align: center; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);';
+        
+        pageDiv.innerHTML = `
+            <p style="font-weight: 700; color: #4a90e2; margin-bottom: 10px;">Pagina ${index + 1}</p>
+            <img src="${imagePath}" alt="Anteprima pagina ${index + 1}" style="max-width: 100%; height: auto; border: 2px solid #f5a6c9; border-radius: 8px;" onerror="this.parentElement.innerHTML='<p style=color:#ef4444;>Immagine non disponibile</p>';">
+        `;
+        
+        previewContent.appendChild(pageDiv);
+    });
+
+    document.getElementById('previewModal').style.display = 'flex';
+}
+
+function closePreviewModal() {
+    document.getElementById('previewModal').style.display = 'none';
 }
