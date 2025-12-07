@@ -96,7 +96,7 @@ body {
 
 /* ==================== HEADER ==================== */
 .header {
-    background: linear-gradient(135deg, #4A6FA5 0%, #FFE5B4 100%);
+    background: #fff7d1;
     box-shadow: var(--shadow-lg);
     position: sticky;
     top: 0;
@@ -114,13 +114,13 @@ body {
 .logo h1 {
     font-size: 26px;
     font-weight: 800;
-    color: #ffffff;
+    color: #0f172a;
     letter-spacing: -0.5px;
 }
 
 .logo .tagline {
     font-size: 11px;
-    color: rgba(255,255,255,0.9);
+    color: #0f172a;
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
@@ -135,33 +135,23 @@ body {
 
 .nav-link {
     text-decoration: none;
-    color: white;
-    font-weight: 600;
+    color: #f5a6c9;
+    font-weight: 700;
     font-size: 14px;
     transition: var(--transition);
     position: relative;
+    padding: 10px 14px;
+    border-radius: 10px;
 }
 
 .nav-link:hover {
-    color: #FFD700;
-    transform: translateY(-2px);
-}
-    color: var(--primary-blue);
+    color: #0f172a;
+    background: #e3f2fd;
+    transform: translateY(-1px);
 }
 
 .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-    width: 100%;
+    display: none;
 }
 
 .cart-count {
