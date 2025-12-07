@@ -203,6 +203,10 @@ body {
 }
 
 .block-pink {
+
+.block-blue h2 {
+    color: #f5a6c9;
+}
     background: #fde2e4;
 }
 
@@ -219,6 +223,7 @@ body {
     font-weight: 800;
     margin-bottom: 16px;
     letter-spacing: -1px;
+    color: #4a90e2;
 }
 
 .hero-content p {
