@@ -6,37 +6,33 @@
     <title>Terzo Anno - SbobinaMente</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .anno-container {
-            min-height: 70vh;
-            padding: 40px 20px;
-        }
-
-        .anno-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .anno-title {
-            font-size: 42px;
-            color: #4facfe;
-            margin-bottom: 20px;
-        }
-
         .breadcrumb {
             text-align: center;
             margin-bottom: 30px;
             font-size: 14px;
-            color: #888;
+            color: #0f172a;
         }
 
         .breadcrumb a {
-            color: #4facfe;
+            color: #4a90e2;
             text-decoration: none;
             cursor: pointer;
+            font-weight: 600;
         }
 
         .breadcrumb a:hover {
             text-decoration: underline;
+        }
+
+        .anno-header {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .anno-title {
+            font-size: 42px;
+            margin-bottom: 20px;
+            font-weight: 800;
         }
 
         .pdf-grid {
@@ -49,17 +45,17 @@
 
         .pdf-card {
             background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            border: 2px solid #f5a6c9;
+            border-radius: 12px;
             padding: 25px;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(245, 166, 201, 0.2);
         }
 
         .pdf-card:hover {
-            border-color: #4facfe;
-            box-shadow: 0 6px 16px rgba(79, 172, 254, 0.2);
+            border-color: #4a90e2;
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
             transform: translateY(-3px);
         }
 
@@ -71,7 +67,7 @@
         .pdf-title {
             font-size: 18px;
             font-weight: 700;
-            color: #333;
+            color: #0f172a;
             margin-bottom: 15px;
             line-height: 1.4;
         }
@@ -79,7 +75,7 @@
         .pdf-price {
             font-size: 24px;
             font-weight: 700;
-            color: #4facfe;
+            color: #f5a6c9;
             margin-bottom: 15px;
         }
 
@@ -89,53 +85,10 @@
             flex-direction: column;
         }
 
-        .pdf-btn {
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .pdf-view-btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .pdf-view-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
-        }
-
-        .pdf-email-btn {
-            background: #f5f5f5;
-            color: #4facfe;
-            border: 2px solid #4facfe;
-        }
-
-        .pdf-email-btn:hover {
-            background: #4facfe;
-            color: white;
-        }
-
-        .pdf-buy-btn {
-            background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
-            color: white;
-        }
-
-        .pdf-buy-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(124, 179, 66, 0.3);
-        }
-
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #888;
+            color: #0f172a;
         }
 
         .empty-state-icon {
@@ -159,11 +112,6 @@
             .pdf-title {
                 font-size: 16px;
             }
-
-            .pdf-btn {
-                font-size: 13px;
-                padding: 10px 15px;
-            }
         }
     </style>
 </head>
@@ -179,6 +127,7 @@
                 <nav class="nav">
                     <a href="index.html" class="nav-link">Home</a>
                     <a href="lezioni.html" class="nav-link">Lezioni</a>
+                    <a href="chi-siamo.html" class="nav-link">Chi Siamo</a>
                     <a href="#" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
                     <a href="#" class="nav-link" id="userLink">Accedi</a>
                 </nav>
@@ -187,24 +136,32 @@
     </header>
 
     <!-- Main Content -->
-    <div class="anno-container">
-        <div class="breadcrumb">
-            <a href="lezioni.html">Lezioni</a> > 
-            <a href="pdf-lezioni.html">PDF</a> > 
-            <a href="pdf-universita.html">Università</a> > 
-            <a href="pdf-universita-sdsg.html">Scienze dei Servizi Giuridici</a> > 
-            <span>Terzo Anno</span>
-        </div>
+    <!-- Blocco Rosa: Breadcrumb e Titolo -->
+    <section class="block block-pink">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="lezioni.html">Lezioni</a> > 
+                <a href="pdf-lezioni.html">PDF</a> > 
+                <a href="pdf-universita.html">Università</a> > 
+                <a href="pdf-universita-sdsg.html">Scienze dei Servizi Giuridici</a> > 
+                <span>Terzo Anno</span>
+            </div>
 
-        <div class="anno-header">
-            <h1 class="anno-title">📚 Terzo Anno - Lezioni</h1>
-            <p style="color: #666; font-size: 16px;">Scarica i tuoi PDF o ricevili via email</p>
+            <div class="anno-header">
+                <h1 class="anno-title" style="color: #4a90e2;">📚 Terzo Anno - Lezioni</h1>
+                <p style="color: #0f172a; font-size: 18px; font-weight: 500;">Scarica i tuoi PDF o ricevili via email</p>
+            </div>
         </div>
+    </section>
 
-        <div class="pdf-grid" id="pdfGrid">
-            <!-- I PDF verranno caricati qui dinamicamente -->
+    <!-- Blocco Azzurro: Griglia PDF -->
+    <section class="block block-blue">
+        <div class="container">
+            <div class="pdf-grid" id="pdfGrid">
+                <!-- I PDF verranno caricati qui dinamicamente -->
+            </div>
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
