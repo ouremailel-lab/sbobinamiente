@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genera Link PDF - Admin SbobinaMente</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container {
+            min-height: calc(100vh - 200px);
+            padding: 40px 20px;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 8px 30px rgba(245, 166, 201, 0.2);
+            border: 2px solid #f5a6c9;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .admin-header h1 {
+            font-size: 32px;
+            color: #4a90e2;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .pdf-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pdf-item {
+            background: #f8f9fa;
+            border: 2px solid #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .pdf-item:hover {
+            border-color: #f5a6c9;
+            box-shadow: 0 4px 12px rgba(245, 166, 201, 0.2);
+        }
+
+        .pdf-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pdf-item-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .pdf-item-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: #f5a6c9;
+        }
+
+        .link-box {
+            background: white;
+            border: 2px solid #4a90e2;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .link-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #4a90e2;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .link-text {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #0f172a;
+            word-break: break-all;
+            line-height: 1.6;
+            padding-right: 80px;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #f5a6c9;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #4a90e2;
+            transform: translateY(-2px);
+        }
+
+        .copy-btn.copied {
+            background: #22c55e;
+        }
+
+        .password-info {
+            background: #fff7d1;
+            border: 2px solid #f5a6c9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .password-info strong {
+            color: #0f172a;
+        }
+
+        @media (max-width: 768px) {
+            .admin-card {
+                padding: 25px 15px;
+            }
+
+            .pdf-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .link-text {
+                font-size: 11px;
+                padding-right: 0;
+            }
+
+            .copy-btn {
+                position: static;
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header e Navigazione -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SbobinaMente</h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="lezioni.html" class="nav-link">Lezioni</a>
+                    <a href="chi-siamo.html" class="nav-link">Chi Siamo</a>
+                    <a href="#" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
+                    <a href="#" class="nav-link" id="userLink">Accedi</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Blocco Rosa: Generatore Link -->
+    <section class="block block-pink">
+        <div class="admin-container">
+            <div class="admin-card">
+                <div class="admin-header">
+                    <h1>🔗 Generatore Link PDF</h1>
+                    <p>Link permanenti da inviare ai clienti via email</p>
+                </div>
+
+                <div class="pdf-list" id="pdfList">
+                    <!-- I link verranno generati qui -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Lista completa dei PDF disponibili
+        const pdfList = [
+            {
+                id: 'pdf_infortuni',
+                title: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE",
+                file: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE.pdf",
+                price: 18.00,
+                password: "INFORT2024"
+            },
+            {
+                id: 'pdf_invalidita',
+                title: "Invalidità e inabilità",
+                file: "Invalidità e inabilità.pdf",
+                price: 18.00,
+                password: "INVALID2024"
+            },
+            {
+                id: 'pdf_pensione',
+                title: "PENSIONE",
+                file: "PENSIONE.pdf",
+                price: 18.00,
+                password: "PENSIO2024"
+            },
+            {
+                id: 'pdf_disoccupazione',
+                title: "Disoccupazione",
+                file: "disoccupazione.pdf",
+                price: 18.00,
+                password: "DISOCC2024"
+            }
+        ];
+
+        function generatePermanentLink(pdf) {
+            const accessId = Date.now() + Math.random().toString(36).substr(2, 9);
+            const baseURL = 'https://sbobinamiente.vercel.app/viewer-pdf-lezioni.html';
+            
+            const params = new URLSearchParams({
+                access: accessId,
+                pwd: pdf.password,
+                file: pdf.file,
+                title: pdf.title,
+                full: 'true'
+            });
+
+            return `${baseURL}?${params.toString()}`;
+        }
+
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copiato!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                alert('Errore nella copia. Copia manualmente il link.');
+            });
+        }
+
+        function renderPDFLinks() {
+            const container = document.getElementById('pdfList');
+            
+            container.innerHTML = pdfList.map((pdf, index) => {
+                const link = generatePermanentLink(pdf);
+                
+                return `
+                    <div class="pdf-item">
+                        <div class="pdf-item-header">
+                            <div class="pdf-item-title">📄 ${pdf.title}</div>
+                            <div class="pdf-item-price">${pdf.price.toFixed(2)}€</div>
+                        </div>
+                        
+                        <div class="link-box">
+                            <div class="link-label">🔗 Link diretto al PDF</div>
+                            <div class="link-text" id="link-${index}">${link}</div>
+                            <button class="copy-btn" onclick="copyToClipboard(document.getElementById('link-${index}').textContent, this)">
+                                📋 Copia
+                            </button>
+                        </div>
+
+                        <div class="password-info">
+                            🔑 <strong>Password:</strong> ${pdf.password} (già inclusa nel link)
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Genera i link al caricamento
+        document.addEventListener('DOMContentLoaded', renderPDFLinks);
+    </script>
+</body>
+</html>
