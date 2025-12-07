@@ -47,7 +47,8 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                from: 'SbobinaMente <noreply@sbobinamiente.com>',
+                // Mittente temporaneo Resend: sostituire con dominio verificato quando pronto
+                from: 'SbobinaMente <onboarding@resend.dev>',
                 to: [email],
                 subject: title,
                 html: htmlContent,
