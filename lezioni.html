@@ -6,78 +6,75 @@
     <title>Lezioni - SbobinaMente</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .lezioni-container {
-            min-height: 70vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-
         .lezioni-title {
             font-size: 48px;
-            color: #4a6fa5;
-            margin-bottom: 40px;
+            color: #0f172a;
+            margin-bottom: 16px;
             text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .lezioni-subtitle {
+            text-align: center;
+            max-width: 840px;
+            margin: 0 auto 28px;
+            font-size: 17px;
+            line-height: 1.7;
+            color: #334155;
         }
 
         .lezioni-buttons {
             display: flex;
-            gap: 30px;
+            gap: 18px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
+            margin-top: 16px;
         }
 
         .lezione-btn {
-            padding: 30px 50px;
-            font-size: 24px;
-            font-weight: 700;
-            border: none;
-            border-radius: 10px;
+            padding: 20px 38px;
+            font-size: 20px;
+            font-weight: 800;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             text-decoration: none;
             display: inline-block;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            color: #f5a6c9;
+            border: 2px solid #f5a6c9;
+            box-shadow: 8px 8px 0 #0f172a;
         }
 
-        .lezione-btn-pdf {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .lezione-btn:hover {
+            transform: translateY(-2px);
+            background: #e3f2fd;
+            color: #4a90e2;
+            box-shadow: 10px 12px 0 #0f172a;
         }
 
-        .lezione-btn-pdf:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .lezione-btn-cartacea {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .lezione-btn-cartacea:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 12px rgba(245, 87, 108, 0.4);
+        .lezione-btn:active {
+            transform: translateY(0);
+            box-shadow: 6px 6px 0 #0f172a;
         }
 
         @media (max-width: 768px) {
             .lezioni-title {
                 font-size: 36px;
-                margin-bottom: 30px;
+                margin-bottom: 14px;
             }
 
             .lezioni-buttons {
                 flex-direction: column;
-                gap: 20px;
+                gap: 14px;
             }
 
             .lezione-btn {
                 width: 100%;
-                max-width: 300px;
-                padding: 20px 40px;
+                max-width: 340px;
+                padding: 16px 24px;
+                box-shadow: 6px 6px 0 #0f172a;
             }
         }
     </style>
@@ -94,6 +91,7 @@
                 <nav class="nav">
                     <a href="index.html" class="nav-link">Home</a>
                     <a href="lezioni.html" class="nav-link active">Lezioni</a>
+                    <a href="chi-siamo.html" class="nav-link">Chi Siamo</a>
                     <a href="#" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
                     <a href="#" class="nav-link" id="userLink">Accedi</a>
                 </nav>
@@ -101,15 +99,34 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="lezioni-container">
-        <h1 class="lezioni-title">📖 Scegli il Tipo di Lezione</h1>
-        
-        <div class="lezioni-buttons">
-            <a href="pdf-lezioni.html" class="lezione-btn lezione-btn-pdf">📄 PDF</a>
-            <a href="cartaceo.html" class="lezione-btn lezione-btn-cartacea">📕 CARTACEA</a>
+    <!-- Blocco Rosa: Introduzione -->
+    <section class="block block-pink">
+        <div class="container">
+            <h1 class="lezioni-title">📖 Scegli il Tipo di Lezione</h1>
+            <p class="lezioni-subtitle">Appunti verificati e pronti: scegli il formato che preferisci, PDF protetti o copie cartacee. Anteprima disponibile e accesso sicuro.</p>
         </div>
-    </div>
+    </section>
+
+    <!-- Blocco Azzurro: Scelta formato -->
+    <section class="block block-blue">
+        <div class="container" style="text-align:center;">
+            <h2 style="margin-bottom: 20px;">Come vuoi studiare?</h2>
+            <p class="lezioni-subtitle" style="margin-bottom: 20px;">Seleziona il formato: i PDF sono protetti con password e visualizzabili online; le copie cartacee arrivano a casa tua.</p>
+            <div class="lezioni-buttons">
+                <a href="pdf-lezioni.html" class="lezione-btn">📄 PDF</a>
+                <a href="cartaceo.html" class="lezione-btn">📕 Cartacea</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blocco Giallo: CTA finale -->
+    <section class="block block-yellow">
+        <div class="container" style="text-align:center;">
+            <h2 style="margin-bottom: 16px;">Serve aiuto o vuoi vendere i tuoi appunti?</h2>
+            <p class="lezioni-subtitle" style="margin-bottom: 22px;">Scrivici per domande, supporto o per proporre i tuoi appunti di qualità.</p>
+            <a href="mailto:ouremailel@gmail.com" class="btn btn-primary" style="padding: 14px 30px;">Contattaci</a>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
