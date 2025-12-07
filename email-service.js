@@ -41,13 +41,17 @@ async function sendPaymentConfirmationEmail(order, digitalsAccess) {
         return false;
     }
     
-    // Lista prodotti dettagliata
+    // Calcola IVA (22%)
+    const iva = (order.total * 0.22).toFixed(2);
+    const subtotale = (order.total - iva).toFixed(2);
+    
+    // Lista prodotti dettagliata per il body
     let itemsList = '';
     order.items.forEach(item => {
         const quantity = item.quantity || 1;
         const prezzo = item.prezzo || item.price || 0;
         const subtotal = prezzo * quantity;
-        itemsList += `• ${item.title}\n  Tipo: ${item.tipo === 'digitale' ? 'PDF Digitale' : 'Appunti Stampati'}\n  Quantità: ${quantity} × €${prezzo.toFixed(2)} = €${subtotal.toFixed(2)}\n\n`;
+        itemsList += `• ${item.title}\n  Tipo: ${item.tipo === 'digitale' ? 'PDF Digitale' : 'Appunti Stampati'}\n  Quantità: ${quantity} × €${prezzo.toFixed(2)} = €${subtotal.toFixed(2)}\n`;
     });
     
     // Informazioni PDF se presenti
@@ -55,7 +59,7 @@ async function sendPaymentConfirmationEmail(order, digitalsAccess) {
     if (digitalsAccess && digitalsAccess.length > 0) {
         pdfInfo = '\n\n📥 ACCESSO AI PDF DIGITALI:\n';
         digitalsAccess.forEach(access => {
-            pdfInfo += `\n• ${access.title}\n  Password: ${access.password}\n  Link: ${access.accessUrl || 'Disponibile nel tuo account'}\n`;
+            pdfInfo += `• ${access.title}\n  Password: ${access.password}\n  Link: ${access.accessUrl || 'Disponibile nel tuo account'}\n`;
         });
     }
     
@@ -65,16 +69,36 @@ async function sendPaymentConfirmationEmail(order, digitalsAccess) {
         const nomeSpedizione = deliveryInfo.nomeCompleto || 
                                (deliveryInfo.nome && deliveryInfo.cognome ? `${deliveryInfo.nome} ${deliveryInfo.cognome}` : deliveryInfo.nome) || 
                                deliveryInfo.fullName || customerName;
-        deliveryDetails = `\n\n📦 DATI DI CONSEGNA:\nNome Completo: ${nomeSpedizione}\nEmail: ${deliveryInfo.email || customerEmail}\nIndirizzo: ${deliveryInfo.indirizzo || deliveryInfo.address || ''}\nCittà: ${deliveryInfo.città || deliveryInfo.city || ''}\nCAP: ${deliveryInfo.cap || ''}\n`;
+        deliveryDetails = `\n\n📦 DATI DI CONSEGNA:\nNome: ${nomeSpedizione}\nIndirizzo: ${deliveryInfo.indirizzo || deliveryInfo.address || ''}\nCittà: ${deliveryInfo.città || deliveryInfo.city || ''} ${deliveryInfo.cap || ''}\n`;
         if (deliveryInfo.telefono || deliveryInfo.phone) {
             deliveryDetails += `Telefono: ${deliveryInfo.telefono || deliveryInfo.phone}\n`;
         }
     }
 
-    const title = `✅ Ordine Confermato #${order.id}`;
-    const message = `Gentile ${customerName},\n\nGrazie per il tuo acquisto su SbobinaMente!\n\n📋 DETTAGLI ORDINE:\nNumero Ordine: #${order.id}\nData: ${new Date(order.orderDate).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}\nStato: ${order.status === 'pagato' ? 'Pagato ✓' : order.status === 'completato' ? 'Completato ✓' : order.status}\nMetodo di Pagamento: ${order.paymentMethod || 'Non specificato'}\n\n🛒 ARTICOLI ACQUISTATI:\n${itemsList}\n💰 TOTALE: €${order.total.toFixed(2)}${pdfInfo}${deliveryDetails}\n\nPer qualsiasi domanda o assistenza, contattaci a info@sbobinamante.com\n\nGrazie per aver scelto SbobinaMente!\nBuono studio! 📚\n\n---\nTeam SbobinaMente`;
-    
-    return sendEmailViaEmailJS(customerEmail, customerName, title, message, EMAILJS_TEMPLATE_ORDER);
+    const fullMessage = `Gentile ${customerName},\n\nGrazie per il tuo acquisto su SbobinaMente!\n\n📋 DETTAGLI ORDINE\nNumero: #${order.id}\nData: ${new Date(order.orderDate).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}\nStato: ${order.status === 'pagato' ? 'Pagato ✓' : order.status === 'completato' ? 'Completato ✓' : order.status}\n\n🛒 ARTICOLI:\n${itemsList}${pdfInfo}${deliveryDetails}\n\nPer assistenza: info@sbobinamante.com\n\nGrazie!\nTeam SbobinaMente 📚`;
+
+    try {
+        // Invia con tutti i parametri che il template si aspetta
+        const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ORDER, {
+            to_email: customerEmail,
+            to_name: customerName,
+            email: customerEmail,
+            name: customerName,
+            order_number: order.id,
+            order_date: new Date(order.orderDate).toLocaleDateString('it-IT'),
+            subtotal: subtotale,
+            iva: iva,
+            total: order.total.toFixed(2),
+            items: itemsList,
+            message: fullMessage,
+            title: `Ordine Confermato #${order.id}`
+        });
+        console.log('✅ Email ordine inviata:', result.status);
+        return true;
+    } catch (error) {
+        console.error('❌ Errore invio email ordine:', error);
+        return false;
+    }
 }
 
 // 3. EMAIL CON PDF (richiesta dal cliente)
