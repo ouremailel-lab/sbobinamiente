@@ -732,14 +732,57 @@ function showPreview(productId) {
         pageDiv.style.cssText = 'text-align: center; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);';
         
         pageDiv.innerHTML = `
-            <p style="font-weight: 700; color: #4a90e2; margin-bottom: 10px;">Pagina ${index + 1}</p>
-            <img src="${imagePath}" alt="Anteprima pagina ${index + 1}" style="max-width: 100%; height: auto; border: 2px solid #f5a6c9; border-radius: 8px;" onerror="this.parentElement.innerHTML='<p style=color:#ef4444;>Immagine non disponibile</p>';">
+            <p style="font-weight: 700; color: #4a90e2; margin-bottom: 10px;">Pagina ${index + 1} - Clicca per ingrandire</p>
+            <img src="${imagePath}" 
+                 alt="Anteprima pagina ${index + 1}" 
+                 style="max-width: 100%; height: auto; border: 2px solid #f5a6c9; border-radius: 8px; cursor: zoom-in; transition: transform 0.3s ease;" 
+                 onclick="openFullImage('${imagePath}')"
+                 onmouseover="this.style.transform='scale(1.02)'"
+                 onmouseout="this.style.transform='scale(1)'"
+                 onerror="this.parentElement.innerHTML='<p style=color:#ef4444;>Immagine non disponibile</p>';">
         `;
         
         previewContent.appendChild(pageDiv);
     });
 
     document.getElementById('previewModal').style.display = 'flex';
+}
+
+function openFullImage(imagePath) {
+    // Crea modal fullscreen per l'immagine
+    const fullImageModal = document.createElement('div');
+    fullImageModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        cursor: zoom-out;
+    `;
+    
+    fullImageModal.innerHTML = `
+        <div style="position: relative; max-width: 95vw; max-height: 95vh;">
+            <img src="${imagePath}" 
+                 style="max-width: 100%; max-height: 95vh; width: auto; height: auto; border-radius: 8px; box-shadow: 0 0 50px rgba(245, 166, 201, 0.5);">
+            <button onclick="this.closest('div').parentElement.remove()" 
+                    style="position: absolute; top: -40px; right: 0; background: #f5a6c9; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; font-weight: bold;">
+                ×
+            </button>
+        </div>
+    `;
+    
+    fullImageModal.onclick = function(e) {
+        if (e.target === fullImageModal) {
+            fullImageModal.remove();
+        }
+    };
+    
+    document.body.appendChild(fullImageModal);
 }
 
 function closePreviewModal() {
