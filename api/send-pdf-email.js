@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
         console.error('Missing RESEND_API_KEY');
-        return res.status(500).json({ error: 'Server misconfiguration' });
+        return res.status(500).json({ error: 'Server misconfiguration: RESEND_API_KEY missing on server' });
     }
 
     try {
