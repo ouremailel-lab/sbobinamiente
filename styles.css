@@ -96,14 +96,12 @@ body {
 
 /* ==================== HEADER ==================== */
 .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4A6FA5 0%, #FFE5B4 100%);
     box-shadow: var(--shadow-lg);
     position: sticky;
     top: 0;
     z-index: 100;
     animation: slideInDown 0.5s ease-out;
-    top: 0;
-    z-index: 100;
 }
 
 .header-content {
