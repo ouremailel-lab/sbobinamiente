@@ -354,9 +354,14 @@
                 if (isDirectLink) {
                     // Link diretto - accesso senza localStorage
                     console.log('✅ Accesso diretto al PDF con password dall\'URL');
+                    console.log('File richiesto:', pdfFile);
+                    
                     document.getElementById('productName').textContent = `📄 ${decodeURIComponent(pdfTitle)}`;
 
-                    const pdfPath = `/PDF/${decodeURIComponent(pdfFile)}`;
+                    // Il file è già URL-encoded, non decodificare
+                    const pdfPath = `/PDF/${pdfFile}`;
+                    console.log('Percorso PDF:', pdfPath);
+                    
                     const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
                     pdfDoc = pdfData;
                     totalPages = fullAccess ? pdfDoc.numPages : 1;
