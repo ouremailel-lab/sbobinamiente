@@ -66,6 +66,6 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, id: data?.id });
     } catch (error) {
         console.error('Unexpected error:', error);
-        return res.status(500).json({ error: 'Internal error' });
+        return res.status(500).json({ error: 'Internal error', details: error.message || String(error) });
     }
 }

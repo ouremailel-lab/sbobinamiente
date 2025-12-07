@@ -457,14 +457,16 @@
                     })
                 });
 
+                const result = await response.json().catch(() => ({}));
                 if (!response.ok) {
-                    throw new Error('Invio email fallito');
+                    const msg = result?.details || result?.error || 'Invio email fallito';
+                    throw new Error(msg);
                 }
 
                 alert(`✅ Email inviata a ${currentUser.email}!\n\nControlla la tua casella di posta per il link al PDF.`);
             } catch (error) {
                 console.error('Errore:', error);
-                alert('❌ Errore nell\'invio dell\'email');
+                alert(`❌ Errore nell'invio dell'email: ${error.message || error}`);
             }
         }
 
