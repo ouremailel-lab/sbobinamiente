@@ -408,11 +408,14 @@ function payWithPayPal() {
         items: cart,
         total: total.toFixed(2),
         customerInfo: {
-            nome: formElements[0].value,
-            email: formElements[1].value,
-            indirizzo: formElements[2].value,
-            città: formElements[3].value,
-            cap: formElements[4].value
+            nome: formElements.nome.value,
+            cognome: formElements.cognome.value,
+            nomeCompleto: formElements.nome.value + ' ' + formElements.cognome.value,
+            email: formElements.email.value,
+            indirizzo: formElements.indirizzo.value,
+            città: formElements.citta.value,
+            cap: formElements.cap.value,
+            telefono: formElements.telefono?.value || ''
         }
     };
 
@@ -430,11 +433,14 @@ function processOrder() {
         items: cart,
         total: cart.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0),
         deliveryInfo: {
-            nome: formElements[0].value,
-            email: formElements[1].value,
-            indirizzo: formElements[2].value,
-            città: formElements[3].value,
-            cap: formElements[4].value
+            nome: formElements.nome.value,
+            cognome: formElements.cognome.value,
+            nomeCompleto: formElements.nome.value + ' ' + formElements.cognome.value,
+            email: formElements.email.value,
+            indirizzo: formElements.indirizzo.value,
+            città: formElements.citta.value,
+            cap: formElements.cap.value,
+            telefono: formElements.telefono?.value || ''
         },
         orderDate: new Date().toISOString(),
         status: 'completato',

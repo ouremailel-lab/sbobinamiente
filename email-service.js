@@ -30,8 +30,11 @@ async function sendRegistrationConfirmationEmail(user) {
 
 // 2. EMAIL DI CONFERMA PAGAMENTO
 async function sendPaymentConfirmationEmail(order, digitalsAccess) {
-    const customerName = order.deliveryInfo?.fullName || order.deliveryInfo?.nome || 'Cliente';
-    const customerEmail = order.deliveryInfo?.email || order.user?.email;
+    const deliveryInfo = order.deliveryInfo || {};
+    const customerName = deliveryInfo.nomeCompleto || deliveryInfo.fullName || 
+                        (deliveryInfo.nome && deliveryInfo.cognome ? `${deliveryInfo.nome} ${deliveryInfo.cognome}` : deliveryInfo.nome) || 
+                        'Cliente';
+    const customerEmail = deliveryInfo.email || order.user?.email;
     
     if (!customerEmail) {
         console.error('❌ Email cliente non trovata nell\'ordine');
@@ -57,10 +60,12 @@ async function sendPaymentConfirmationEmail(order, digitalsAccess) {
     }
     
     // Dati di spedizione/consegna
-    const deliveryInfo = order.deliveryInfo || {};
     let deliveryDetails = '';
     if (deliveryInfo.indirizzo || deliveryInfo.address) {
-        deliveryDetails = `\n\n📦 DATI DI CONSEGNA:\nNome: ${deliveryInfo.nome || deliveryInfo.fullName || customerName}\nEmail: ${deliveryInfo.email || customerEmail}\nIndirizzo: ${deliveryInfo.indirizzo || deliveryInfo.address || ''}\nCittà: ${deliveryInfo.città || deliveryInfo.city || ''}\nCAP: ${deliveryInfo.cap || ''}\n`;
+        const nomeSpedizione = deliveryInfo.nomeCompleto || 
+                               (deliveryInfo.nome && deliveryInfo.cognome ? `${deliveryInfo.nome} ${deliveryInfo.cognome}` : deliveryInfo.nome) || 
+                               deliveryInfo.fullName || customerName;
+        deliveryDetails = `\n\n📦 DATI DI CONSEGNA:\nNome Completo: ${nomeSpedizione}\nEmail: ${deliveryInfo.email || customerEmail}\nIndirizzo: ${deliveryInfo.indirizzo || deliveryInfo.address || ''}\nCittà: ${deliveryInfo.città || deliveryInfo.city || ''}\nCAP: ${deliveryInfo.cap || ''}\n`;
         if (deliveryInfo.telefono || deliveryInfo.phone) {
             deliveryDetails += `Telefono: ${deliveryInfo.telefono || deliveryInfo.phone}\n`;
         }
