@@ -388,6 +388,39 @@ async function saveUserToSupabase(user) {
     }
 }
 
+async function saveOrderToSupabase(order) {
+    try {
+        const orderData = {
+            order_id: 'ORD-' + order.id,
+            user_name: order.user?.nome || order.deliveryInfo?.nome || 'Cliente',
+            user_email: order.user?.email || order.deliveryInfo?.email || '',
+            items: order.items,
+            total: order.total,
+            delivery_info: order.deliveryInfo,
+            order_date: order.orderDate,
+            status: order.status
+        };
+        
+        const { data, error } = await window.supabaseClient
+            .from('orders')
+            .insert([orderData])
+            .select();
+        
+        if (error) throw error;
+        console.log('✅ Ordine salvato su Supabase:', data);
+        
+        // Invia notifica WhatsApp
+        if (window.whatsappNotify) {
+            await window.whatsappNotify.order(orderData);
+        }
+    } catch (error) {
+        console.error('❌ Errore salvataggio ordine Supabase:', error);
+    }
+}
+
+// Rendi disponibile globalmente per altri file
+window.saveOrderToSupabase = saveOrderToSupabase;
+
 function logout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
@@ -468,6 +501,9 @@ function processOrderDirect(orderData) {
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Salva su Supabase e invia WhatsApp
+    saveOrderToSupabase(order);
 
     // Genera credenziali PDF protetti con link al viewer
     const digitalsAccess = [];
@@ -614,6 +650,9 @@ function processOrder() {
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Salva su Supabase e invia WhatsApp
+    saveOrderToSupabase(order);
 
     // Genera credenziali PDF protetti
     const digitalsAccess = [];

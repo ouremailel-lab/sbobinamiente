@@ -42,6 +42,11 @@ function handlePayPalSuccess() {
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Salva su Supabase e invia WhatsApp
+    if (window.saveOrderToSupabase) {
+        window.saveOrderToSupabase(order);
+    }
 
     // Genera credenziali PDF protetti
     const digitalsAccess = [];

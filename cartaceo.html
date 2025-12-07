@@ -193,8 +193,48 @@
         emailjs.init('Bo-Kyor5W-Q_BRDf3');
     </script>
 
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="whatsapp-notifications.js"></script>
+
     <script src="products-data.js"></script>
     <script src="email-service.js"></script>
+    
+    <!-- Funzione globale per salvare ordini -->
+    <script>
+        async function saveOrderToSupabase(order) {
+            try {
+                const orderData = {
+                    order_id: 'ORD-' + order.id,
+                    user_name: order.user?.nome || order.deliveryInfo?.nome || 'Cliente',
+                    user_email: order.user?.email || order.deliveryInfo?.email || '',
+                    items: order.items,
+                    total: order.total,
+                    delivery_info: order.deliveryInfo,
+                    order_date: order.orderDate,
+                    status: order.status
+                };
+                
+                const { data, error } = await window.supabaseClient
+                    .from('orders')
+                    .insert([orderData])
+                    .select();
+                
+                if (error) throw error;
+                console.log('✅ Ordine salvato su Supabase:', data);
+                
+                // Invia notifica WhatsApp
+                if (window.whatsappNotify) {
+                    await window.whatsappNotify.order(orderData);
+                }
+            } catch (error) {
+                console.error('❌ Errore salvataggio ordine Supabase:', error);
+            }
+        }
+        window.saveOrderToSupabase = saveOrderToSupabase;
+    </script>
+    
     <script src="app-cartaceo.js"></script>
     <script src="paypal-handler.js"></script>
     <script src="pdf-protection.js"></script>

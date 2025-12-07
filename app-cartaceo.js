@@ -444,6 +444,11 @@ function processOrder() {
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Salva su Supabase e invia WhatsApp
+    if (window.saveOrderToSupabase) {
+        window.saveOrderToSupabase(order);
+    }
 
     closeCheckout();
     cart = [];
@@ -575,6 +580,11 @@ function processOrderDirect(orderData) {
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Salva su Supabase e invia WhatsApp
+    if (window.saveOrderToSupabase) {
+        window.saveOrderToSupabase(order);
+    }
 
     // Genera credenziali di accesso ai PDF protetti con link al viewer
     const digitalsAccess = [];
