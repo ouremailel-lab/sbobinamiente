@@ -41,25 +41,21 @@ async function sendPaymentConfirmationEmail(order, digitalsAccess) {
         return false;
     }
     
-    // Calcola IVA (22%)
-    const iva = (order.total * 0.22).toFixed(2);
-    const subtotale = (order.total - iva).toFixed(2);
-    
     // Lista prodotti dettagliata per il body
     let itemsList = '';
     order.items.forEach(item => {
         const quantity = item.quantity || 1;
         const prezzo = item.prezzo || item.price || 0;
         const subtotal = prezzo * quantity;
-        itemsList += `• ${item.title}\n  Tipo: ${item.tipo === 'digitale' ? 'PDF Digitale' : 'Appunti Stampati'}\n  Quantità: ${quantity} × €${prezzo.toFixed(2)} = €${subtotal.toFixed(2)}\n`;
+        itemsList += `• ${item.title}\n  ${item.tipo === 'digitale' ? '📄 PDF Digitale' : '📕 Appunti Stampati'} - Qty: ${quantity} × €${prezzo.toFixed(2)} = €${subtotal.toFixed(2)}\n`;
     });
     
     // Informazioni PDF se presenti
     let pdfInfo = '';
     if (digitalsAccess && digitalsAccess.length > 0) {
-        pdfInfo = '\n\n📥 ACCESSO AI PDF DIGITALI:\n';
+        pdfInfo = '\n\n📥 ACCESSO AI TUOI PDF DIGITALI:\n';
         digitalsAccess.forEach(access => {
-            pdfInfo += `• ${access.title}\n  Password: ${access.password}\n  Link: ${access.accessUrl || 'Disponibile nel tuo account'}\n`;
+            pdfInfo += `\n• ${access.title}\n  🔐 Password: ${access.password}\n  🔗 Link: ${access.accessUrl || 'Disponibile nel tuo account'}\n`;
         });
     }
     
@@ -69,13 +65,13 @@ async function sendPaymentConfirmationEmail(order, digitalsAccess) {
         const nomeSpedizione = deliveryInfo.nomeCompleto || 
                                (deliveryInfo.nome && deliveryInfo.cognome ? `${deliveryInfo.nome} ${deliveryInfo.cognome}` : deliveryInfo.nome) || 
                                deliveryInfo.fullName || customerName;
-        deliveryDetails = `\n\n📦 DATI DI CONSEGNA:\nNome: ${nomeSpedizione}\nIndirizzo: ${deliveryInfo.indirizzo || deliveryInfo.address || ''}\nCittà: ${deliveryInfo.città || deliveryInfo.city || ''} ${deliveryInfo.cap || ''}\n`;
+        deliveryDetails = `\n\n📦 INDIRIZZO DI SPEDIZIONE:\n${nomeSpedizione}\n${deliveryInfo.indirizzo || deliveryInfo.address || ''}\n${deliveryInfo.città || deliveryInfo.city || ''} ${deliveryInfo.cap || ''}\n`;
         if (deliveryInfo.telefono || deliveryInfo.phone) {
-            deliveryDetails += `Telefono: ${deliveryInfo.telefono || deliveryInfo.phone}\n`;
+            deliveryDetails += `Tel: ${deliveryInfo.telefono || deliveryInfo.phone}\n`;
         }
     }
 
-    const fullMessage = `Gentile ${customerName},\n\nGrazie per il tuo acquisto su SbobinaMente!\n\n📋 DETTAGLI ORDINE\nNumero: #${order.id}\nData: ${new Date(order.orderDate).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}\nStato: ${order.status === 'pagato' ? 'Pagato ✓' : order.status === 'completato' ? 'Completato ✓' : order.status}\n\n🛒 ARTICOLI:\n${itemsList}${pdfInfo}${deliveryDetails}\n\nPer assistenza: info@sbobinamante.com\n\nGrazie!\nTeam SbobinaMente 📚`;
+    const fullMessage = `Stato: ${order.status === 'pagato' ? 'Pagato ✓' : order.status === 'completato' ? 'Completato ✓' : order.status}${pdfInfo}${deliveryDetails}\n\nGrazie per aver scelto SbobinaMente! 📚`;
 
     try {
         // Invia con tutti i parametri che il template si aspetta
@@ -85,9 +81,7 @@ async function sendPaymentConfirmationEmail(order, digitalsAccess) {
             email: customerEmail,
             name: customerName,
             order_number: order.id,
-            order_date: new Date(order.orderDate).toLocaleDateString('it-IT'),
-            subtotal: subtotale,
-            iva: iva,
+            order_date: new Date(order.orderDate).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
             total: order.total.toFixed(2),
             items: itemsList,
             message: fullMessage,
