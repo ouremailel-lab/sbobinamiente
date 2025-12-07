@@ -7,10 +7,16 @@ async function sendWhatsAppNotification(message) {
         const encodedMessage = encodeURIComponent(message);
         const url = `https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_PHONE}&text=${encodedMessage}&apikey=${WHATSAPP_API_KEY}`;
         
-        await fetch(url);
-        console.log('✅ Notifica WhatsApp inviata');
+        console.log('📤 Invio WhatsApp a:', WHATSAPP_PHONE);
+        console.log('📝 Messaggio:', message);
+        console.log('🔗 URL:', url);
+        
+        const response = await fetch(url, { mode: 'no-cors' });
+        console.log('✅ Notifica WhatsApp inviata con successo');
+        return true;
     } catch (error) {
         console.error('❌ Errore invio WhatsApp:', error);
+        return false;
     }
 }
 
@@ -26,18 +32,20 @@ async function notifyNewRegistration(user) {
 
 // Notifica per nuovo ordine
 async function notifyNewOrder(order) {
+    console.log('📦 Creazione notifica ordine:', order);
+    
     const items = order.items.map(item => 
-        `- ${item.title} (x${item.quantity})`
+        `- ${item.title} (x${item.quantity || 1})`
     ).join('\n');
     
     const message = `🛒 *NUOVO ORDINE*\n\n` +
-                   `📦 Ordine #${order.id}\n` +
-                   `👤 Cliente: ${order.userName}\n` +
-                   `📧 Email: ${order.userEmail}\n` +
-                   `💰 Totale: ${order.total.toFixed(2)}€\n\n` +
+                   `📦 Ordine: ${order.order_id || order.id}\n` +
+                   `👤 Cliente: ${order.user_name || order.userName}\n` +
+                   `📧 Email: ${order.user_email || order.userEmail}\n` +
+                   `💰 Totale: €${order.total.toFixed(2)}\n\n` +
                    `📋 Prodotti:\n${items}`;
     
-    await sendWhatsAppNotification(message);
+    return await sendWhatsAppNotification(message);
 }
 
 // Export per uso negli altri file
