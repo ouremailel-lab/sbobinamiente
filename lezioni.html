@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lezioni - SbobinaMente</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .lezioni-container {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .lezioni-title {
+            font-size: 48px;
+            color: #4a6fa5;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .lezioni-buttons {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lezione-btn {
+            padding: 30px 50px;
+            font-size: 24px;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .lezione-btn-pdf {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .lezione-btn-pdf:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .lezione-btn-cartacea {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .lezione-btn-cartacea:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 12px rgba(245, 87, 108, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .lezioni-title {
+                font-size: 36px;
+                margin-bottom: 30px;
+            }
+
+            .lezioni-buttons {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .lezione-btn {
+                width: 100%;
+                max-width: 300px;
+                padding: 20px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header e Navigazione -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SbobinaMente</h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="lezioni.html" class="nav-link active">Lezioni</a>
+                    <a href="#" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
+                    <a href="#" class="nav-link" id="userLink">Accedi</a>
+                    <a href="test-email.html" class="nav-link" style="color: #7cb342; font-weight: 600;">🧪 Test Email</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="lezioni-container">
+        <h1 class="lezioni-title">📖 Scegli il Tipo di Lezione</h1>
+        
+        <div class="lezioni-buttons">
+            <a href="pdf-lezioni.html" class="lezione-btn lezione-btn-pdf">📄 PDF</a>
+            <a href="cartaceo.html" class="lezione-btn lezione-btn-cartacea">📕 CARTACEA</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

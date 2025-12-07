@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terzo Anno - SbobinaMente</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .anno-container {
+            min-height: 70vh;
+            padding: 40px 20px;
+        }
+
+        .anno-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .anno-title {
+            font-size: 42px;
+            color: #4facfe;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .breadcrumb a {
+            color: #4facfe;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .pdf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pdf-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .pdf-card:hover {
+            border-color: #4facfe;
+            box-shadow: 0 6px 16px rgba(79, 172, 254, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .pdf-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .pdf-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .pdf-actions {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        .pdf-btn {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .pdf-view-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .pdf-view-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+        }
+
+        .pdf-email-btn {
+            background: #f5f5f5;
+            color: #4facfe;
+            border: 2px solid #4facfe;
+        }
+
+        .pdf-email-btn:hover {
+            background: #4facfe;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .anno-title {
+                font-size: 32px;
+            }
+
+            .pdf-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pdf-card {
+                padding: 20px;
+            }
+
+            .pdf-title {
+                font-size: 16px;
+            }
+
+            .pdf-btn {
+                font-size: 13px;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header e Navigazione -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SbobinaMente</h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="lezioni.html" class="nav-link">Lezioni</a>
+                    <a href="#" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
+                    <a href="#" class="nav-link" id="userLink">Accedi</a>
+                    <a href="test-email.html" class="nav-link" style="color: #7cb342; font-weight: 600;">🧪 Test Email</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="anno-container">
+        <div class="breadcrumb">
+            <a href="lezioni.html">Lezioni</a> > 
+            <a href="pdf-lezioni.html">PDF</a> > 
+            <a href="pdf-universita.html">Università</a> > 
+            <a href="pdf-universita-sdsg.html">Scienze dei Servizi Giuridici</a> > 
+            <span>Terzo Anno</span>
+        </div>
+
+        <div class="anno-header">
+            <h1 class="anno-title">📚 Terzo Anno - Lezioni</h1>
+            <p style="color: #666; font-size: 16px;">Scarica i tuoi PDF o ricevili via email</p>
+        </div>
+
+        <div class="pdf-grid" id="pdfGrid">
+            <!-- I PDF verranno caricati qui dinamicamente -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <!-- EmailJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>emailjs.init('Bo-Kyor5W-Q_BRDf3');</script>
+    <script src="app.js"></script>
+
+    <script>
+        // Lista dei PDF del terzo anno
+        const pdfList = [
+            {
+                title: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE",
+                file: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE.pdf"
+            },
+            {
+                title: "Invalidità e inabilità",
+                file: "Invalidità e inabilità.pdf"
+            },
+            {
+                title: "PENSIONE",
+                file: "PENSIONE.pdf"
+            },
+            {
+                title: "Disoccupazione",
+                file: "disoccupazione.pdf"
+            }
+        ];
+
+        function loadPDFs() {
+            const grid = document.getElementById('pdfGrid');
+            
+            if (pdfList.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">📭</div>
+                        <h2>Nessun PDF disponibile</h2>
+                        <p>I PDF per il terzo anno saranno disponibili a breve.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = pdfList.map((pdf, index) => `
+                <div class="pdf-card">
+                    <div class="pdf-icon">📄</div>
+                    <h3 class="pdf-title">${pdf.title}</h3>
+                    <div class="pdf-actions">
+                        <button onclick="viewPDFProtected('${pdf.title.replace(/'/g, "\\'")}', '${pdf.file.replace(/'/g, "\\'")}')" class="pdf-btn pdf-view-btn">
+                            👁️ Visualizza PDF
+                        </button>
+                        <button onclick="sendPDFViaEmail('${pdf.title.replace(/'/g, "\\'")}', '${pdf.file.replace(/'/g, "\\'")}')" class="pdf-btn pdf-email-btn">
+                            📧 Invia via Email
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateRandomPassword() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        function viewPDFProtected(title, file) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                alert('❌ Devi fare il login per visualizzare il PDF');
+                window.location.href = 'index.html#login';
+                return;
+            }
+
+            // Crea accesso
+            const accessId = Date.now();
+            const pdfPassword = generateRandomPassword();
+            
+            let tempAccess = JSON.parse(localStorage.getItem('tempPDFAccess')) || {};
+            tempAccess[accessId] = {
+                file: file,
+                password: pdfPassword,
+                user: currentUser.email,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('tempPDFAccess', JSON.stringify(tempAccess));
+
+            // Apri viewer
+            const pdfLink = `viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}&title=${encodeURIComponent(title)}`;
+            window.open(pdfLink, 'pdfViewer', 'width=1000,height=700');
+        }
+
+        async function sendPDFViaEmail(title, file) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                alert('❌ Devi fare il login per inviare il PDF via email');
+                window.location.href = 'index.html#login';
+                return;
+            }
+
+            try {
+                // Crea un ID per l'accesso al PDF
+                const accessId = Date.now();
+                const pdfPassword = generateRandomPassword();
+                
+                // Salva l'accesso
+                let tempAccess = JSON.parse(localStorage.getItem('tempPDFAccess')) || {};
+                tempAccess[accessId] = {
+                    file: file,
+                    password: pdfPassword,
+                    user: currentUser.email,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('tempPDFAccess', JSON.stringify(tempAccess));
+
+                // Crea il link protetto
+                const pdfLink = `https://sbobinamiente.vercel.app/viewer-pdf-lezioni.html?access=${accessId}&pwd=${pdfPassword}&file=${encodeURIComponent(file)}`;
+                
+                const emailTitle = `📚 Lezione: ${title}`;
+                const emailMessage = `Ciao ${currentUser.nome},\n\nEcco il tuo PDF richiesto:\n\n📄 ${title}\n\nAccedi al PDF qui:\n${pdfLink}\n\nPassword: ${pdfPassword}\n\n🔒 Il file è protetto e non può essere scaricato o condiviso.\nIl link rimane valido indefinitamente.\n\nBuona lettura!\n\nCordiali saluti,\nIl Team di SbobinaMente`;
+                
+                // Invia via EmailJS
+                const result = await emailjs.send(
+                    'service_a410o74',
+                    'template_j7hwc4l',
+                    {
+                        email: currentUser.email,
+                        name: currentUser.nome,
+                        title: emailTitle,
+                        message: emailMessage
+                    }
+                );
+
+                if (result.status === 200) {
+                    alert(`✅ Email inviata a ${currentUser.email}!\n\nIl link al PDF è valido indefinitamente.`);
+                } else {
+                    alert('❌ Errore nell\'invio dell\'email');
+                }
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('❌ Errore nell\'invio dell\'email');
+            }
+        }
+
+        // Carica i PDF al caricamento della pagina
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPDFs();
+        });
+    </script>
+</body>
+</html>

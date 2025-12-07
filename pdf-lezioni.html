@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lezioni PDF - SbobinaMente</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .pdf-lezioni-container {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .pdf-lezioni-title {
+            font-size: 42px;
+            color: #667eea;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .breadcrumb {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .categoria-btn {
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .categoria-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .pdf-lezioni-title {
+                font-size: 32px;
+            }
+
+            .categoria-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header e Navigazione -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SbobinaMente</h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="lezioni.html" class="nav-link">Lezioni</a>
+                    <a href="#" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
+                    <a href="#" class="nav-link" id="userLink">Accedi</a>
+                    <a href="test-email.html" class="nav-link" style="color: #7cb342; font-weight: 600;">🧪 Test Email</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="pdf-lezioni-container">
+        <div class="breadcrumb">
+            <a href="lezioni.html">Lezioni</a> > <span>PDF</span>
+        </div>
+
+        <h1 class="pdf-lezioni-title">📄 Lezioni in PDF</h1>
+        
+        <a href="pdf-universita.html" class="categoria-btn">🎓 Università</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
