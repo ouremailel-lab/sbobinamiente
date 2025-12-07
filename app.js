@@ -325,7 +325,7 @@ function handleRegister(e) {
         nome: nome,
         email: email,
         password: password,
-        verified: true,
+        verified: false,
         registrationDate: new Date().toISOString()
     };
 
@@ -336,7 +336,21 @@ function handleRegister(e) {
     sendRegistrationConfirmationEmail(newUser);
     
     closeAuth();
-    showNotification('✅ Registrazione completata! Controlla la tua email.');
+    showNotification('Registrazione completata! Controlla la tua email per la verifica. (Simulato: clicca qui per verificare)');
+    
+    // Simulazione verifica email dopo 2 secondi
+    setTimeout(() => {
+        simulateEmailVerification(newUser.email);
+    }, 2000);
+}
+
+function simulateEmailVerification(email) {
+    const user = users.find(u => u.email === email);
+    if (user) {
+        user.verified = true;
+        localStorage.setItem('users', JSON.stringify(users));
+        showNotification('Email verificata! Puoi ora accedere.');
+    }
 }
 
 function logout() {
