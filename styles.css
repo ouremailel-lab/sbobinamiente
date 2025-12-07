@@ -1014,29 +1014,78 @@ footer {
 
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
+    /* Header mobile */
+    .header {
+        position: sticky;
+        top: 0;
+    }
+
     .header-content {
         flex-direction: column;
         gap: 16px;
+        padding: 12px 0;
+    }
+
+    .logo h1 {
+        font-size: 24px;
+    }
+
+    .logo .tagline {
+        font-size: 10px;
     }
 
     .nav {
-        flex-direction: column;
-        gap: 12px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
         width: 100%;
     }
 
     .nav-link {
-        width: 100%;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    /* Hero mobile */
+    .hero {
+        padding: 60px 15px 50px;
     }
 
     .hero-content h2 {
-        font-size: 36px;
+        font-size: 28px;
+        line-height: 1.3;
     }
 
     .hero-content p {
-        font-size: 16px;
+        font-size: 15px;
+        line-height: 1.6;
     }
 
+    .hero-content img {
+        max-width: 100%;
+        margin-bottom: 20px !important;
+    }
+
+    /* Blocchi mobile */
+    .block {
+        padding: 50px 15px;
+    }
+
+    .block h2 {
+        font-size: 26px;
+        line-height: 1.3;
+    }
+
+    .block h3 {
+        font-size: 20px;
+    }
+
+    .block p, .block li {
+        font-size: 15px;
+    }
+
+    /* Products grid */
     .products-section h2,
     .benefits-section h2,
     .how-it-works h2 {
@@ -1045,49 +1094,184 @@ footer {
 
     .products-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
 
+    /* Filters */
     .filters {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
 
+    /* Modal */
     .modal-content {
-        padding: 24px;
+        padding: 20px;
+        margin: 20px;
+        max-width: calc(100% - 40px);
     }
 
+    .modal-header h2 {
+        font-size: 22px;
+    }
+
+    /* Cart */
     .cart-item {
         flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 
+    .cart-item-info {
+        width: 100%;
+    }
+
+    .cart-summary {
+        padding: 20px;
+    }
+
+    /* Auth modal */
+    .auth-tabs {
+        gap: 10px;
+    }
+
+    .auth-tab {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+
+    /* Footer */
     .footer-content {
         grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
+    }
+
+    /* Buttons */
+    .btn {
+        font-size: 14px;
+        padding: 12px 24px;
+    }
+
+    /* PDF viewer */
+    .pdf-container {
+        padding: 15px;
+    }
+
+    #pdf-canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    .pdf-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .pdf-controls button {
+        font-size: 12px;
+        padding: 8px 12px;
     }
 }
 
 @media (max-width: 480px) {
+    /* Logo ultra-small */
     .logo h1 {
-        font-size: 22px;
+        font-size: 20px;
     }
 
+    .logo .tagline {
+        font-size: 9px;
+    }
+
+    /* Navigation ultra-small */
+    .nav {
+        gap: 6px;
+    }
+
+    .nav-link {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+
+    /* Hero ultra-small */
     .hero {
-        padding: 80px 20px 60px;
+        padding: 50px 10px 40px;
     }
 
     .hero-content h2 {
-        font-size: 28px;
+        font-size: 24px;
     }
 
     .hero-content p {
         font-size: 14px;
     }
 
-    .btn {
-        width: 100%;
+    /* Blocchi ultra-small */
+    .block {
+        padding: 40px 10px;
     }
 
+    .block h2 {
+        font-size: 22px;
+    }
+
+    .block h3 {
+        font-size: 18px;
+    }
+
+    /* Buttons full width on very small screens */
+    .btn {
+        width: 100%;
+        font-size: 13px;
+        padding: 10px 20px;
+    }
+
+    /* Products section */
     .products-section,
     .benefits-section,
     .how-it-works {
-        padding: 60px 20px;
+        padding: 50px 10px;
+    }
+
+    /* Modal ultra-small */
+    .modal-content {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    /* Form inputs */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+    }
+
+    /* Card adjustments */
+    .product-card {
+        padding: 15px;
+    }
+
+    .product-title {
+        font-size: 16px;
+    }
+
+    .product-price {
+        font-size: 20px;
+    }
+}
+
+/* Landscape orientation fixes for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .hero {
+        padding: 40px 15px;
+    }
+
+    .block {
+        padding: 40px 15px;
+    }
+
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
     }
 }
