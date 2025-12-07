@@ -442,24 +442,26 @@
                 
                 const emailTitle = `✅ Ordine Confermato - SbobinaMente`;
                 const emailMessage = `Ciao ${currentUser.nome}! 🎉\n\nGrazie per il tuo acquisto!\n\n📚 Ecco il tuo PDF: ${pdfLink}\n\n🔑 Password di accesso: ${pdfPassword}\n\nIl link è protetto e rimane valido per sempre.\n\nBuona lettura!\n\nElisa&Luigi di SbobinaMente`;
-                
-                // Invia via EmailJS usando template_b69xo05
-                const result = await emailjs.send(
-                    'service_a410o74',
-                    'template_b69xo05',
-                    {
+
+                // Invia tramite la function serverless (Resend)
+                const response = await fetch('/api/send-pdf-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
                         email: currentUser.email,
                         name: currentUser.nome,
                         title: emailTitle,
                         message: emailMessage
-                    }
-                );
+                    })
+                });
 
-                if (result.status === 200) {
-                    alert(`✅ Email inviata a ${currentUser.email}!\n\nControlla la tua casella di posta per il link al PDF.`);
-                } else {
-                    alert('❌ Errore nell\'invio dell\'email');
+                if (!response.ok) {
+                    throw new Error('Invio email fallito');
                 }
+
+                alert(`✅ Email inviata a ${currentUser.email}!\n\nControlla la tua casella di posta per il link al PDF.`);
             } catch (error) {
                 console.error('Errore:', error);
                 alert('❌ Errore nell\'invio dell\'email');
