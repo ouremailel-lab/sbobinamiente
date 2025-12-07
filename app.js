@@ -311,12 +311,17 @@ function handleRegister(e) {
     const confirmPassword = form.querySelectorAll('input[type="password"]')[1].value;
 
     if (password !== confirmPassword) {
-        alert('Le password non coincidono');
+        alert('❌ Le password non coincidono');
+        return;
+    }
+
+    if (password.length < 6) {
+        alert('❌ La password deve essere di almeno 6 caratteri');
         return;
     }
 
     if (users.find(u => u.email === email)) {
-        alert('Questo email è già registrato');
+        alert('❌ Questo email è già registrato');
         return;
     }
 
@@ -325,7 +330,7 @@ function handleRegister(e) {
         nome: nome,
         email: email,
         password: password,
-        verified: false,
+        verified: true, // Verificato automaticamente
         registrationDate: new Date().toISOString()
     };
 
@@ -333,23 +338,23 @@ function handleRegister(e) {
     localStorage.setItem('users', JSON.stringify(users));
     
     // INVIA EMAIL DI CONFERMA REGISTRAZIONE
-    sendRegistrationConfirmationEmail(newUser);
+    sendRegistrationEmail(newUser);
     
     closeAuth();
-    showNotification('Registrazione completata! Controlla la tua email per la verifica. (Simulato: clicca qui per verificare)');
-    
-    // Simulazione verifica email dopo 2 secondi
-    setTimeout(() => {
-        simulateEmailVerification(newUser.email);
-    }, 2000);
+    showNotification('✅ Registrazione completata! Ti abbiamo inviato una email di conferma.');
 }
 
-function simulateEmailVerification(email) {
-    const user = users.find(u => u.email === email);
-    if (user) {
-        user.verified = true;
-        localStorage.setItem('users', JSON.stringify(users));
-        showNotification('Email verificata! Puoi ora accedere.');
+async function sendRegistrationEmail(user) {
+    try {
+        await emailjs.send('service_a410o74', 'template_j7hwc4l', {
+            email: user.email,
+            name: user.nome,
+            title: '🎉 Benvenuto su SbobinaMente!',
+            message: `Ciao ${user.nome}!\n\nLa tua registrazione è stata completata con successo.\n\n📧 Email: ${user.email}\n📅 Data registrazione: ${new Date(user.registrationDate).toLocaleDateString('it-IT')}\n\nIl tuo account è ora attivo e puoi accedere a tutti i nostri servizi.\n\nBuono studio!\nTeam SbobinaMente`
+        });
+        console.log('✅ Email di registrazione inviata a:', user.email);
+    } catch (error) {
+        console.error('❌ Errore invio email registrazione:', error);
     }
 }
 
