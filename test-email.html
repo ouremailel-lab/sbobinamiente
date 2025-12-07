@@ -154,7 +154,6 @@
             </div>
             
             <input type="submit" id="button" value="Send Email">
-            <div id="status" class="status"></div>
         </form>
     </div>
 
@@ -162,35 +161,26 @@
     <script type="text/javascript">
         emailjs.init('Bo-Kyor5W-Q_BRDf3');
         
-        document.getElementById('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const statusDiv = document.getElementById('status');
-            statusDiv.className = 'status loading';
-            statusDiv.textContent = '⏳ Invio email in corso...';
-            
-            const templateParams = {
-                name: document.getElementById('name').value,
-                title: document.getElementById('title').value,
-                email: document.getElementById('email').value,
-                message: document.getElementById('message').value
-            };
-            
-            emailjs.send('sAJlIG2M63bqNohFuCqje', 'template_j7hwc4l', templateParams)
-                .then(function(response) {
-                    console.log('✅ Email inviata!', response.status, response.text);
-                    statusDiv.className = 'status success';
-                    statusDiv.textContent = '✅ Email inviata con successo! Controlla la tua inbox.';
-                    document.getElementById('form').reset();
-                    
-                    setTimeout(() => {
-                        statusDiv.style.display = 'none';
-                    }, 5000);
-                }, function(error) {
-                    console.error('❌ Errore:', error);
-                    statusDiv.className = 'status error';
-                    statusDiv.textContent = '❌ Errore nell\'invio: ' + JSON.stringify(error);
-                });
+        const btn = document.getElementById('button');
+
+        document.getElementById('form')
+         .addEventListener('submit', function(event) {
+           event.preventDefault();
+
+           btn.value = 'Sending...';
+
+           const serviceID = 'sAJlIG2M63bqNohFuCqje';
+           const templateID = 'template_j7hwc4l';
+
+           emailjs.sendForm(serviceID, templateID, this)
+            .then(() => {
+              btn.value = 'Send Email';
+              alert('✅ Email inviata con successo!');
+              document.getElementById('form').reset();
+            }, (err) => {
+              btn.value = 'Send Email';
+              alert('❌ Errore: ' + JSON.stringify(err));
+            });
         });
     </script>
 </body>
