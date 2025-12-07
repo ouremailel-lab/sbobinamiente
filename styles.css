@@ -114,7 +114,7 @@ body {
 .logo h1 {
     font-size: 26px;
     font-weight: 800;
-    color: #0f172a;
+    color: #4a90e2;
     letter-spacing: -0.5px;
 }
 
@@ -189,6 +189,9 @@ body {
 
 .block h2 {
     font-size: 36px;
+.block-blue h2 {
+    color: #f5a6c9;
+}
     font-weight: 800;
     margin-bottom: 16px;
     letter-spacing: -0.5px;
