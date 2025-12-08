@@ -174,6 +174,69 @@
             color: #4a90e2;
         }
 
+        .search-banner {
+            background: linear-gradient(135deg, #fff7d1 0%, #f5a6c9 100%);
+            padding: 28px 20px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-banner h3 {
+            text-align: center;
+            color: #0f172a;
+            font-size: 18px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .search-input-wrapper {
+            display: flex;
+            gap: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input-wrapper input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #f5a6c9;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input-wrapper input:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+        }
+
+        .search-input-wrapper button {
+            padding: 12px 24px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        .search-input-wrapper button:hover {
+            background: #2e5ac1;
+            transform: translateY(-2px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+            font-size: 16px;
+        }
+
         @media (max-width: 768px) {
             .pacchetti-title {
                 font-size: 32px;
@@ -186,6 +249,14 @@
 
             .pacchetto-card {
                 padding: 20px;
+            }
+
+            .search-input-wrapper {
+                flex-direction: column;
+            }
+
+            .search-input-wrapper button {
+                width: 100%;
             }
         }
     </style>
@@ -222,6 +293,14 @@
                 Vuoi gli appunti digitali subito per iniziare a studiare ma anche la versione cartacea per lo studio offline? 
                 Perfetto! I nostri pacchetti premium includono sia il PDF protetto che la copia cartacea rilegata a casa tua!
             </p>
+
+            <div class="search-banner">
+                <h3>🔍 Cerca la tua materia</h3>
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" placeholder="Scrivi il nome della materia (es: Infortuni, Invalidità...)" />
+                    <button onclick="cercaMateria()">Cerca</button>
+                </div>
+            </div>
 
             <div class="info-box">
                 <strong>💡 Come funziona:</strong> Acquisti il pacchetto, ricevi subito il PDF con accesso tramite viewer protetto + la copia cartacea spedita a casa nel giro di 3-5 giorni lavorativi.
@@ -324,9 +403,15 @@
         ];
 
         // Genera i pacchetti premium
-        function renderPacchetti() {
+        function renderPacchetti(pacchetti = PACCHETTI_PREMIUM) {
             const grid = document.getElementById('pachettiGrid');
-            grid.innerHTML = PACCHETTI_PREMIUM.map(p => `
+            
+            if (pacchetti.length === 0) {
+                grid.innerHTML = '<div class="no-results" style="grid-column: 1/-1;">Nessun pacchetto trovato. Prova a cercare una materia diversa.</div>';
+                return;
+            }
+
+            grid.innerHTML = pacchetti.map(p => `
                 <div class="pacchetto-card">
                     <div class="pacchetto-badge">RISPARMIA!</div>
                     <div class="pacchetto-icon">${p.icon}</div>
@@ -335,9 +420,7 @@
                     <ul class="pacchetto-features">
                         ${p.features.map(f => `<li>${f}</li>`).join('')}
                     </ul>
-                    <div class="pacchetto-prezzo-small">
-                        <span style="text-decoration: line-through; color: #888;">€${(p.prezzoDigitale + p.prezzoCartaceo).toFixed(2)}</span>
-                    </div>
+                    <p class="pacchetto-prezzo-small">Risparmio: €${(p.prezzoDigitale + p.prezzoCartaceo - p.prezzoCombo).toFixed(2)}</p>
                     <div class="pacchetto-prezzo">€${p.prezzoCombo.toFixed(2)}</div>
                     <button class="pacchetto-btn" onclick="aggiungiAlCarrelloPacchetto(${p.id})">
                         🛒 Aggiungi Pacchetto
@@ -345,6 +428,36 @@
                 </div>
             `).join('');
         }
+
+        // Funzione di ricerca
+        function cercaMateria() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            if (searchInput === '') {
+                renderPacchetti(PACCHETTI_PREMIUM);
+                return;
+            }
+
+            const risultati = PACCHETTI_PREMIUM.filter(p => 
+                p.nome.toLowerCase().includes(searchInput) ||
+                p.descrizione.toLowerCase().includes(searchInput) ||
+                p.features.some(f => f.toLowerCase().includes(searchInput))
+            );
+
+            renderPacchetti(risultati);
+        }
+
+        // Permetti ricerca con Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        cercaMateria();
+                    }
+                });
+            }
+        });
 
         // Aggiungi il pacchetto al carrello
         function aggiungiAlCarrelloPacchetto(pacchettId) {
