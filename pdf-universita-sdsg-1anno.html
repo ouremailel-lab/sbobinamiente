@@ -57,6 +57,80 @@
             margin-bottom: 20px;
         }
 
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .product-emoji {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 800;
+            color: #667eea;
+        }
+
+        .btn-add-cart {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-add-cart:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
         @media (max-width: 768px) {
             .anno-title {
                 font-size: 32px;
@@ -64,6 +138,10 @@
 
             .info-box {
                 padding: 30px 20px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -100,11 +178,7 @@
 
         <h1 class="anno-title">📚 Primo Anno</h1>
 
-        <div class="info-box">
-            <div class="info-icon">🔒</div>
-            <p>I materiali per il primo anno non sono ancora disponibili.</p>
-            <p>Torna a trovarci presto per scoprire le nuove lezioni!</p>
-        </div>
+        <div class="products-grid" id="productsGrid"></div>
     </div>
 
     <!-- Footer -->
@@ -114,6 +188,35 @@
         </div>
     </footer>
 
+    <script src="products-data.js"></script>
     <script src="app.js"></script>
+    <script>
+        // Carica prodotti del primo anno
+        document.addEventListener('DOMContentLoaded', function() {
+            const grid = document.getElementById('productsGrid');
+            const yearProducts = getProductsByCategory('universita', 'sdsg', 1);
+
+            if (yearProducts.length === 0) {
+                grid.innerHTML = '<div class="info-box" style="grid-column: 1/-1;"><div class="info-icon">🔒</div><p>I materiali per il primo anno non sono ancora disponibili.</p></div>';
+                return;
+            }
+
+            yearProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-emoji">${product.emoji}</div>
+                    <h3 class="product-title">${product.title}</h3>
+                    <p class="product-description">${product.descrizione}</p>
+                    <div style="font-size: 13px; color: #94a3b8;">📄 ${product.pages} pagine • PDF protetto</div>
+                    <div class="product-meta">
+                        <span class="product-price">€${product.prezzo.toFixed(2)}</span>
+                        <button class="btn-add-cart" onclick="addToCartFromPage(${product.id})">Aggiungi</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        });
+    </script>
 </body>
 </html>
