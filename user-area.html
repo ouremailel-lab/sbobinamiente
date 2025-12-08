@@ -26,6 +26,13 @@
         .password-wrapper { display: flex; align-items: center; gap: 8px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0 10px; background: #f8fafc; }
         .password-wrapper input { flex: 1; border: none; background: transparent; padding: 10px 0; outline: none; }
         .toggle-password { border: none; background: transparent; cursor: pointer; font-size: 16px; line-height: 1; }
+        .pdf-access-list { display: flex; flex-direction: column; gap: 12px; }
+        .pdf-access-item { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; background: #f8fafc; }
+        .pdf-access-item h4 { margin: 0 0 6px 0; color: #0f172a; }
+        .pdf-meta { font-size: 13px; color: #475569; display: flex; gap: 12px; flex-wrap: wrap; margin: 4px 0 8px 0; }
+        .pdf-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-link { padding: 8px 12px; background: #4a90e2; color: #fff; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-outline { padding: 4px 8px; border-radius: 999px; border: 1px solid #cbd5e1; color: #334155; font-size: 12px; }
         @media (max-width: 900px) { .user-area-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -88,6 +95,14 @@
                 <button type="submit" class="btn-primary-small">Aggiorna password</button>
                 <div class="status" id="passwordStatus"></div>
             </form>
+        </div>
+
+        <div class="user-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px;">
+                <h3 style="margin: 0;">PDF protetti acquistati</h3>
+                <span id="digitalAccessCount" style="color: #6b7280; font-size: 13px;">-</span>
+            </div>
+            <div id="digitalAccessList" class="pdf-access-list"></div>
         </div>
 
         <div class="user-card" style="grid-column: 1 / -1;">

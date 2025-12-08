@@ -624,6 +624,8 @@ function processOrderDirect(orderData) {
             const viewerUrl = `${window.location.origin}${window.location.pathname.replace('cartaceo.html', '')}viewer-pdf.html?order=${order.id}&pwd=${password}&product=${item.id}`;
             
             digitalsAccess.push({
+                orderId: order.id,
+                userEmail: currentUser?.email,
                 productId: item.id,
                 title: item.title,
                 pdfFile: item.pdfFile,
@@ -636,14 +638,21 @@ function processOrderDirect(orderData) {
 
     // Salva credenziali
     let userAccess = JSON.parse(localStorage.getItem('userPdfAccess')) || {};
-    if (!userAccess[currentUser.email]) {
-        userAccess[currentUser.email] = [];
+    if (currentUser?.email) {
+        if (!userAccess[currentUser.email]) {
+            userAccess[currentUser.email] = [];
+        }
+        userAccess[currentUser.email].push({
+            orderId: order.id,
+            items: digitalsAccess
+        });
+        localStorage.setItem('userPdfAccess', JSON.stringify(userAccess));
     }
-    userAccess[currentUser.email].push({
-        orderId: order.id,
-        items: digitalsAccess
-    });
-    localStorage.setItem('userPdfAccess', JSON.stringify(userAccess));
+
+    // Salva accessi anche nel formato unificato
+    localStorage.setItem('myDigitalsAccess', JSON.stringify(
+        [...JSON.parse(localStorage.getItem('myDigitalsAccess')) || [], ...digitalsAccess]
+    ));
     
     // Invia email di conferma al cliente
     if (typeof sendPaymentConfirmationEmail === 'function') {

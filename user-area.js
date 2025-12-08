@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initUserInfo(currentUser);
     bindLogout();
     bindPasswordForm(currentUser);
+    loadDigitalAccess(currentUser);
     loadOrders(currentUser);
 });
 
@@ -151,6 +152,9 @@ async function loadOrders(user) {
         const total = order.total ? Number(order.total).toFixed(2) : '0.00';
         const items = order.items || [];
 
+        const hasPhysical = items.some(it => (it.tipo || it.type) === 'fisico');
+        const shippingInfo = order.deliveryInfo || order.delivery_info || order.customerInfo || order.delivery_info;
+
         const itemLines = items.map(it => {
             const qty = it.quantity || 1;
             const price = it.prezzo || it.price || 0;
@@ -170,6 +174,53 @@ async function loadOrders(user) {
             <div style="color:#475569; font-size:13px; margin-top:4px;">${date.toLocaleString('it-IT')}</div>
             <div style="margin-top:8px; white-space: pre-line; color:#0f172a;">${itemLines}</div>
             <div style="margin-top:10px; font-weight:700; color:#0f172a;">Totale: €${total}</div>
+            ${hasPhysical && shippingInfo ? `<div style="margin-top:8px; font-size:13px; color:#475569;">📦 Spedizione: ${shippingInfo.indirizzo || shippingInfo.address || ''} ${shippingInfo.cap || ''} ${shippingInfo.città || shippingInfo.city || ''}</div>` : ''}
+        `;
+        listEl.appendChild(card);
+    });
+}
+
+function loadDigitalAccess(user) {
+    const listEl = document.getElementById('digitalAccessList');
+    const countEl = document.getElementById('digitalAccessCount');
+    if (!listEl || !countEl) return;
+
+    listEl.innerHTML = '<p class="empty-state">Caricamento accessi...</p>';
+
+    const unified = JSON.parse(localStorage.getItem('myDigitalsAccess')) || [];
+    const legacy = JSON.parse(localStorage.getItem('userPdfAccess')) || {};
+
+    const legacyItems = (legacy[user.email] || []).flatMap(entry => {
+        return (entry.items || []).map(it => ({ ...it, orderId: entry.orderId, userEmail: user.email }));
+    });
+
+    const allAccess = [...unified, ...legacyItems];
+    const filtered = allAccess.filter(a => !a.userEmail || a.userEmail === user.email);
+
+    if (filtered.length === 0) {
+        countEl.textContent = '0 PDF';
+        listEl.innerHTML = '<div class="empty-state">Nessun PDF acquistato.</div>';
+        return;
+    }
+
+    countEl.textContent = `${filtered.length} PDF`;
+    listEl.innerHTML = '';
+
+    filtered.forEach(access => {
+        const expiry = access.expiryDate ? new Date(access.expiryDate).toLocaleDateString('it-IT') : 'N/D';
+        const orderId = access.orderId || '-';
+        const card = document.createElement('div');
+        card.className = 'pdf-access-item';
+        card.innerHTML = `
+            <h4>${access.title || 'PDF'}</h4>
+            <div class="pdf-meta">
+                <span class="badge-outline">Ordine #${orderId}</span>
+                <span class="badge-outline">Password: <code>${access.password || 'N/D'}</code></span>
+                <span class="badge-outline">Scadenza: ${expiry}</span>
+            </div>
+            <div class="pdf-actions">
+                <a class="btn-link" href="${access.accessUrl || '#'}" target="_blank" rel="noopener">🔗 Apri viewer</a>
+            </div>
         `;
         listEl.appendChild(card);
     });

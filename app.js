@@ -561,14 +561,16 @@ function processOrderDirect(orderData) {
             const password = generatePassword();
             const viewerUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}viewer-pdf.html?order=${order.id}&pwd=${password}&product=${item.id}`;
             
-            digitalsAccess.push({
-                productId: item.id,
-                title: item.title,
-                pdfFile: item.pdfFile,
-                password: password,
-                accessUrl: viewerUrl,
-                expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-            });
+                digitalsAccess.push({
+                    orderId: order.id,
+                    userEmail: currentUser.email,
+                    productId: item.id,
+                    title: item.title,
+                    pdfFile: item.pdfFile,
+                    password: password,
+                    accessUrl: viewerUrl,
+                    expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+                });
         }
     });
 
@@ -712,12 +714,16 @@ function processOrder() {
     const digitalsAccess = [];
     cart.forEach(item => {
         if (item.tipo === 'digitale' && item.pdfFile) {
+            const password = generatePassword();
+            const viewerUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}viewer-pdf.html?order=${order.id}&pwd=${password}&product=${item.id}`;
             digitalsAccess.push({
+                orderId: order.id,
+                userEmail: currentUser.email,
                 productId: item.id,
                 title: item.title,
                 pdfFile: item.pdfFile,
-                password: generatePassword(),
-                accessUrl: `PDF/${encodeURIComponent(item.pdfFile)}`,
+                password: password,
+                accessUrl: viewerUrl,
                 expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
             });
         }

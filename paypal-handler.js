@@ -50,12 +50,16 @@ function handlePayPalSuccess() {
     const digitalsAccess = [];
     order.items.forEach(item => {
         if (item.tipo === 'digitale' && item.pdfFile) {
+            const password = generatePassword();
+            const viewerUrl = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, '')}viewer-pdf.html?order=${order.id}&pwd=${password}&product=${item.id}`;
             digitalsAccess.push({
+                orderId: order.id,
+                userEmail: currentUser?.email,
                 productId: item.id,
                 title: item.title,
                 pdfFile: item.pdfFile,
-                password: generatePassword(),
-                accessUrl: `PDF/${encodeURIComponent(item.pdfFile)}`,
+                password: password,
+                accessUrl: viewerUrl,
                 expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
             });
         }
