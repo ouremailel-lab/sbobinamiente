@@ -230,3 +230,5 @@ function addToCartFromPage(productId) {
     alert(`✅ "${product.title}" aggiunto al carrello!`);
 }
 
+// Esponi la variabile prodotti come globale per l'accesso dal viewer
+window.productsData = products;
