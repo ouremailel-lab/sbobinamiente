@@ -417,8 +417,9 @@
                 // Aggiorna il nome del prodotto
                 document.getElementById('productName').textContent = `📄 ${product.title}`;
 
-                // Carica il PDF
-                const pdfPath = `/PDF/${product.pdfFile || product.file}`;
+                // Carica il PDF (usa percorso relativo)
+                const pdfPath = `PDF/${product.pdfFile || product.file}`;
+                console.log('Caricamento PDF:', pdfPath);
                 const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
                 pdfDoc = pdfData;
                 totalPages = pdfDoc.numPages;
