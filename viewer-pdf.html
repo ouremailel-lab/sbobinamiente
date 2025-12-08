@@ -269,12 +269,12 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             animation: fadeIn 0.3s ease-in;
+            justify-content: center;
+            align-items: center;
         }
 
         .checkout-modal.show {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex !important;
         }
 
         .checkout-content {
@@ -713,38 +713,44 @@
                 
                 // Se è preview e siamo all'ultima pagina, mostra il popup CTA
                 console.log('Preview check:', { isPreview, pageNum, totalPages, MAX_PREVIEW_PAGES, productId });
-                if (isPreview && pageNum === MAX_PREVIEW_PAGES) {
-                    console.log('Condizioni met per mostrare popup! Cercando prodotto...');
-                    // Aggiungi il prodotto al carrello automaticamente
-                    const product = window.productsData.find(p => p.id == productId);
-                    console.log('Prodotto trovato:', product);
-                    if (product && !window.popupShown) {
-                        window.popupShown = true; // Evita di mostrare il popup multiple volte
-                        console.log('Mostrando popup per:', product.title);
+                
+                if (isPreview && pageNum === 3) {
+                    console.log('🔥 Siamo alla pagina 3, mostrando popup!');
+                    
+                    // Mostra sempre il popup per la pagina 3 in preview
+                    if (!window.popupShown) {
+                        window.popupShown = true;
+                        console.log('Popup non era stato mostrato, lo mostro adesso');
                         
-                        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                        const existingItem = cart.find(item => item.id == productId);
+                        // Aggiungi il prodotto al carrello automaticamente
+                        const product = window.productsData ? window.productsData.find(p => p.id == productId) : null;
+                        console.log('Prodotto trovato:', product);
                         
-                        if (!existingItem) {
-                            cart.push({
-                                id: product.id,
-                                title: product.title,
-                                prezzo: product.prezzo,
-                                tipo: product.tipo,
-                                pdfFile: product.pdfFile,
-                                quantity: 1
-                            });
-                            localStorage.setItem('cart', JSON.stringify(cart));
-                            console.log('Prodotto aggiunto al carrello');
+                        if (product) {
+                            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                            const existingItem = cart.find(item => item.id == productId);
+                            
+                            if (!existingItem) {
+                                cart.push({
+                                    id: product.id,
+                                    title: product.title,
+                                    prezzo: product.prezzo,
+                                    tipo: product.tipo,
+                                    pdfFile: product.pdfFile,
+                                    quantity: 1
+                                });
+                                localStorage.setItem('cart', JSON.stringify(cart));
+                                console.log('✅ Prodotto aggiunto al carrello:', product.title);
+                            }
+                            
+                            // Mostra il popup
+                            console.log('Calling showCheckoutPopup with title:', product.title);
+                            showCheckoutPopup(product.title);
+                        } else {
+                            // Se il prodotto non è trovato, mostra il popup comunque con un titolo generico
+                            console.log('⚠️ Prodotto non trovato nel catalogo, mostrando popup generico');
+                            showCheckoutPopup('Prodotto #' + productId);
                         }
-                        
-                        // Mostra il popup
-                        showCheckoutPopup(product.title);
-                    } else {
-                        console.log('Popup NON mostrato. Motivo:', { 
-                            productFound: !!product,
-                            popupAlreadyShown: window.popupShown
-                        });
                     }
                     document.getElementById('ctaContainer').innerHTML = '';
                 } else {
