@@ -257,6 +257,147 @@
                 font-size: 40px;
             }
         }
+
+        /* Modal Popup per CTA */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .checkout-modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .checkout-content {
+            background: linear-gradient(135deg, #f5a6c9 0%, #fff7d1 100%);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease-out;
+            position: relative;
+        }
+
+        .checkout-content h2 {
+            color: #0f172a;
+            font-size: 24px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .checkout-content p {
+            color: #0f172a;
+            font-size: 16px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .checkout-product {
+            background-color: rgba(255, 255, 255, 0.6);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 16px 0 24px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .checkout-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .checkout-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkout-btn-primary {
+            background-color: #4a90e2;
+            color: white;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .checkout-btn-primary:hover {
+            background-color: #2e5ac1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(74, 144, 226, 0.3);
+        }
+
+        .checkout-btn-secondary {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #0f172a;
+            border: 2px solid #f5a6c9;
+        }
+
+        .checkout-btn-secondary:hover {
+            background-color: white;
+            border-color: #f5a6c9;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-modal-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -272,6 +413,24 @@
         <div class="loading">
             <div class="loading-spinner"></div>
             <p>Caricamento del documento...</p>
+        </div>
+    </div>
+
+    <!-- Modal Popup CTA -->
+    <div id="checkoutModal" class="checkout-modal">
+        <div class="checkout-content">
+            <button class="close-modal-btn" onclick="closeCheckoutModal()">✕</button>
+            <h2>🎉 Perfetto!</h2>
+            <p>Dai mi pare abbastanza, adesso compra!</p>
+            <div class="checkout-product" id="checkoutProductName">Caricamento...</div>
+            <div class="checkout-buttons">
+                <a href="cartaceo.html" class="checkout-btn checkout-btn-primary" onclick="addToCartFromModal(); return true;">
+                    🛒 Vai al Carrello
+                </a>
+                <button class="checkout-btn checkout-btn-secondary" onclick="closeCheckoutModal()">
+                    ← Continua lettura
+                </button>
+            </div>
         </div>
     </div>
 
@@ -552,17 +711,32 @@
                 document.getElementById('prevBtn').disabled = pageNum <= 1;
                 document.getElementById('nextBtn').disabled = pageNum >= totalPages;
                 
-                // Se è preview e siamo all'ultima pagina, mostra il CTA
+                // Se è preview e siamo all'ultima pagina, mostra il popup CTA
                 if (isPreview && pageNum >= totalPages) {
-                    const ctaContainer = document.getElementById('ctaContainer');
-                    ctaContainer.innerHTML = `
-                        <div style="background: linear-gradient(135deg, #f5a6c9 0%, #fff7d1 100%); padding: 20px; text-align: center; border-top: 2px solid #f5a6c9; margin-top: 20px;">
-                            <p style="margin: 0 0 12px 0; font-size: 14px; color: #0f172a; font-weight: 600;">Dai mi pare abbastanza, adesso compra! 🎉</p>
-                            <button onclick="addToCartAndRedirect(${productId})" style="background: #4a90e2; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; transition: all 0.2s;">
-                                🛒 Aggiungi al Carrello
-                            </button>
-                        </div>
-                    `;
+                    // Aggiungi il prodotto al carrello automaticamente
+                    const product = window.productsData.find(p => p.id == productId);
+                    if (product && !window.popupShown) {
+                        window.popupShown = true; // Evita di mostrare il popup multiple volte
+                        
+                        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                        const existingItem = cart.find(item => item.id == productId);
+                        
+                        if (!existingItem) {
+                            cart.push({
+                                id: product.id,
+                                title: product.title,
+                                prezzo: product.prezzo,
+                                tipo: product.tipo,
+                                pdfFile: product.pdfFile,
+                                quantity: 1
+                            });
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                        }
+                        
+                        // Mostra il popup
+                        showCheckoutPopup(product.title);
+                    }
+                    document.getElementById('ctaContainer').innerHTML = '';
                 } else {
                     document.getElementById('ctaContainer').innerHTML = '';
                 }
@@ -648,6 +822,36 @@
                 </div>
             `;
         }
+
+        function showCheckoutPopup(productTitle) {
+            const modal = document.getElementById('checkoutModal');
+            const productName = document.getElementById('checkoutProductName');
+            
+            productName.textContent = productTitle;
+            modal.classList.add('show');
+            
+            // Impedisci scroll quando il modal è aperto
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        function addToCartFromModal() {
+            // Il prodotto è già stato aggiunto al carrello in renderPage()
+            // Qui redirect semplicemente al carrello
+            window.location.href = 'cartaceo.html';
+        }
+
+        // Chiudi il modal se clicchi fuori
+        document.getElementById('checkoutModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeCheckoutModal();
+            }
+        });
     </script>
 </body>
 </html>
