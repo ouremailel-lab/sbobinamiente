@@ -275,6 +275,7 @@
         </div>
     </div>
 
+    <script src="products-data.js"></script>
     <script>
         // ============ PROTEZIONI RIGOROSE ============
         
@@ -396,21 +397,41 @@
 
         async function loadPDF() {
             try {
+                console.log('Parametri viewer:', { orderId, productId, password });
+                
                 // Carica dati ordini
                 const orders = JSON.parse(localStorage.getItem('orders')) || [];
-                const order = orders.find(o => o.id == orderId);
+                const order = orders.find(o => o.id == orderId || o.order_id == orderId);
 
-                if (!order) {
-                    showError('Ordine non trovato nel sistema.');
+                console.log('Ordini trovati:', orders.length);
+                console.log('Ordine corrente:', order);
+
+                let product = null;
+                
+                if (order) {
+                    currentOrderId = orderId;
+                    // Trova il prodotto nell'ordine
+                    product = order.items?.find(item => item.id == productId || item.productId == productId);
+                    console.log('Prodotto nell\'ordine:', product);
+                }
+                
+                // Fallback: carica dal catalogo prodotti se non trovato nell'ordine
+                if (!product) {
+                    console.log('Prodotto non trovato nell\'ordine, cerco nel catalogo...');
+                    // Carica products-data.js se disponibile
+                    if (typeof products !== 'undefined') {
+                        product = products.find(p => p.id == productId);
+                        console.log('Prodotto dal catalogo:', product);
+                    }
+                }
+
+                if (!product) {
+                    showError(`Prodotto #${productId} non trovato. Verifica che l'ordine sia stato completato correttamente.`);
                     return;
                 }
 
-                currentOrderId = orderId;
-
-                // Trova il prodotto nell'ordine
-                const product = order.items.find(item => item.id == productId);
-                if (!product || product.tipo !== 'digitale') {
-                    showError('Prodotto non disponibile in questo ordine.');
+                if (product.tipo !== 'digitale' && product.tipo !== undefined) {
+                    showError('Questo prodotto non è un PDF digitale.');
                     return;
                 }
 
