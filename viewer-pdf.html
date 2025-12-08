@@ -441,8 +441,10 @@
                 // Carica il PDF (usa percorso relativo con fetch per CORS)
                 // Codifica il nome del file per gestire spazi e caratteri speciali
                 const fileName = product.pdfFile || product.file;
-                const encodedFileName = encodeURIComponent(fileName);
-                const pdfPath = `/PDF/${encodedFileName}`;
+                // Codifica solo il nome del file, non il percorso completo con cartelle
+                const pathParts = fileName.split('/');
+                const encodedPath = pathParts.map(part => encodeURIComponent(part)).join('/');
+                const pdfPath = `/PDF/${encodedPath}`;
                 console.log('Caricamento PDF:', pdfPath, 'Da file:', fileName);
                 
                 // Usa fetch per caricare il PDF come ArrayBuffer

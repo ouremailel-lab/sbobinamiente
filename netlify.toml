@@ -3,7 +3,7 @@
   publish = "."
 
 [[redirects]]
-  from = "/PDF/*"
+  from = "/PDF/**"
   to = "/PDF/:splat"
   status = 200
   force = true

@@ -10,7 +10,7 @@ const products = [
         descrizione: "Guida completa su infortuni e malattie professionali",
         dettagli: "PDF protetto da password. Download immediato dopo l'acquisto.",
         pages: 45,
-        pdfFile: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE.pdf"
+        pdfFile: "università/scienze dei servizi giuridici/terzo anno/INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE.pdf"
     },
     {
         id: 2,
@@ -39,7 +39,7 @@ const products = [
         descrizione: "Tutto sulla pensione e i diritti dei pensionati",
         dettagli: "PDF protetto con guide passo-passo e calcoli pensionistici.",
         pages: 38,
-        pdfFile: "PENSIONE.pdf"
+        pdfFile: "università/scienze dei servizi giuridici/terzo anno/PENSIONE.pdf"
     },
     {
         id: 4,
@@ -51,7 +51,7 @@ const products = [
         descrizione: "Guida completa su invalidità e inabilità",
         dettagli: "PDF protetto con esempi e modulistica. Download immediato.",
         pages: 42,
-        pdfFile: "Invalidità e inabilità.pdf"
+        pdfFile: "università/scienze dei servizi giuridici/terzo anno/Invalidità e inabilità.pdf"
     },
     {
         id: 5,
@@ -63,7 +63,7 @@ const products = [
         descrizione: "Guida sulla disoccupazione e ammortizzatori sociali",
         dettagli: "PDF con istruzioni su sussidi e prestazioni sociali.",
         pages: 35,
-        pdfFile: "disoccupazione.pdf"
+        pdfFile: "università/scienze dei servizi giuridici/terzo anno/disoccupazione.pdf"
     },
     {
         id: 6,
@@ -91,7 +91,7 @@ const products = [
         descrizione: "Guida completa su infortuni e malattie professionali",
         dettagli: "PDF protetto con schemi, esempi e casi pratici. Download immediato.",
         pages: 45,
-        pdfFile: "INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE.pdf",
+        pdfFile: "università/scienze dei servizi giuridici/terzo anno/INFORTUNI SUL LAVORO E MALATTIA PROFESSIONALE.pdf",
         categoria: "universita",
         corso: "sdsg",
         anno: 1
@@ -106,7 +106,7 @@ const products = [
         descrizione: "Guida completa su invalidità e inabilità",
         dettagli: "PDF protetto con esempi e modulistica. Download immediato.",
         pages: 42,
-        pdfFile: "Invalidità e inabilità.pdf",
+        pdfFile: "università/scienze dei servizi giuridici/terzo anno/Invalidità e inabilità.pdf",
         categoria: "universita",
         corso: "sdsg",
         anno: 1
@@ -121,7 +121,7 @@ const products = [
         descrizione: "Tutto sulla pensione e i diritti dei pensionati",
         dettagli: "PDF protetto con guide passo-passo e calcoli pensionistici.",
         pages: 38,
-        pdfFile: "PENSIONE.pdf",
+        pdfFile: "università/scienze dei servizi giuridici/terzo anno/PENSIONE.pdf",
         categoria: "universita",
         corso: "sdsg",
         anno: 2
@@ -136,7 +136,7 @@ const products = [
         descrizione: "Guida sulla disoccupazione e ammortizzatori sociali",
         dettagli: "PDF con istruzioni su sussidi e prestazioni sociali.",
         pages: 35,
-        pdfFile: "disoccupazione.pdf",
+        pdfFile: "università/scienze dei servizi giuridici/terzo anno/disoccupazione.pdf",
         categoria: "universita",
         corso: "sdsg",
         anno: 3
