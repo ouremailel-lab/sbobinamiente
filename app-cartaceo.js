@@ -264,7 +264,10 @@ function openAuth() {
             </div>
             <div class="form-group">
                 <label>Password:</label>
-                <input type="password" required>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input id="loginPassword" type="password" required style="flex:1;">
+                    <button type="button" onclick="togglePassword('loginPassword', this)" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 6px; cursor: pointer;">👁️</button>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">Accedi</button>
         </form>
@@ -280,11 +283,17 @@ function openAuth() {
             </div>
             <div class="form-group">
                 <label>Password:</label>
-                <input type="password" required>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input id="registerPassword" type="password" required style="flex:1;">
+                    <button type="button" onclick="togglePassword('registerPassword', this)" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 6px; cursor: pointer;">👁️</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>Conferma Password:</label>
-                <input type="password" required>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input id="registerConfirmPassword" type="password" required style="flex:1;">
+                    <button type="button" onclick="togglePassword('registerConfirmPassword', this)" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 6px; cursor: pointer;">👁️</button>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">Registrati</button>
             <p style="font-size: 12px; color: #888; margin-top: 12px;">Ti invieremo un email di conferma</p>
@@ -299,6 +308,14 @@ function switchAuthTab(tab) {
     
     event.target.classList.add('active');
     document.getElementById(tab + 'Form').classList.add('active');
+}
+
+function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    if (!input) return;
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    btn.textContent = isPassword ? '🙈' : '👁️';
 }
 
 function handleLogin(e) {

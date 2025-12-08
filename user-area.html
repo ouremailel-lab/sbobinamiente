@@ -23,6 +23,9 @@
         .logout-btn { background: #ef4444; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-primary-small { background: #4a90e2; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .status { margin-top: 8px; font-size: 13px; }
+        .password-wrapper { display: flex; align-items: center; gap: 8px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0 10px; background: #f8fafc; }
+        .password-wrapper input { flex: 1; border: none; background: transparent; padding: 10px 0; outline: none; }
+        .toggle-password { border: none; background: transparent; cursor: pointer; font-size: 16px; line-height: 1; }
         @media (max-width: 900px) { .user-area-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -63,15 +66,24 @@
             <form id="passwordForm">
                 <div class="form-group">
                     <label>Password attuale</label>
-                    <input type="password" id="currentPassword" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="currentPassword" placeholder="Inserisci password attuale" required>
+                            <button type="button" class="toggle-password" aria-label="Mostra password" onclick="togglePassword('currentPassword', this)">👁️</button>
+                        </div>
                 </div>
                 <div class="form-group">
                     <label>Nuova password</label>
-                    <input type="password" id="newPassword" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="newPassword" placeholder="Scegli una nuova password" required>
+                            <button type="button" class="toggle-password" aria-label="Mostra password" onclick="togglePassword('newPassword', this)">👁️</button>
+                        </div>
                 </div>
                 <div class="form-group">
                     <label>Conferma nuova password</label>
-                    <input type="password" id="confirmPassword" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="confirmPassword" placeholder="Conferma la nuova password" required>
+                            <button type="button" class="toggle-password" aria-label="Mostra password" onclick="togglePassword('confirmPassword', this)">👁️</button>
+                        </div>
                 </div>
                 <button type="submit" class="btn-primary-small">Aggiorna password</button>
                 <div class="status" id="passwordStatus"></div>

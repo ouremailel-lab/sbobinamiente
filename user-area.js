@@ -11,6 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loadOrders(currentUser);
 });
 
+function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    if (!input) return;
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    btn.textContent = isPassword ? '🙈' : '👁️';
+}
+
 function initUserInfo(user) {
     const firstName = user.nome?.split(' ')[0] || user.nome || '';
     document.getElementById('welcomeText').textContent = `Ciao ${firstName}, gestisci qui i tuoi dati e ordini.`;

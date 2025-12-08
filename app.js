@@ -1,21 +1,28 @@
 // Variabili globali
+const productList = Array.isArray(window.products) ? window.products : [];
 let cart = [];
 let currentUser = null;
 let users = JSON.parse(localStorage.getItem('users')) || [];
-let filteredProducts = products;
+let filteredProducts = productList;
 
 // Inizializzazione
 document.addEventListener('DOMContentLoaded', function() {
     loadCart();
-    renderProducts(products);
+    if (document.getElementById('productsGrid')) {
+        renderProducts(productList);
+    }
     updateCartCount();
     checkUserStatus();
+    if (window.location.hash === '#login' && !currentUser && document.getElementById('authContainer')) {
+        openAuth();
+    }
 });
 
 // ==================== GESTIONE PRODOTTI ====================
 
 function renderProducts(productsToRender) {
     const grid = document.getElementById('productsGrid');
+    if (!grid) return;
     grid.innerHTML = '';
 
     if (productsToRender.length === 0) {
@@ -44,7 +51,7 @@ function renderProducts(productsToRender) {
 }
 
 function viewProduct(productId) {
-    const product = products.find(p => p.id === productId);
+    const product = productList.find(p => p.id === productId);
     if (!product) return;
 
     const detailDiv = document.getElementById('productDetail');
@@ -79,7 +86,7 @@ function viewProduct(productId) {
 // ==================== CARRELLO ====================
 
 function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
+    const product = productList.find(p => p.id === productId);
     if (!product) return;
 
     const quantity = parseInt(document.getElementById('quantityInput').value) || 1;
@@ -126,15 +133,18 @@ function loadCart() {
 
 function updateCartCount() {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    document.querySelector('.cart-count').textContent = count;
+    const countEl = document.querySelector('.cart-count');
+    if (countEl) countEl.textContent = count;
 }
 
 function updateCartDisplay() {
     const cartItemsDiv = document.getElementById('cartItems');
+    if (!cartItemsDiv) return;
     
     if (cart.length === 0) {
         cartItemsDiv.innerHTML = '<p class="empty-message">Il carrello è vuoto</p>';
-        document.querySelector('.total-price').textContent = '0€';
+        const totalPrice = document.querySelector('.total-price');
+        if (totalPrice) totalPrice.textContent = '0€';
         return;
     }
 
@@ -162,19 +172,28 @@ function updateCartDisplay() {
     });
 
     cartItemsDiv.innerHTML = html;
-    document.querySelector('.total-price').textContent = total.toFixed(2) + '€';
+    const totalPrice = document.querySelector('.total-price');
+    if (totalPrice) totalPrice.textContent = total.toFixed(2) + '€';
 }
 
 // ==================== CARRELLO UI ====================
 
-document.getElementById('cartLink').addEventListener('click', function(e) {
-    e.preventDefault();
-    openCart();
-});
+const cartLink = document.getElementById('cartLink');
+if (cartLink) {
+    cartLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        openCart();
+    });
+}
 
 function openCart() {
     updateCartDisplay();
-    openModal('cartModal');
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal) {
+        openModal('cartModal');
+    } else {
+        window.location.href = 'index.html#cart';
+    }
 }
 
 function closeCart() {
@@ -210,7 +229,7 @@ function applyFilters() {
     
     document.getElementById('prezzoDisplay').textContent = filterPrezzo + '€';
 
-    filteredProducts = products.filter(product => {
+    filteredProducts = productList.filter(product => {
         const typeMatch = !filterType || product.tipo === filterType;
         const materiaMatch = !filterMateria || product.materia === filterMateria;
         const prezzoMatch = product.prezzo <= parseInt(filterPrezzo);
@@ -223,17 +242,27 @@ function applyFilters() {
 
 // ==================== AUTENTICAZIONE ====================
 
-document.getElementById('userLink').addEventListener('click', function(e) {
-    e.preventDefault();
-    if (currentUser) {
-        window.location.href = 'user-area.html';
-    } else {
-        openAuth();
-    }
-});
+const userLink = document.getElementById('userLink');
+if (userLink) {
+    userLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (currentUser) {
+            window.location.href = 'user-area.html';
+        } else if (document.getElementById('authContainer')) {
+            openAuth();
+        } else {
+            window.location.href = 'index.html#login';
+        }
+    });
+}
 
 function openAuth() {
+    const modalEl = document.getElementById('authModal');
     const container = document.getElementById('authContainer');
+    if (!modalEl || !container) {
+        window.location.href = 'index.html#login';
+        return;
+    }
     container.innerHTML = `
         <div class="auth-tabs">
             <button class="auth-tab active" onclick="switchAuthTab('login')">Accedi</button>
@@ -247,7 +276,10 @@ function openAuth() {
             </div>
             <div class="form-group">
                 <label>Password:</label>
-                <input type="password" required>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input id="loginPassword" type="password" required style="flex:1;">
+                    <button type="button" onclick="togglePassword('loginPassword', this)" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 6px; cursor: pointer;">👁️</button>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">Accedi</button>
         </form>
@@ -263,11 +295,17 @@ function openAuth() {
             </div>
             <div class="form-group">
                 <label>Password:</label>
-                <input type="password" required>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input id="registerPassword" type="password" required style="flex:1;">
+                    <button type="button" onclick="togglePassword('registerPassword', this)" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 6px; cursor: pointer;">👁️</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>Conferma Password:</label>
-                <input type="password" required>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input id="registerConfirmPassword" type="password" required style="flex:1;">
+                    <button type="button" onclick="togglePassword('registerConfirmPassword', this)" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 6px; cursor: pointer;">👁️</button>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">Registrati</button>
             <p style="font-size: 12px; color: #888; margin-top: 12px;">Ti invieremo un email di conferma</p>
@@ -284,10 +322,18 @@ function switchAuthTab(tab) {
     document.getElementById(tab + 'Form').classList.add('active');
 }
 
+function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    if (!input) return;
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    btn.textContent = isPassword ? '🙈' : '👁️';
+}
+
 function handleLogin(e) {
     e.preventDefault();
     const email = e.target.querySelector('input[type="email"]').value;
-    const password = e.target.querySelector('input[type="password"]').value;
+    const password = e.target.querySelector('#loginPassword').value;
 
     const user = users.find(u => u.email === email && u.password === password && u.verified);
     
@@ -307,8 +353,8 @@ function handleRegister(e) {
     const form = e.target;
     const nome = form.querySelector('input[type="text"]').value;
     const email = form.querySelector('input[type="email"]').value;
-    const password = form.querySelectorAll('input[type="password"]')[0].value;
-    const confirmPassword = form.querySelectorAll('input[type="password"]')[1].value;
+    const password = form.querySelector('#registerPassword').value;
+    const confirmPassword = form.querySelector('#registerConfirmPassword').value;
 
     if (password !== confirmPassword) {
         alert('❌ Le password non coincidono');
@@ -435,6 +481,7 @@ function checkUserStatus() {
 
 function updateUserLink() {
     const userLink = document.getElementById('userLink');
+    if (!userLink) return;
     if (currentUser) {
         userLink.textContent = `${currentUser.nome.split(' ')[0]} · Area personale`;
         userLink.setAttribute('href', 'user-area.html');
