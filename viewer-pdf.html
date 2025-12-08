@@ -439,16 +439,48 @@
                 document.getElementById('productName').textContent = `📄 ${product.title}`;
 
                 // Carica il PDF (usa percorso relativo con fetch per CORS)
-                const pdfPath = `PDF/${product.pdfFile || product.file}`;
-                console.log('Caricamento PDF:', pdfPath);
+                const pdfFile = product.pdfFile || product.file;
+                console.log('PDF file from product:', pdfFile);
                 
-                // Usa fetch per caricare il PDF come ArrayBuffer
-                const response = await fetch(pdfPath);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                let arrayBuffer = null;
+                let pdfPath = null;
+                
+                // Tenta diverse strade per trovare il PDF
+                const pathsToTry = [
+                    `PDF/${pdfFile}`,
+                    `/PDF/${pdfFile}`,
+                    `./PDF/${pdfFile}`,
+                    `https://sbobinamente.it/PDF/${encodeURIComponent(pdfFile)}`
+                ];
+                
+                console.log('Tentando di caricare PDF da:', pathsToTry);
+                
+                for (const path of pathsToTry) {
+                    try {
+                        console.log(`Tentativo: ${path}`);
+                        const response = await fetch(path, { 
+                            credentials: 'same-origin',
+                            mode: 'cors'
+                        });
+                        
+                        if (response.ok) {
+                            arrayBuffer = await response.arrayBuffer();
+                            pdfPath = path;
+                            console.log(`✅ PDF caricato da: ${path}, dimensione: ${arrayBuffer.byteLength} bytes`);
+                            break;
+                        } else {
+                            console.log(`❌ ${path} - Status: ${response.status}`);
+                        }
+                    } catch (error) {
+                        console.log(`❌ ${path} - Error: ${error.message}`);
+                    }
                 }
-                const arrayBuffer = await response.arrayBuffer();
-                console.log('PDF caricato, dimensione:', arrayBuffer.byteLength);
+                
+                if (!arrayBuffer) {
+                    throw new Error(`Impossibile caricare il PDF "${pdfFile}" da nessun percorso. File potrebbe non essere disponibile.`);
+                }
+                
+                console.log('PDF caricato con successo:', { pdfPath, size: arrayBuffer.byteLength });
                 
                 const pdfData = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 pdfDoc = pdfData;
