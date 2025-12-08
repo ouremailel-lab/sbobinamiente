@@ -1,11 +1,17 @@
-// Configurazione Supabase
-// Le credenziali sono state configurate automaticamente
+// Configurazione Supabase - CREDENZIALI RIMOSSE PER SICUREZZA
+// Le operazioni database ora passano attraverso Netlify Functions
 
-const SUPABASE_URL = 'https://kmfjswmlwgglytktynzp.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttZmpzd21sd2dnbHl0a3R5bnpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUxNDQ3NDgsImV4cCI6MjA4MDcyMDc0OH0.vJrV-0eUZkpwZ_VCZwLG2lT7XnJq1f68oriCiiNrUjE';
+// ⚠️ NON USARE PIÙ QUESTO CLIENT PER SCRIVERE DATI
+// Usa invece le API functions:
+// - POST /.netlify/functions/create-order per creare ordini
+// - GET /.netlify/functions/get-user-orders?user_email=xxx per recuperare ordini
 
-// Inizializza client Supabase
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Se serve un client Supabase client-side (SOLO LETTURA), configuralo così:
+// const SUPABASE_URL = 'https://kmfjswmlwgglytktynzp.supabase.co';
+// const SUPABASE_ANON_KEY = 'la_tua_anon_key'; // Ma configura RLS su Supabase!
 
-// Export per uso in altri file
-window.supabaseClient = supabase;
+// Per ora, tutte le operazioni passano attraverso le Netlify Functions
+window.supabaseClient = null; // Disabilitato - usa API
+
+console.log('✅ Supabase configurato in modalità sicura (solo backend API)');
+

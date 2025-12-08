@@ -14,5 +14,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/elisaiannone/sbobinamiente.git"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
   }
 }
