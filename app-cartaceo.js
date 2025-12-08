@@ -626,7 +626,7 @@ function processOrderDirect(orderData) {
     cart.forEach(item => {
         if (item.tipo === 'digitale' && item.pdfFile) {
             const password = generateRandomPassword();
-            const viewerUrl = `${window.location.origin}${window.location.pathname.replace('cartaceo.html', '')}viewer-pdf.html?order=${order.id}&pwd=${password}&product=${item.id}`;
+            const viewerUrl = `viewer-pdf.html?order=${order.id}&pwd=${password}&product=${item.id}`;
             
             digitalsAccess.push({
                 orderId: order.id,
