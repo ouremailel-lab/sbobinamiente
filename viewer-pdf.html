@@ -712,11 +712,15 @@
                 document.getElementById('nextBtn').disabled = pageNum >= totalPages;
                 
                 // Se è preview e siamo all'ultima pagina, mostra il popup CTA
-                if (isPreview && pageNum >= totalPages) {
+                console.log('Preview check:', { isPreview, pageNum, totalPages, MAX_PREVIEW_PAGES, productId });
+                if (isPreview && pageNum === MAX_PREVIEW_PAGES) {
+                    console.log('Condizioni met per mostrare popup! Cercando prodotto...');
                     // Aggiungi il prodotto al carrello automaticamente
                     const product = window.productsData.find(p => p.id == productId);
+                    console.log('Prodotto trovato:', product);
                     if (product && !window.popupShown) {
                         window.popupShown = true; // Evita di mostrare il popup multiple volte
+                        console.log('Mostrando popup per:', product.title);
                         
                         let cart = JSON.parse(localStorage.getItem('cart')) || [];
                         const existingItem = cart.find(item => item.id == productId);
@@ -731,10 +735,16 @@
                                 quantity: 1
                             });
                             localStorage.setItem('cart', JSON.stringify(cart));
+                            console.log('Prodotto aggiunto al carrello');
                         }
                         
                         // Mostra il popup
                         showCheckoutPopup(product.title);
+                    } else {
+                        console.log('Popup NON mostrato. Motivo:', { 
+                            productFound: !!product,
+                            popupAlreadyShown: window.popupShown
+                        });
                     }
                     document.getElementById('ctaContainer').innerHTML = '';
                 } else {
