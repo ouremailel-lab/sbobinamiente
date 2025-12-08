@@ -388,8 +388,11 @@
         const orderId = urlParams.get('order');
         const password = urlParams.get('pwd');
         const productId = urlParams.get('product');
+        const isPreview = urlParams.get('preview') === 'true';
 
-        if (!orderId || !password || !productId) {
+        if (!productId) {
+            showError('Link di accesso non valido. ID prodotto mancante.');
+        } else if (!isPreview && (!orderId || !password)) {
             showError('Link di accesso non valido. Parametri mancanti.');
         } else {
             loadPDF();
@@ -397,31 +400,39 @@
 
         async function loadPDF() {
             try {
-                console.log('Parametri viewer:', { orderId, productId, password });
+                console.log('Parametri viewer:', { orderId, productId, password, isPreview });
                 
-                // Carica dati ordini
-                const orders = JSON.parse(localStorage.getItem('orders')) || [];
-                const order = orders.find(o => o.id == orderId || o.order_id == orderId);
-
-                console.log('Ordini trovati:', orders.length);
-                console.log('Ordine corrente:', order);
-
                 let product = null;
                 
-                if (order) {
-                    currentOrderId = orderId;
-                    // Trova il prodotto nell'ordine
-                    product = order.items?.find(item => item.id == productId || item.productId == productId);
-                    console.log('Prodotto nell\'ordine:', product);
-                }
-                
-                // Fallback: carica dal catalogo prodotti se non trovato nell'ordine
-                if (!product) {
-                    console.log('Prodotto non trovato nell\'ordine, cerco nel catalogo...');
-                    // Carica products-data.js se disponibile
+                // Se è preview, carica direttamente dal catalogo
+                if (isPreview) {
+                    console.log('Modalità preview - carico dal catalogo');
                     if (typeof products !== 'undefined') {
                         product = products.find(p => p.id == productId);
-                        console.log('Prodotto dal catalogo:', product);
+                        console.log('Prodotto dal catalogo (preview):', product);
+                    }
+                } else {
+                    // Carica dati ordini per accesso protetto
+                    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    const order = orders.find(o => o.id == orderId || o.order_id == orderId);
+
+                    console.log('Ordini trovati:', orders.length);
+                    console.log('Ordine corrente:', order);
+
+                    if (order) {
+                        currentOrderId = orderId;
+                        // Trova il prodotto nell'ordine
+                        product = order.items?.find(item => item.id == productId || item.productId == productId);
+                        console.log('Prodotto nell\'ordine:', product);
+                    }
+                    
+                    // Fallback: carica dal catalogo prodotti se non trovato nell'ordine
+                    if (!product) {
+                        console.log('Prodotto non trovato nell\'ordine, cerco nel catalogo...');
+                        if (typeof products !== 'undefined') {
+                            product = products.find(p => p.id == productId);
+                            console.log('Prodotto dal catalogo (fallback):', product);
+                        }
                     }
                 }
 
@@ -473,6 +484,7 @@
 
         function createViewerUI() {
             const container = document.getElementById('viewerContainer');
+            const previewLabel = isPreview ? ' (Anteprima)' : '';
             container.innerHTML = `
                 <div class="pdf-viewer">
                     <div class="controls">
