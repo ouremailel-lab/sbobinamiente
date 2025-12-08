@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacchetti Premium - SbobinaMente</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .pacchetti-container {
+            min-height: 70vh;
+            padding: 40px 20px;
+        }
+
+        .pacchetti-title {
+            font-size: 42px;
+            color: #f5a6c9;
+            margin-bottom: 16px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .pacchetti-subtitle {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            font-size: 17px;
+            line-height: 1.7;
+            color: #334155;
+        }
+
+        .breadcrumb {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .breadcrumb a {
+            color: #f5a6c9;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .pacchetti-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pacchetto-card {
+            background: linear-gradient(135deg, #f5a6c9 0%, #fff7d1 100%);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pacchetto-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .pacchetto-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #ff6b6b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pacchetto-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .pacchetto-nome {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .pacchetto-descrizione {
+            color: #0f172a;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .pacchetto-features {
+            list-style: none;
+            margin: 16px 0;
+            padding: 0;
+        }
+
+        .pacchetto-features li {
+            color: #0f172a;
+            font-size: 13px;
+            margin-bottom: 8px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .pacchetto-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        .pacchetto-prezzo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #4a90e2;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .pacchetto-prezzo-small {
+            font-size: 13px;
+            color: #0f172a;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .pacchetto-btn {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+
+        .pacchetto-btn:hover {
+            background: #2e5ac1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #4a90e2;
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 4px;
+            color: #0f172a;
+        }
+
+        .info-box strong {
+            color: #4a90e2;
+        }
+
+        @media (max-width: 768px) {
+            .pacchetti-title {
+                font-size: 32px;
+            }
+
+            .pacchetti-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .pacchetto-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header e Navigazione -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SbobinaMente</h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="lezioni.html" class="nav-link active">Lezioni</a>
+                    <a href="chi-siamo.html" class="nav-link">Chi Siamo</a>
+                    <a href="#" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
+                    <a href="#" class="nav-link" id="userLink">Accedi</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Blocco Principale -->
+    <section class="block block-pink">
+        <div class="container pacchetti-container">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a> > <a href="lezioni.html">Lezioni</a> > Pacchetti Premium
+            </div>
+
+            <h1 class="pacchetti-title">🎁 Pacchetti Premium</h1>
+            <p class="pacchetti-subtitle">
+                Vuoi gli appunti digitali subito per iniziare a studiare ma anche la versione cartacea per lo studio offline? 
+                Perfetto! I nostri pacchetti premium includono sia il PDF protetto che la copia cartacea rilegata a casa tua!
+            </p>
+
+            <div class="info-box">
+                <strong>💡 Come funziona:</strong> Acquisti il pacchetto, ricevi subito il PDF con accesso tramite viewer protetto + la copia cartacea spedita a casa nel giro di 3-5 giorni lavorativi.
+            </div>
+
+            <div class="pacchetti-grid" id="pachettiGrid">
+                <!-- I pacchetti verranno generati da JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Blocco CTA -->
+    <section class="block block-yellow">
+        <div class="container" style="text-align:center;">
+            <h2 style="margin-bottom: 16px;">💡 Domande sui Pacchetti?</h2>
+            <p class="pacchetti-subtitle" style="margin-bottom: 22px;">Scrivici per info su tempi di consegna, varianti o esigenze speciali!</p>
+            <a href="mailto:ouremailel@gmail.com" class="btn btn-primary" style="padding: 14px 30px;">Contattaci</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script src="products-data.js"></script>
+    <script>
+        // Carica i dati dei pacchetti premium (combo PDF + Cartaceo)
+        const PACCHETTI_PREMIUM = [
+            {
+                id: 1001,
+                nome: "Infortuni + Malattia Professionale",
+                icon: "⚖️",
+                descrizione: "Pacchetto completo con PDF immediato e copia cartacea.",
+                features: [
+                    "✓ PDF protetto accesso immediato",
+                    "✓ Copia cartacea rilegata",
+                    "✓ Valido 1 anno",
+                    "✓ Supporto 24/7"
+                ],
+                prezzoDigitale: 20.00,
+                prezzoCartaceo: 25.00,
+                prezzoCombo: 40.00,
+                prodottiAssociati: [1, 2],
+                pdfFile: "01-infortuni-sul-lavoro.pdf"
+            },
+            {
+                id: 1002,
+                nome: "Invalidità e Inabilità",
+                icon: "📋",
+                descrizione: "Combo digitale+cartaceo per il tuo corso di diritto.",
+                features: [
+                    "✓ PDF protetto accesso immediato",
+                    "✓ Copia cartacea rilegata",
+                    "✓ Valido 1 anno",
+                    "✓ Supporto 24/7"
+                ],
+                prezzoDigitale: 18.00,
+                prezzoCartaceo: 22.00,
+                prezzoCombo: 35.00,
+                prodottiAssociati: [3, 4],
+                pdfFile: "02-invalidita-inabilita.pdf"
+            },
+            {
+                id: 1003,
+                nome: "Pensione e Diritti",
+                icon: "🏦",
+                descrizione: "Appunti completi in formato digitale e cartaceo.",
+                features: [
+                    "✓ PDF protetto accesso immediato",
+                    "✓ Copia cartacea rilegata",
+                    "✓ Valido 1 anno",
+                    "✓ Supporto 24/7"
+                ],
+                prezzoDigitale: 22.00,
+                prezzoCartaceo: 28.00,
+                prezzoCombo: 42.00,
+                prodottiAssociati: [5, 6],
+                pdfFile: "03-pensione.pdf"
+            },
+            {
+                id: 1004,
+                nome: "Disoccupazione e Sussidi",
+                icon: "💼",
+                descrizione: "Guida completa in formato ibrido per studiare sempre.",
+                features: [
+                    "✓ PDF protetto accesso immediato",
+                    "✓ Copia cartacea rilegata",
+                    "✓ Valido 1 anno",
+                    "✓ Supporto 24/7"
+                ],
+                prezzoDigitale: 20.00,
+                prezzoCartaceo: 26.00,
+                prezzoCombo: 38.00,
+                prodottiAssociati: [7, 8],
+                pdfFile: "04-disoccupazione.pdf"
+            }
+        ];
+
+        // Genera i pacchetti premium
+        function renderPacchetti() {
+            const grid = document.getElementById('pachettiGrid');
+            grid.innerHTML = PACCHETTI_PREMIUM.map(p => `
+                <div class="pacchetto-card">
+                    <div class="pacchetto-badge">RISPARMIA!</div>
+                    <div class="pacchetto-icon">${p.icon}</div>
+                    <h3 class="pacchetto-nome">${p.nome}</h3>
+                    <p class="pacchetto-descrizione">${p.descrizione}</p>
+                    <ul class="pacchetto-features">
+                        ${p.features.map(f => `<li>${f}</li>`).join('')}
+                    </ul>
+                    <div class="pacchetto-prezzo-small">
+                        <span style="text-decoration: line-through; color: #888;">€${(p.prezzoDigitale + p.prezzoCartaceo).toFixed(2)}</span>
+                    </div>
+                    <div class="pacchetto-prezzo">€${p.prezzoCombo.toFixed(2)}</div>
+                    <button class="pacchetto-btn" onclick="aggiungiAlCarrelloPacchetto(${p.id})">
+                        🛒 Aggiungi Pacchetto
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Aggiungi il pacchetto al carrello
+        function aggiungiAlCarrelloPacchetto(pacchettId) {
+            const pacchetto = PACCHETTI_PREMIUM.find(p => p.id === pacchettId);
+            
+            if (!pacchetto) {
+                alert('Pacchetto non trovato');
+                return;
+            }
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Aggiungi sia il PDF che il Cartaceo
+            const itemDigitale = {
+                id: pacchetto.prodottiAssociati[0],
+                title: pacchetto.nome + " (PDF)",
+                tipo: "digitale",
+                prezzo: pacchetto.prezzoDigitale,
+                pdfFile: pacchetto.pdfFile,
+                quantity: 1
+            };
+
+            const itemCartaceo = {
+                id: pacchetto.prodottiAssociati[1],
+                title: pacchetto.nome + " (Cartaceo)",
+                tipo: "fisico",
+                prezzo: pacchetto.prezzoCartaceo,
+                quantity: 1
+            };
+
+            // Controlla se già nel carrello
+            const existingDigitale = cart.find(item => item.id == itemDigitale.id);
+            const existingCartaceo = cart.find(item => item.id == itemCartaceo.id);
+
+            if (!existingDigitale) cart.push(itemDigitale);
+            if (!existingCartaceo) cart.push(itemCartaceo);
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Aggiorna il counter del carrello
+            const cartCount = document.querySelector('.cart-count');
+            if (cartCount) {
+                const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+                cartCount.textContent = totalItems;
+            }
+
+            alert(`✅ Pacchetto "${pacchetto.nome}" aggiunto al carrello!`);
+        }
+
+        // Inizializza
+        renderPacchetti();
+
+        // Carica il conteggio del carrello
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            document.querySelector('.cart-count').textContent = totalItems;
+        }
+
+        updateCartCount();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
