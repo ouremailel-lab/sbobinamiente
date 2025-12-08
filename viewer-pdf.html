@@ -239,7 +239,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* POPUP MODAL STYLES */
+        /* POPUP MODAL */
         .checkout-modal {
             display: none !important;
             position: fixed;
@@ -314,7 +314,6 @@
         .checkout-btn-primary {
             background-color: #4a90e2;
             color: white;
-            flex: 1;
             min-width: 140px;
         }
 
@@ -332,7 +331,6 @@
 
         .checkout-btn-secondary:hover {
             background-color: white;
-            border-color: #f5a6c9;
         }
 
         .close-modal-btn {
@@ -562,10 +560,10 @@
                 document.getElementById('prevBtn').disabled = pageNum <= 1;
                 document.getElementById('nextBtn').disabled = pageNum >= totalPages;
                 
-                // MOSTRA POPUP SULLA PAGINA 3
+                // MOSTRA POPUP SULLA PAGINA 3 IN PREVIEW
                 if (isPreview && pageNum === MAX_PREVIEW_PAGES && !window.popupShown) {
                     window.popupShown = true;
-                    console.log('🔥 MOSTRANDO POPUP SULLA PAGINA 3!');
+                    console.log('🔥 POPUP ATTIVATO PAGINA 3');
                     
                     if (window.currentProduct) {
                         let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -607,7 +605,7 @@
 
         // POPUP FUNCTIONS
         function showCheckoutPopup(productTitle) {
-            console.log('✅ Popup - Titolo:', productTitle);
+            console.log('✅ showCheckoutPopup:', productTitle);
             const modal = document.getElementById('checkoutModal');
             document.getElementById('checkoutProductName').textContent = productTitle;
             modal.classList.add('show');
