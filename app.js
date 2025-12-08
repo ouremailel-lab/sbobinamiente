@@ -437,13 +437,13 @@ async function saveUserToSupabase(user) {
 async function saveOrderToSupabase(order) {
     try {
         const orderData = {
-            order_id: 'ORD-' + order.id,
-            user_name: order.user?.nome || order.deliveryInfo?.nome || 'Cliente',
-            user_email: order.user?.email || order.deliveryInfo?.email || '',
+            order_id: order.order_id || 'ORD-' + order.id,
+            user_name: order.user_name || order.user?.nome || order.deliveryInfo?.nome || 'Cliente',
+            user_email: order.user_email || order.user?.email || order.deliveryInfo?.email || '',
             items: order.items,
             total: order.total,
-            delivery_info: order.deliveryInfo,
-            order_date: order.orderDate,
+            delivery_info: order.deliveryInfo || order.delivery_info,
+            order_date: order.order_date || order.orderDate,
             status: order.status
         };
         
@@ -538,11 +538,16 @@ function processOrderDirect(orderData) {
     // Crea l'ordine completato
     const order = {
         id: Date.now(),
+        order_id: 'ORD-' + Date.now(),
         user: currentUser,
+        user_email: currentUser.email,
+        user_name: currentUser.nome,
         items: cart,
         total: parseFloat(orderData.total),
         deliveryInfo: orderData.customerInfo,
+        delivery_info: orderData.customerInfo,
         orderDate: new Date().toISOString(),
+        order_date: new Date().toISOString(),
         status: 'pagato',
         paymentMethod: 'paypal_test'
     };
@@ -689,7 +694,10 @@ function processOrder() {
     const formElements = document.getElementById('checkoutForm').elements;
     const order = {
         id: Date.now(),
+        order_id: 'ORD-' + Date.now(),
         user: currentUser,
+        user_email: currentUser.email,
+        user_name: currentUser.nome,
         items: cart,
         total: cart.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0),
         deliveryInfo: {
@@ -699,7 +707,15 @@ function processOrder() {
             città: formElements[3].value,
             cap: formElements[4].value
         },
+        delivery_info: {
+            nome: formElements[0].value,
+            email: formElements[1].value,
+            indirizzo: formElements[2].value,
+            città: formElements[3].value,
+            cap: formElements[4].value
+        },
         orderDate: new Date().toISOString(),
+        order_date: new Date().toISOString(),
         status: 'completato'
     };
 

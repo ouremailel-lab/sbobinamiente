@@ -21,7 +21,10 @@ function handlePayPalSuccess() {
     // Crea l'ordine completato
     const order = {
         id: Date.now(),
+        order_id: 'ORD-' + Date.now(),
         user: currentUser,
+        user_email: currentUser?.email,
+        user_name: currentUser?.nome,
         items: cart.filter(item => {
             // Trova il prodotto completo
             return products.find(p => p.id === item.id);
@@ -34,7 +37,9 @@ function handlePayPalSuccess() {
         }),
         total: parseFloat(pendingOrder.total),
         deliveryInfo: pendingOrder.customerInfo,
+        delivery_info: pendingOrder.customerInfo,
         orderDate: new Date().toISOString(),
+        order_date: new Date().toISOString(),
         status: 'pagato',
         paymentMethod: 'paypal'
     };

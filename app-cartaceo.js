@@ -597,11 +597,16 @@ window.onclick = function(event) {
 function processOrderDirect(orderData) {
     const order = {
         id: Date.now(),
+        order_id: 'ORD-' + Date.now(),
         user: currentUser,
+        user_email: currentUser?.email,
+        user_name: currentUser?.nome,
         items: cart,
         total: parseFloat(orderData.total),
         deliveryInfo: orderData.customerInfo,
+        delivery_info: orderData.customerInfo,
         orderDate: new Date().toISOString(),
+        order_date: new Date().toISOString(),
         status: 'pagato',
         paymentMethod: 'paypal_test'
     };
