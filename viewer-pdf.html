@@ -499,14 +499,7 @@
                             <p>Rendering pagina...</p>
                         </div>
                     </div>
-                    ${isPreview ? `
-                    <div style="background: linear-gradient(135deg, #f5a6c9 0%, #fff7d1 100%); padding: 20px; text-align: center; border-top: 2px solid #f5a6c9;">
-                        <p style="margin: 0 0 12px 0; font-size: 14px; color: #0f172a; font-weight: 600;">Dai mi pare abbastanza, adesso compra! 🎉</p>
-                        <button onclick="addToCartAndRedirect(${productId})" style="background: #4a90e2; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; transition: all 0.2s;">
-                            🛒 Aggiungi al Carrello
-                        </button>
-                    </div>
-                    ` : ''}
+                    <div id="ctaContainer"></div>
                     <div class="access-info">
                         ${isPreview ? 
                             `👁️ ANTEPRIMA (${MAX_PREVIEW_PAGES} pagine) | Acquista per il documento completo` :
@@ -558,6 +551,21 @@
                 document.getElementById('currentPage').textContent = pageNum;
                 document.getElementById('prevBtn').disabled = pageNum <= 1;
                 document.getElementById('nextBtn').disabled = pageNum >= totalPages;
+                
+                // Se è preview e siamo all'ultima pagina, mostra il CTA
+                if (isPreview && pageNum >= totalPages) {
+                    const ctaContainer = document.getElementById('ctaContainer');
+                    ctaContainer.innerHTML = `
+                        <div style="background: linear-gradient(135deg, #f5a6c9 0%, #fff7d1 100%); padding: 20px; text-align: center; border-top: 2px solid #f5a6c9; margin-top: 20px;">
+                            <p style="margin: 0 0 12px 0; font-size: 14px; color: #0f172a; font-weight: 600;">Dai mi pare abbastanza, adesso compra! 🎉</p>
+                            <button onclick="addToCartAndRedirect(${productId})" style="background: #4a90e2; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; transition: all 0.2s;">
+                                🛒 Aggiungi al Carrello
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('ctaContainer').innerHTML = '';
+                }
             } catch (error) {
                 console.error('Errore rendering:', error);
             }
