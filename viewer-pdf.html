@@ -438,10 +438,19 @@
                 // Aggiorna il nome del prodotto
                 document.getElementById('productName').textContent = `📄 ${product.title}`;
 
-                // Carica il PDF (usa percorso relativo)
+                // Carica il PDF (usa percorso relativo con fetch per CORS)
                 const pdfPath = `PDF/${product.pdfFile || product.file}`;
                 console.log('Caricamento PDF:', pdfPath);
-                const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
+                
+                // Usa fetch per caricare il PDF come ArrayBuffer
+                const response = await fetch(pdfPath);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const arrayBuffer = await response.arrayBuffer();
+                console.log('PDF caricato, dimensione:', arrayBuffer.byteLength);
+                
+                const pdfData = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 pdfDoc = pdfData;
                 totalPages = pdfDoc.numPages;
 
