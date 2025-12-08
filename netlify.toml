@@ -3,6 +3,12 @@
   publish = "."
 
 [[redirects]]
+  from = "/PDF/*"
+  to = "/PDF/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "index.html"
   status = 200
