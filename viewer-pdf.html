@@ -499,6 +499,14 @@
                             <p>Rendering pagina...</p>
                         </div>
                     </div>
+                    ${isPreview ? `
+                    <div style="background: linear-gradient(135deg, #f5a6c9 0%, #fff7d1 100%); padding: 20px; text-align: center; border-top: 2px solid #f5a6c9;">
+                        <p style="margin: 0 0 12px 0; font-size: 14px; color: #0f172a; font-weight: 600;">Dai mi pare abbastanza, adesso compra! 🎉</p>
+                        <button onclick="addToCartAndRedirect(${productId})" style="background: #4a90e2; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 16px; transition: all 0.2s;">
+                            🛒 Aggiungi al Carrello
+                        </button>
+                    </div>
+                    ` : ''}
                     <div class="access-info">
                         ${isPreview ? 
                             `👁️ ANTEPRIMA (${MAX_PREVIEW_PAGES} pagine) | Acquista per il documento completo` :
@@ -566,6 +574,58 @@
         function previousPage() {
             if (currentPage > 1) {
                 renderPage(currentPage - 1);
+            }
+        }
+
+        function addToCartAndRedirect(productId) {
+            try {
+                // Carica il carrello attuale
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                
+                // Trova il prodotto dal catalogo
+                let product = null;
+                if (typeof products !== 'undefined') {
+                    product = products.find(p => p.id == productId);
+                }
+                
+                if (!product) {
+                    alert('Errore: Prodotto non trovato.');
+                    return;
+                }
+                
+                // Controlla se è già nel carrello
+                const existingItem = cart.find(item => item.id == productId);
+                if (existingItem) {
+                    existingItem.quantity = (existingItem.quantity || 1) + 1;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        title: product.title,
+                        prezzo: product.prezzo,
+                        tipo: product.tipo,
+                        pdfFile: product.pdfFile,
+                        quantity: 1
+                    });
+                }
+                
+                // Salva il carrello
+                localStorage.setItem('cart', JSON.stringify(cart));
+                
+                // Aggiorna il counter del carrello se esiste
+                const cartCount = document.querySelector('.cart-count');
+                if (cartCount) {
+                    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+                    cartCount.textContent = totalItems;
+                }
+                
+                // Mostra un messaggio di conferma
+                alert(`✅ "${product.title}" aggiunto al carrello!`);
+                
+                // Reindirizza al carrello
+                window.location.href = 'cartaceo.html';
+            } catch (error) {
+                console.error('Errore aggiunta carrello:', error);
+                alert('Errore nell\'aggiunta al carrello. Riprova.');
             }
         }
 
