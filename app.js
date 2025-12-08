@@ -226,7 +226,7 @@ function applyFilters() {
 document.getElementById('userLink').addEventListener('click', function(e) {
     e.preventDefault();
     if (currentUser) {
-        logout();
+        window.location.href = 'user-area.html';
     } else {
         openAuth();
     }
@@ -436,9 +436,11 @@ function checkUserStatus() {
 function updateUserLink() {
     const userLink = document.getElementById('userLink');
     if (currentUser) {
-        userLink.textContent = `${currentUser.nome.split(' ')[0]}`;
+        userLink.textContent = `${currentUser.nome.split(' ')[0]} · Area personale`;
+        userLink.setAttribute('href', 'user-area.html');
     } else {
         userLink.textContent = 'Accedi';
+        userLink.setAttribute('href', '#');
     }
 }
 

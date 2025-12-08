@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Personale - SbobinaMente</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .user-hero { background: linear-gradient(135deg, #e3f2fd 0%, #f5a6c9 100%); padding: 60px 20px; color: #0f172a; text-align: center; }
+        .user-hero h1 { margin: 0 0 12px 0; color: #4a90e2; }
+        .user-hero p { margin: 0; font-size: 16px; }
+        .user-area-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 24px 20px; max-width: 1100px; margin: 0 auto; }
+        .user-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+        .user-card h3 { margin-top: 0; color: #0f172a; }
+        .orders-list { display: flex; flex-direction: column; gap: 12px; }
+        .order-item { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; background: #fff; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #0f172a; }
+        .order-items { margin: 8px 0 0 0; padding-left: 16px; color: #334155; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; }
+        .badge-paid { background: #e0f2fe; color: #0369a1; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .empty-state { text-align: center; padding: 24px; color: #6b7280; border: 1px dashed #e5e7eb; border-radius: 8px; background: #fff; }
+        .logout-btn { background: #ef4444; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-primary-small { background: #4a90e2; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .status { margin-top: 8px; font-size: 13px; }
+        @media (max-width: 900px) { .user-area-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1><a href="index.html" style="text-decoration: none; color: inherit;">SbobinaMente</a></h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="lezioni.html" class="nav-link">Lezioni</a>
+                    <a href="cartaceo.html" class="nav-link">Cartaceo</a>
+                    <a href="chi-siamo.html" class="nav-link">Chi Siamo</a>
+                    <a href="#" class="nav-link" id="logoutLink">Logout</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="user-hero">
+        <h1>Area Personale</h1>
+        <p id="welcomeText">Benvenuto!</p>
+    </section>
+
+    <section class="user-area-grid">
+        <div class="user-card">
+            <h3>Profilo</h3>
+            <p><strong>Nome:</strong> <span id="userName">-</span></p>
+            <p><strong>Email:</strong> <span id="userEmail">-</span></p>
+            <button class="logout-btn" id="logoutButton">Logout</button>
+        </div>
+
+        <div class="user-card">
+            <h3>Modifica Password</h3>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label>Password attuale</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Nuova password</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Conferma nuova password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn-primary-small">Aggiorna password</button>
+                <div class="status" id="passwordStatus"></div>
+            </form>
+        </div>
+
+        <div class="user-card" style="grid-column: 1 / -1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 style="margin: 0;">I tuoi ordini</h3>
+                <span id="ordersCount" style="color: #6b7280; font-size: 13px;">-</span>
+            </div>
+            <div id="ordersList" class="orders-list"></div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="email-service.js"></script>
+    <script src="user-area.js"></script>
+</body>
+</html>
