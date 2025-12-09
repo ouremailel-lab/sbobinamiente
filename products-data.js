@@ -92,6 +92,11 @@ const products = [
         dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
         pages: 60,
         pdfFile: "cost-primo-anno.pdf",
+        previewPages: [
+            "image/previews/cost-1.png",
+            "image/previews/cost-2.png",
+            "image/previews/cost-3.png"
+        ],
         categoria: "universita",
         corso: "sdsg",
         anno: 1
