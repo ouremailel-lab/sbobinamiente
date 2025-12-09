@@ -103,7 +103,7 @@ function renderProducts(productsToRender) {
                 <p class="product-materia">${product.materia.charAt(0).toUpperCase() + product.materia.slice(1)}</p>
                 <p class="product-description">${product.descrizione}</p>
                 ${previewButton}
-                <div class="product-footer">
+                <div class="product-footer" style="display: flex; flex-direction: column; gap: 12px;">
                     <span class="product-price">${product.prezzo.toFixed(2)}€</span>
                     <div style="display: flex; gap: 8px; width: 100%;">
                         <button class="add-to-cart-btn btn-small" onclick="viewProduct(${product.id})" style="flex: 1;">Dettagli</button>
