@@ -82,36 +82,6 @@ const products = [
     },
     // Prodotti Universitari - Scienze dei Servizi Giuridici
     {
-        id: 101,
-        title: "Infortuni sul Lavoro e Malattia Professionale - 1° Anno",
-        materia: "diritto",
-        tipo: "digitale",
-        prezzo: 18.00,
-        emoji: "📄",
-        descrizione: "Guida completa su infortuni e malattie professionali",
-        dettagli: "PDF protetto con schemi, esempi e casi pratici. Download immediato.",
-        pages: 45,
-        pdfFile: "01-infortuni-sul-lavoro.pdf",
-        categoria: "universita",
-        corso: "sdsg",
-        anno: 1
-    },
-    {
-        id: 102,
-        title: "Invalidità e Inabilità - 1° Anno",
-        materia: "diritto",
-        tipo: "digitale",
-        prezzo: 18.00,
-        emoji: "📄",
-        descrizione: "Guida completa su invalidità e inabilità",
-        dettagli: "PDF protetto con esempi e modulistica. Download immediato.",
-        pages: 42,
-        pdfFile: "02-invalidita-inabilita.pdf",
-        categoria: "universita",
-        corso: "sdsg",
-        anno: 1
-    },
-    {
         id: 103,
         title: "Diritto Costituzionale - 1° Anno",
         materia: "diritto",
