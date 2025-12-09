@@ -213,6 +213,133 @@
             color: #666;
         }
 
+        /* ========== POPUP MODAL ========== */
+        .checkout-modal {
+            display: none !important;
+            position: fixed;
+            z-index: 99999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .checkout-modal.show {
+            display: flex !important;
+        }
+
+        .checkout-content {
+            background: linear-gradient(135deg, #f5a6c9 0%, #fff7d1 100%);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .checkout-content h2 {
+            color: #0f172a;
+            font-size: 24px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .checkout-content p {
+            color: #0f172a;
+            font-size: 16px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .checkout-product {
+            background-color: rgba(255, 255, 255, 0.6);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 16px 0 24px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .checkout-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .checkout-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .checkout-btn-primary {
+            background-color: #4a90e2;
+            color: white;
+            min-width: 140px;
+        }
+
+        .checkout-btn-primary:hover {
+            background-color: #2e5ac1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(74, 144, 226, 0.3);
+        }
+
+        .checkout-btn-secondary {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #0f172a;
+            border: 2px solid #f5a6c9;
+        }
+
+        .checkout-btn-secondary:hover {
+            background-color: white;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-modal-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 768px) {
             .viewer-header h1 {
                 font-size: 16px;
@@ -260,13 +387,29 @@
         </div>
     </div>
 
+    <!-- POPUP MODAL -->
+    <div id="checkoutModal" class="checkout-modal">
+        <div class="checkout-content">
+            <button class="close-modal-btn" onclick="closeCheckoutModal()">✕</button>
+            <h2>🎉 Perfetto!</h2>
+            <p>Dai mi pare abbastanza, adesso compra!</p>
+            <div class="checkout-product" id="checkoutProductName">PDF Diritto Costituzionale</div>
+            <div class="checkout-buttons">
+                <a href="javascript:history.back()" class="checkout-btn checkout-btn-primary">🛒 Vai alla Pagina Prodotto</a>
+                <button class="checkout-btn checkout-btn-secondary" onclick="closeCheckoutModal()">← Continua lettura</button>
+            </div>
+        </div>
+    </div>
+
     <script src="pdf-protection.js"></script>
+    <script src="products-data.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         let pdfDoc = null;
         let currentPage = 1;
         const maxPreviewPages = 4; // Solo prime 4 pagine
+        let currentProductFile = null;
 
         // Ottieni il file PDF dal parametro URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -275,6 +418,7 @@
         if (!pdfFile) {
             document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: File PDF non specificato</p>';
         } else {
+            currentProductFile = pdfFile;
             loadPDF(pdfFile);
         }
 
@@ -335,6 +479,33 @@
                 const totalPages = Math.min(pdfDoc.numPages, maxPreviewPages);
                 document.getElementById('prevBtn').disabled = pageNum <= 1;
                 document.getElementById('nextBtn').disabled = pageNum >= totalPages;
+                
+                // MOSTRA POPUP SULLA PAGINA 3 IN ANTEPRIMA
+                if (pageNum === 3 && !window.popupShown) {
+                    window.popupShown = true;
+                    console.log('🔥 POPUP PAGINA 3 ATTIVATO');
+                    
+                    // Trova il prodotto e aggiungilo al carrello
+                    if (typeof products !== 'undefined' && currentProductFile) {
+                        const product = products.find(p => p.pdfFile === currentProductFile);
+                        if (product) {
+                            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                            if (!cart.find(item => item.id === product.id)) {
+                                cart.push({
+                                    id: product.id,
+                                    title: product.title,
+                                    prezzo: product.prezzo,
+                                    tipo: product.tipo,
+                                    pdfFile: product.pdfFile,
+                                    quantity: 1
+                                });
+                                localStorage.setItem('cart', JSON.stringify(cart));
+                                console.log('✅ Prodotto aggiunto al carrello');
+                            }
+                            showCheckoutPopup(product.title);
+                        }
+                    }
+                }
             } catch (error) {
                 console.error('Errore rendering pagina:', error);
             }
@@ -348,6 +519,24 @@
                 renderPage(newPage);
             }
         }
+
+        // ========== POPUP FUNCTIONS ==========
+        function showCheckoutPopup(productTitle) {
+            console.log('✅ showCheckoutPopup:', productTitle);
+            const modal = document.getElementById('checkoutModal');
+            document.getElementById('checkoutProductName').textContent = productTitle;
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('checkoutModal').addEventListener('click', function(event) {
+            if (event.target === this) closeCheckoutModal();
+        });
 
         // Protezione aggiuntiva per anteprima
         document.addEventListener('keydown', function(e) {
