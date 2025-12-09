@@ -243,5 +243,85 @@ function addToCartFromPage(productId) {
     alert(`✅ "${product.title}" aggiunto al carrello!`);
 }
 
+// Funzione per aggiungere rapido allo zaino (1 copia senza dialogo)
+function addToCartQuickFromPage(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) {
+        alert('Prodotto non trovato');
+        return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingItem = cart.find(item => item.id === productId);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1
+        });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Aggiorna il contatore se presente
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.textContent = count;
+    }
+
+    // Notifica discreta senza alert
+    const notification = document.createElement('div');
+    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f5a6c9; color: white; padding: 12px 16px; border-radius: 6px; font-weight: 600; z-index: 1000; animation: slideIn 0.3s ease;';
+    notification.innerHTML = `✅ "${product.title}" aggiunto allo zaino!`;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Funzione per aggiungere rapido allo zaino (1 copia senza dialogo)
+function addToCartQuickFromPage(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) {
+        alert('Prodotto non trovato');
+        return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingItem = cart.find(item => item.id === productId);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1
+        });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Aggiorna il contatore se presente
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.textContent = count;
+    }
+
+    // Notifica discreta senza alert
+    const notification = document.createElement('div');
+    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f5a6c9; color: white; padding: 12px 16px; border-radius: 6px; font-weight: 600; z-index: 1000; animation: slideIn 0.3s ease;';
+    notification.innerHTML = `✅ "${product.title}" aggiunto allo zaino!`;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
 // Esponi la variabile prodotti come globale per l'accesso dal viewer
 window.productsData = products;
