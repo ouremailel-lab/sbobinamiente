@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anteprima PDF - SbobinaMente</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #b3d9e8 0%, #b8d4c8 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-touch-callout: none;
+        }
+
+        .viewer-header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .viewer-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .preview-badge {
+            background: linear-gradient(135deg, #f5a6c9 0%, #e879a3 100%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .viewer-header-info {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+
+        .viewer-header-info .close-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .viewer-header-info .close-btn:hover {
+            background-color: #ff5252;
+        }
+
+        .viewer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .pdf-viewer {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .controls button {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .controls button:hover:not(:disabled) {
+            background-color: #3a5a85;
+        }
+
+        .controls button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 14px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .pdf-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            background-color: #f5f5f5;
+            position: relative;
+        }
+
+        .pdf-page {
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: white;
+        }
+
+        .pdf-page canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            pointer-events: none;
+        }
+
+        .pdf-page-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 60px;
+            color: rgba(200, 200, 200, 0.15);
+            font-weight: bold;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-notice {
+            background: linear-gradient(135deg, #fff7e6 0%, #ffe6f2 100%);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 12px;
+            border: 2px solid #f5a6c9;
+            text-align: center;
+        }
+
+        .preview-notice h3 {
+            color: #d64a8a;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .preview-notice p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #f5a6c9 0%, #e879a3 100%);
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 166, 201, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .viewer-header h1 {
+                font-size: 16px;
+            }
+
+            .controls {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .controls button {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="viewer-header">
+        <h1>👁️ Anteprima PDF - Prime 4 Pagine</h1>
+        <div class="viewer-header-info">
+            <span class="preview-badge">🔓 ANTEPRIMA GRATUITA</span>
+            <button class="close-btn" onclick="window.close()">✕ Chiudi</button>
+        </div>
+    </div>
+
+    <div class="preview-notice">
+        <h3>📖 Stai visualizzando un'anteprima</h3>
+        <p>Puoi sfogliare solo le prime 4 pagine. Per accedere al documento completo, acquista il PDF.</p>
+        <a href="javascript:history.back()" class="buy-btn">🛒 Torna alla pagina di acquisto</a>
+    </div>
+
+    <div class="viewer-container">
+        <div class="pdf-viewer">
+            <div class="controls">
+                <button id="prevBtn" onclick="changePage(-1)">← Precedente</button>
+                <span class="page-info">
+                    Pagina <span id="currentPage">1</span> di <span id="totalPages">4</span>
+                </span>
+                <button id="nextBtn" onclick="changePage(1)">Successiva →</button>
+            </div>
+            <div class="pdf-content" id="pdfContent">
+                <div class="loading">Caricamento anteprima...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="pdf-protection.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        let pdfDoc = null;
+        let currentPage = 1;
+        const maxPreviewPages = 4; // Solo prime 4 pagine
+
+        // Ottieni il file PDF dal parametro URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const pdfFile = urlParams.get('file');
+
+        if (!pdfFile) {
+            document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: File PDF non specificato</p>';
+        } else {
+            loadPDF(pdfFile);
+        }
+
+        async function loadPDF(fileName) {
+            try {
+                const pdfPath = `/PDF/${fileName}`;
+                
+                const loadingTask = pdfjsLib.getDocument(pdfPath);
+                pdfDoc = await loadingTask.promise;
+                
+                // Mostra solo max 4 pagine
+                const totalPages = Math.min(pdfDoc.numPages, maxPreviewPages);
+                document.getElementById('totalPages').textContent = totalPages;
+                
+                renderPage(1);
+            } catch (error) {
+                console.error('Errore caricamento PDF:', error);
+                document.getElementById('pdfContent').innerHTML = `
+                    <p style="color: red; padding: 40px;">
+                        ❌ Errore nel caricamento del PDF.<br>
+                        <small>${error.message}</small>
+                    </p>
+                `;
+            }
+        }
+
+        async function renderPage(pageNum) {
+            try {
+                const page = await pdfDoc.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 1.5 });
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'pdf-page';
+                pageDiv.appendChild(canvas);
+
+                const watermark = document.createElement('div');
+                watermark.className = 'pdf-page-watermark';
+                watermark.textContent = 'SbobinaMente';
+                pageDiv.appendChild(watermark);
+
+                const pdfContent = document.getElementById('pdfContent');
+                pdfContent.innerHTML = '';
+                pdfContent.appendChild(pageDiv);
+
+                currentPage = pageNum;
+                document.getElementById('currentPage').textContent = pageNum;
+                
+                const totalPages = Math.min(pdfDoc.numPages, maxPreviewPages);
+                document.getElementById('prevBtn').disabled = pageNum <= 1;
+                document.getElementById('nextBtn').disabled = pageNum >= totalPages;
+            } catch (error) {
+                console.error('Errore rendering pagina:', error);
+            }
+        }
+
+        function changePage(delta) {
+            const totalPages = Math.min(pdfDoc.numPages, maxPreviewPages);
+            const newPage = currentPage + delta;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                renderPage(newPage);
+            }
+        }
+
+        // Protezione aggiuntiva per anteprima
+        document.addEventListener('keydown', function(e) {
+            // Disabilita screenshot
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's' || e.key === 'P' || e.key === 'S')) {
+                e.preventDefault();
+                alert('⚠️ Questa è un\'anteprima protetta. Acquista il PDF completo per accedere a tutte le funzionalità.');
+            }
+        });
+    </script>
+</body>
+</html>

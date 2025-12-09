@@ -203,11 +203,17 @@
             yearProducts.forEach(product => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
+                
+                const previewButton = product.pdfFile 
+                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="window.open('viewer-pdf-preview.html?file=${product.pdfFile}', '_blank')">👁️ Vedi Anteprima (4 pagine)</button>`
+                    : '';
+                
                 card.innerHTML = `
                     <div class="product-emoji">${product.emoji}</div>
                     <h3 class="product-title">${product.title}</h3>
                     <p class="product-description">${product.descrizione}</p>
                     <div style="font-size: 13px; color: #94a3b8;">📄 ${product.pages} pagine • PDF protetto</div>
+                    ${previewButton}
                     <div class="product-meta">
                         <span class="product-price">€${product.prezzo.toFixed(2)}</span>
                         <button class="btn-add-cart" onclick="addToCartFromPage(${product.id})">Aggiungi</button>
