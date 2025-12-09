@@ -26,7 +26,7 @@ function renderProducts(productsToRender) {
     grid.innerHTML = '';
 
     if (productsToRender.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #888;">Nessun prodotto trovato</p>';
+        grid.innerHTML = '';
         return;
     }
 
