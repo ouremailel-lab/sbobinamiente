@@ -210,6 +210,9 @@ document.getElementById('cartLink').addEventListener('click', function(e) {
 });
 
 function openCart() {
+    // Sincronizza il carrello con localStorage (in caso sia stato modificato da altra pagina)
+    loadCart();
+    updateCartCount();
     updateCartDisplay();
     openModal('cartModal');
 }

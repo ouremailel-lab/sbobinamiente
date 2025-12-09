@@ -220,6 +220,10 @@ if (cartLink) {
 }
 
 function openCart() {
+    // Sincronizza il carrello con localStorage (in caso sia stato modificato da altra pagina)
+    loadCart();
+    updateCartCount();
+    
     // Se il carrello è vuoto, reindirizza alla pagina del carrello vuoto
     if (cart.length === 0) {
         window.location.href = 'empty-cart.html';
