@@ -821,7 +821,19 @@ function showOrderSuccessModal(order, digitalsAccess) {
 
 function showPreview(productId) {
     const product = products.find(p => p.id === productId);
-    if (!product || !product.previewPages || product.previewPages.length === 0) {
+    if (!product) {
+        alert('Anteprima non disponibile per questo prodotto');
+        return;
+    }
+
+    // Se il prodotto ha un PDF collegato, apri lo stesso viewer usato per i PDF
+    if (product.pdfFile) {
+        const url = `viewer-pdf-preview.html?file=${encodeURIComponent(product.pdfFile)}`;
+        window.open(url, '_blank');
+        return;
+    }
+
+    if (!product.previewPages || product.previewPages.length === 0) {
         alert('Anteprima non disponibile per questo prodotto');
         return;
     }

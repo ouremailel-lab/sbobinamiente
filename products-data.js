@@ -22,6 +22,7 @@ const products = [
         descrizione: "Appunti stampati e rilegati professionalmente",
         dettagli: "Formato A4, rilega a spirale, 50 pagine a colori. Spedizione inclusa.",
         pages: 50,
+        pdfFile: "02-invalidita-inabilita.pdf",
         previewImage: "image/copia_cartacea.png",
         previewPages: [
             "image/previews/invalidita-1.png",
@@ -111,6 +112,7 @@ const products = [
         descrizione: "Appunti di Diritto Costituzionale stampati e rilegati",
         dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
         pages: 60,
+        pdfFile: "cost-primo-anno.pdf",
         previewImage: "image/copia_cartacea.png",
         previewPages: [
             "image/previews/cost-1.png",
