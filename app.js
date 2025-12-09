@@ -422,15 +422,19 @@ async function saveUserToSupabase(user) {
             registration_date: user.registrationDate
         };
         
-        const { data, error } = await window.supabaseClient
-            .from('users')
-            .insert([userData])
-            .select();
-        
-        if (error) throw error;
-        console.log('✅ Utente salvato su Supabase:', data);
+        // ⚠️ Salvataggio utenti via localStorage per ora
+        // In futuro: crea una Netlify Function per salvataggio sicuro utenti
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        const existingIndex = users.findIndex(u => u.email === userData.email);
+        if (existingIndex >= 0) {
+            users[existingIndex] = userData;
+        } else {
+            users.push(userData);
+        }
+        localStorage.setItem('users', JSON.stringify(users));
+        console.log('✅ Utente salvato su localStorage:', userData);
     } catch (error) {
-        console.error('❌ Errore salvataggio Supabase:', error);
+        console.error('❌ Errore salvataggio utente:', error);
     }
 }
 
@@ -447,20 +451,37 @@ async function saveOrderToSupabase(order) {
             status: order.status
         };
         
-        const { data, error } = await window.supabaseClient
-            .from('orders')
-            .insert([orderData])
-            .select();
-        
-        if (error) throw error;
-        console.log('✅ Ordine salvato su Supabase:', data);
+        // ✅ USA NETLIFY FUNCTION (SICURO)
+        if (window.API && window.API.createOrder) {
+            const result = await window.API.createOrder(orderData);
+            console.log('✅ Ordine salvato via API:', result.order);
+        } else {
+            // Fallback: localStorage se API non disponibile
+            console.warn('⚠️ API non disponibile, salvataggio su localStorage');
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push(orderData);
+            localStorage.setItem('orders', JSON.stringify(orders));
+        }
         
         // Invia notifica WhatsApp
         if (window.whatsappNotify) {
             await window.whatsappNotify.order(orderData);
         }
     } catch (error) {
-        console.error('❌ Errore salvataggio ordine Supabase:', error);
+        console.error('❌ Errore salvataggio ordine:', error);
+        // Fallback: salva almeno su localStorage
+        try {
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push({
+                order_id: order.order_id || 'ORD-' + order.id,
+                user_email: order.user_email || order.user?.email || order.deliveryInfo?.email || '',
+                items: order.items,
+                total: order.total
+            });
+            localStorage.setItem('orders', JSON.stringify(orders));
+        } catch (e) {
+            console.error('Errore anche fallback localStorage:', e);
+        }
     }
 }
 

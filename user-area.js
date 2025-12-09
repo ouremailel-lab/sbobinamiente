@@ -76,13 +76,8 @@ function bindPasswordForm(user) {
             const updatedUsers = users.map(u => u.email === user.email ? { ...u, password: next } : u);
             localStorage.setItem('users', JSON.stringify(updatedUsers));
 
-            // Aggiorna Supabase se disponibile
-            if (window.supabaseClient) {
-                await window.supabaseClient
-                    .from('users')
-                    .update({ password: next })
-                    .eq('email', user.email);
-            }
+            // ⚠️ Aggiornamento Supabase disabilitato (usa localStorage per ora)
+            // In futuro: crea Netlify Function per update password sicuro
 
             statusEl.style.color = '#15803d';
             statusEl.textContent = 'Password aggiornata con successo.';
@@ -102,19 +97,16 @@ async function loadOrders(user) {
 
     let merged = [];
 
-    // Prova a leggere da Supabase
+    // ✅ Prova a leggere da Netlify Function (SICURO)
     try {
-        if (window.supabaseClient) {
-            const { data, error } = await window.supabaseClient
-                .from('orders')
-                .select('*')
-                .eq('user_email', user.email)
-                .order('order_date', { ascending: false });
-            if (error) throw error;
-            if (data) merged = merged.concat(data);
+        if (window.API && window.API.getUserOrders) {
+            const result = await window.API.getUserOrders(user.email);
+            if (result.orders) {
+                merged = merged.concat(result.orders);
+            }
         }
     } catch (err) {
-        console.warn('Supabase ordini non disponibile:', err.message);
+        console.warn('Netlify API ordini non disponibile:', err.message);
     }
 
     // Fallback/local merge

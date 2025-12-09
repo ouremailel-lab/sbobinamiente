@@ -217,7 +217,8 @@
     <script src="products-data.js"></script>
     <script src="email-service.js"></script>
     
-    <!-- Funzione globale per salvare ordini -->
+    <!-- Funzione globale per salvare ordini (NETLIFY FUNCTION) -->
+    <script src="api-client.js"></script>
     <script>
         async function saveOrderToSupabase(order) {
             try {
@@ -232,20 +233,34 @@
                     status: order.status
                 };
                 
-                const { data, error } = await window.supabaseClient
-                    .from('orders')
-                    .insert([orderData])
-                    .select();
-                
-                if (error) throw error;
-                console.log('✅ Ordine salvato su Supabase:', data);
+                // ✅ USA NETLIFY FUNCTION (SICURO)
+                if (window.API && window.API.createOrder) {
+                    const result = await window.API.createOrder(orderData);
+                    console.log('✅ Ordine salvato via API:', result.order);
+                } else {
+                    throw new Error('API non disponibile');
+                }
                 
                 // Invia notifica WhatsApp
                 if (window.whatsappNotify) {
                     await window.whatsappNotify.order(orderData);
                 }
             } catch (error) {
-                console.error('❌ Errore salvataggio ordine Supabase:', error);
+                console.error('❌ Errore salvataggio ordine:', error);
+                // Fallback: localStorage
+                try {
+                    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    orders.push({
+                        order_id: 'ORD-' + order.id,
+                        user_email: order.user?.email || order.deliveryInfo?.email || '',
+                        items: order.items,
+                        total: order.total
+                    });
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                    console.log('⚠️ Ordine salvato su localStorage (fallback)');
+                } catch (e) {
+                    console.error('Errore fallback:', e);
+                }
             }
         }
         window.saveOrderToSupabase = saveOrderToSupabase;

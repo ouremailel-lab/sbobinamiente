@@ -9,3 +9,16 @@
 
 /viewer-pdf.html
   Cache-Control: no-cache
+
+/* Netlify Functions - Security Headers */
+/.netlify/functions/create-order
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/.netlify/functions/get-user-orders
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
