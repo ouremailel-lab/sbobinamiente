@@ -65,28 +65,56 @@
         <div class="container">
             <h2>I Nostri Prodotti Stampati</h2>
             
-            <!-- Filtri Cartaceo -->
-            <div class="filters">
-                <div class="filter-group">
-                    <label>Materia:</label>
-                    <select id="filterMateria" onchange="applyFilters()">
-                        <option value="">Tutte</option>
-                        <option value="diritto">Diritto</option>
-                        <option value="matematica">Matematica</option>
-                        <option value="storia">Storia</option>
-                        <option value="lingue">Lingue</option>
-                        <option value="scienze">Scienze</option>
-                    </select>
+            <!-- Breadcrumb Navigation -->
+            <div class="breadcrumb" id="breadcrumb" style="margin-bottom: 20px; color: #4a90e2; font-size: 14px;">
+                <a href="#" onclick="showCategories(); return false;" style="color: #4a90e2;">Cartacei</a>
+                <span id="breadcrumbPath"></span>
+            </div>
+
+            <!-- Categorie Principali -->
+            <div id="categoriesView" class="categories-view">
+                <div class="category-card" onclick="showUniversitaCorsi()">
+                    <span class="category-icon">🎓</span>
+                    <h3>Università</h3>
+                    <p>Appunti universitari stampati</p>
                 </div>
-                <div class="filter-group">
-                    <label>Prezzo max:</label>
-                    <input type="range" id="filterPrezzo" min="0" max="50" value="50" onchange="applyFilters()">
-                    <span id="prezzoDisplay">50€</span>
+                <div class="category-card" onclick="showGeneralProducts()">
+                    <span class="category-icon">📚</span>
+                    <h3>Generale</h3>
+                    <p>Altri appunti e materiali</p>
+                </div>
+            </div>
+
+            <!-- Corsi Universitari -->
+            <div id="universitaView" class="categories-view" style="display: none;">
+                <div class="category-card" onclick="showAnniCorso('sdsg')">
+                    <span class="category-icon">⚖️</span>
+                    <h3>Scienze dei Servizi Giuridici</h3>
+                    <p>Appunti del corso SDSG</p>
+                </div>
+            </div>
+
+            <!-- Anni del Corso -->
+            <div id="anniView" class="categories-view" style="display: none;">
+                <div class="category-card" onclick="showProductsByAnno(1)">
+                    <span class="category-icon">1️⃣</span>
+                    <h3>Primo Anno</h3>
+                    <p>Appunti primo anno</p>
+                </div>
+                <div class="category-card" onclick="showProductsByAnno(2)">
+                    <span class="category-icon">2️⃣</span>
+                    <h3>Secondo Anno</h3>
+                    <p>Appunti secondo anno</p>
+                </div>
+                <div class="category-card" onclick="showProductsByAnno(3)">
+                    <span class="category-icon">3️⃣</span>
+                    <h3>Terzo Anno</h3>
+                    <p>Appunti terzo anno</p>
                 </div>
             </div>
 
             <!-- Griglia Prodotti Cartacei -->
-            <div class="products-grid" id="productsGrid">
+            <div class="products-grid" id="productsGrid" style="display: none;">
                 <!-- I prodotti verranno inseriti via JavaScript -->
             </div>
         </div>

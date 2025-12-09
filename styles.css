@@ -1275,3 +1275,54 @@ footer {
         overflow-y: auto;
     }
 }
+
+/* ==================== NAVIGATION CATEGORIES (CARTACEO) ==================== */
+.categories-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.category-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    border-color: #4a90e2;
+    box-shadow: 0 10px 25px rgba(74, 144, 226, 0.15);
+}
+
+.category-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.category-card h3 {
+    color: #0f172a;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.category-card p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+

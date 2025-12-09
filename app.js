@@ -142,7 +142,14 @@ function updateCartDisplay() {
     if (!cartItemsDiv) return;
     
     if (cart.length === 0) {
-        cartItemsDiv.innerHTML = '<p class="empty-message">Il carrello è vuoto</p>';
+        cartItemsDiv.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 80px; margin-bottom: 20px;">🛒</div>
+                <h3 style="color: #0f172a; margin: 0 0 10px 0;">Il carrello è vuoto!</h3>
+                <p style="color: #475569; margin: 0 0 20px 0;">Non ci sono ancora appunti dentro, ma puoi rimediare...</p>
+                <a href="lezioni.html" style="background: linear-gradient(135deg, #f5a6c9 0%, #e879a3 100%); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">📚 Vai alle Lezioni</a>
+            </div>
+        `;
         const totalPrice = document.querySelector('.total-price');
         if (totalPrice) totalPrice.textContent = '0€';
         return;
@@ -224,18 +231,21 @@ function openCart() {
     loadCart();
     updateCartCount();
     
-    // Se il carrello è vuoto, reindirizza alla pagina del carrello vuoto
-    if (cart.length === 0) {
-        window.location.href = 'empty-cart.html';
-        return;
-    }
+    // Se il carrello è vuoto, apri il modal vuoto (non reindirizzare)
+    // Nota: su pacchetti-premium.html il reindirizzamento a empty-cart.html è ancora valido
+    // perché quella pagina non ha il cartModal
     
     updateCartDisplay();
     const cartModal = document.getElementById('cartModal');
     if (cartModal) {
         openModal('cartModal');
     } else {
-        window.location.href = 'index.html#cart';
+        // Se non c'è il modal (es. da pacchetti-premium.html), reindirizza
+        if (cart.length === 0) {
+            window.location.href = 'empty-cart.html';
+        } else {
+            window.location.href = 'index.html#cart';
+        }
     }
 }
 

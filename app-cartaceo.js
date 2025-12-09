@@ -3,22 +3,74 @@ let cart = [];
 let currentUser = null;
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let filteredProducts = [];
+let currentCorso = null;
 
 // Inizializzazione
 document.addEventListener('DOMContentLoaded', function() {
     loadCart();
-    filterCartaceoProducts();
+    showCategories();
     updateCartCount();
     checkUserStatus();
 });
 
-// ==================== GESTIONE PRODOTTI CARTACEI ====================
+// ==================== NAVIGAZIONE CATEGORIE ====================
 
-function filterCartaceoProducts() {
-    // Filtra solo i prodotti fisici (cartacei)
-    filteredProducts = products.filter(p => p.tipo === 'fisico');
+function showCategories() {
+    document.getElementById('categoriesView').style.display = 'grid';
+    document.getElementById('universitaView').style.display = 'none';
+    document.getElementById('anniView').style.display = 'none';
+    document.getElementById('productsGrid').style.display = 'none';
+    document.getElementById('breadcrumbPath').innerHTML = '';
+}
+
+function showUniversitaCorsi() {
+    document.getElementById('categoriesView').style.display = 'none';
+    document.getElementById('universitaView').style.display = 'grid';
+    document.getElementById('anniView').style.display = 'none';
+    document.getElementById('productsGrid').style.display = 'none';
+    document.getElementById('breadcrumbPath').innerHTML = ' > Università';
+}
+
+function showAnniCorso(corso) {
+    currentCorso = corso;
+    document.getElementById('categoriesView').style.display = 'none';
+    document.getElementById('universitaView').style.display = 'none';
+    document.getElementById('anniView').style.display = 'grid';
+    document.getElementById('productsGrid').style.display = 'none';
+    document.getElementById('breadcrumbPath').innerHTML = ' > Università > Scienze dei Servizi Giuridici';
+}
+
+function showProductsByAnno(anno) {
+    const annoText = anno === 1 ? 'Primo' : anno === 2 ? 'Secondo' : 'Terzo';
+    document.getElementById('categoriesView').style.display = 'none';
+    document.getElementById('universitaView').style.display = 'none';
+    document.getElementById('anniView').style.display = 'none';
+    document.getElementById('productsGrid').style.display = 'grid';
+    document.getElementById('breadcrumbPath').innerHTML = ` > Università > Scienze dei Servizi Giuridici > ${annoText} Anno`;
+    
+    // Filtra prodotti per anno
+    filteredProducts = products.filter(p => 
+        p.tipo === 'fisico' && 
+        p.categoria === 'universita' && 
+        p.corso === currentCorso && 
+        p.anno === anno
+    );
     renderProducts(filteredProducts);
 }
+
+function showGeneralProducts() {
+    document.getElementById('categoriesView').style.display = 'none';
+    document.getElementById('universitaView').style.display = 'none';
+    document.getElementById('anniView').style.display = 'none';
+    document.getElementById('productsGrid').style.display = 'grid';
+    document.getElementById('breadcrumbPath').innerHTML = ' > Generale';
+    
+    // Filtra prodotti generali (non universitari)
+    filteredProducts = products.filter(p => p.tipo === 'fisico' && !p.categoria);
+    renderProducts(filteredProducts);
+}
+
+// ==================== GESTIONE PRODOTTI CARTACEI ====================
 
 function renderProducts(productsToRender) {
     const grid = document.getElementById('productsGrid');
@@ -94,25 +146,6 @@ function viewProduct(productId) {
     openModal('productModal');
 }
 
-// ==================== FILTRI ====================
-
-function applyFilters() {
-    const filterMateria = document.getElementById('filterMateria').value;
-    const filterPrezzo = document.getElementById('filterPrezzo').value;
-    
-    document.getElementById('prezzoDisplay').textContent = filterPrezzo + '€';
-
-    filteredProducts = products.filter(product => {
-        const typeMatch = product.tipo === 'fisico'; // Solo cartacei
-        const materiaMatch = !filterMateria || product.materia === filterMateria;
-        const prezzoMatch = product.prezzo <= parseInt(filterPrezzo);
-        
-        return typeMatch && materiaMatch && prezzoMatch;
-    });
-
-    renderProducts(filteredProducts);
-}
-
 // ==================== CARRELLO ====================
 
 function addToCart(productId) {
@@ -170,7 +203,14 @@ function updateCartDisplay() {
     const cartItemsDiv = document.getElementById('cartItems');
     
     if (cart.length === 0) {
-        cartItemsDiv.innerHTML = '<p class="empty-message">Il carrello è vuoto</p>';
+        cartItemsDiv.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 80px; margin-bottom: 20px;">🛒</div>
+                <h3 style="color: #0f172a; margin: 0 0 10px 0;">Il carrello è vuoto!</h3>
+                <p style="color: #475569; margin: 0 0 20px 0;">Non ci sono ancora appunti dentro, ma puoi rimediare...</p>
+                <a href="lezioni.html" style="background: linear-gradient(135deg, #f5a6c9 0%, #e879a3 100%); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">📚 Vai alle Lezioni</a>
+            </div>
+        `;
         document.querySelector('.total-price').textContent = '0€';
         return;
     }
