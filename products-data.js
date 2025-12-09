@@ -112,6 +112,36 @@ const products = [
         anno: 1
     },
     {
+        id: 103,
+        title: "COST - 1° Anno",
+        materia: "diritto",
+        tipo: "digitale",
+        prezzo: 9.99,
+        emoji: "📄",
+        descrizione: "Appunti completi di Diritto Costituzionale",
+        dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
+        pages: 60,
+        pdfFile: "cost-primo-anno.pdf",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 1
+    },
+    {
+        id: 104,
+        title: "COST - 1° Anno - Appunti Stampati",
+        materia: "diritto",
+        tipo: "fisico",
+        prezzo: 22.00,
+        emoji: "📕",
+        descrizione: "Appunti di Diritto Costituzionale stampati e rilegati",
+        dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
+        pages: 60,
+        previewImage: "image/copia_cartacea.png",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 1
+    },
+    {
         id: 201,
         title: "Pensione - 2° Anno",
         materia: "diritto",
