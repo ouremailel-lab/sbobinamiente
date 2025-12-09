@@ -150,19 +150,36 @@ function updateCartDisplay() {
 
     let html = '';
     let total = 0;
+    let totalSconto = 0;
 
     cart.forEach(item => {
         const itemTotal = item.prezzo * item.quantity;
         total += itemTotal;
+        
+        // Calcola lo sconto se è un pacchetto
+        const isPackage = item.tipo === 'pacchetto' || item.sconto;
+        const itemSconto = isPackage ? (item.sconto * item.quantity) : 0;
+        totalSconto += itemSconto;
+        
+        // Crea il badge di sconto se presente
+        const scontoBadge = isPackage ? `<span style="background: #ff6b6b; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-left: 8px;">-${item.percentualeSconto}%</span>` : '';
+        
+        // Mostra dettagli dello sconto
+        const scontoDetails = isPackage ? `<div style="color: #27ae60; font-size: 13px; margin-top: 4px; font-weight: 600;">💰 Risparmi: €${(item.sconto * item.quantity).toFixed(2)}</div>` : '';
+        
         html += `
             <div class="cart-item">
                 <div class="cart-item-info">
-                    <div class="cart-item-title">${item.title}</div>
+                    <div class="cart-item-title">
+                        ${item.title}${scontoBadge}
+                    </div>
                     <div class="cart-item-price">
+                        ${isPackage ? `<span style="text-decoration: line-through; color: #999;">€${(item.prezzoOriginale * item.quantity).toFixed(2)}</span> → ` : ''}
                         ${item.prezzo.toFixed(2)}€ × <input type="number" value="${item.quantity}" min="1" 
                         onchange="updateCartQuantity(${item.id}, this.value)" style="width: 40px;">
                         = <strong>${itemTotal.toFixed(2)}€</strong>
                     </div>
+                    ${scontoDetails}
                 </div>
                 <div class="cart-item-actions">
                     <button onclick="removeFromCart(${item.id})">Rimuovi</button>
@@ -172,8 +189,24 @@ function updateCartDisplay() {
     });
 
     cartItemsDiv.innerHTML = html;
+    
+    // Aggiorna il prezzo totale
     const totalPrice = document.querySelector('.total-price');
     if (totalPrice) totalPrice.textContent = total.toFixed(2) + '€';
+    
+    // Mostra il riepilogo degli sconti se ce ne sono
+    if (totalSconto > 0) {
+        const cartElement = document.getElementById('cartModal');
+        if (cartElement) {
+            const existingDiscount = cartElement.querySelector('.cart-discount-summary');
+            if (existingDiscount) {
+                existingDiscount.innerHTML = `<div style="background: #e8f5e9; padding: 12px; border-radius: 6px; margin-bottom: 12px; border-left: 4px solid #27ae60;">
+                    <strong>💰 Sconti Totali: -€${totalSconto.toFixed(2)}</strong><br>
+                    <small>Pacchetti e offerte speciali</small>
+                </div>`;
+            }
+        }
+    }
 }
 
 // ==================== CARRELLO UI ====================

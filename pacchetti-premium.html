@@ -470,30 +470,45 @@
 
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-            // Aggiungi sia il PDF che il Cartaceo
-            const itemDigitale = {
-                id: pacchetto.prodottiAssociati[0],
-                title: pacchetto.nome + " (PDF)",
-                tipo: "digitale",
-                prezzo: pacchetto.prezzoDigitale,
-                pdfFile: pacchetto.pdfFile,
-                quantity: 1
-            };
+            // Calcola lo sconto
+            const prezzoNormale = pacchetto.prezzoDigitale + pacchetto.prezzoCartaceo;
+            const prezzoScontato = pacchetto.prezzoCombo;
+            const sconto = prezzoNormale - prezzoScontato;
+            const percentualeSconto = Math.round((sconto / prezzoNormale) * 100);
 
-            const itemCartaceo = {
-                id: pacchetto.prodottiAssociati[1],
-                title: pacchetto.nome + " (Cartaceo)",
-                tipo: "fisico",
-                prezzo: pacchetto.prezzoCartaceo,
+            // Aggiungi il pacchetto come articolo unico con informazione dello sconto
+            const itemPacchetto = {
+                id: pacchetto.id,
+                title: pacchetto.nome + " (Pacchetto Combo)",
+                tipo: "pacchetto",
+                prezzo: prezzoScontato,
+                prezzoOriginale: prezzoNormale,
+                sconto: sconto,
+                percentualeSconto: percentualeSconto,
+                pdfFile: pacchetto.pdfFile,
+                includes: [
+                    {
+                        title: pacchetto.nome + " (PDF)",
+                        tipo: "digitale",
+                        prezzo: pacchetto.prezzoDigitale
+                    },
+                    {
+                        title: pacchetto.nome + " (Cartaceo)",
+                        tipo: "fisico",
+                        prezzo: pacchetto.prezzoCartaceo
+                    }
+                ],
                 quantity: 1
             };
 
             // Controlla se già nel carrello
-            const existingDigitale = cart.find(item => item.id == itemDigitale.id);
-            const existingCartaceo = cart.find(item => item.id == itemCartaceo.id);
+            const existing = cart.find(item => item.id === itemPacchetto.id);
 
-            if (!existingDigitale) cart.push(itemDigitale);
-            if (!existingCartaceo) cart.push(itemCartaceo);
+            if (!existing) {
+                cart.push(itemPacchetto);
+            } else {
+                existing.quantity += 1;
+            }
 
             localStorage.setItem('cart', JSON.stringify(cart));
 
@@ -504,7 +519,10 @@
                 cartCount.textContent = totalItems;
             }
 
-            alert(`✅ Pacchetto "${pacchetto.nome}" aggiunto al carrello!`);
+            // Mostra notifica con dettagli dello sconto
+            const message = `✅ Pacchetto "${pacchetto.nome}" aggiunto!\n\n💰 Prezzo pacchetto: €${prezzoScontato.toFixed(2)}\n✂️ Sconto: -€${sconto.toFixed(2)} (-${percentualeSconto}%)\n📊 Prezzo singoli: €${prezzoNormale.toFixed(2)}\n\n🎉 Risparmi €${sconto.toFixed(2)} con questo pacchetto!`;
+            
+            alert(message);
         }
 
         // Inizializza
