@@ -93,6 +93,7 @@ const products = [
         dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
         pages: 60,
         pdfFile: "cost-primo-anno.pdf",
+        previewImage: "image/DIRITTO COSTITUZIONALE.png",
         previewPages: [
             "image/previews/cost-1.png",
             "image/previews/cost-2.png",
@@ -113,7 +114,7 @@ const products = [
         dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
         pages: 60,
         pdfFile: "cost-primo-anno.pdf",
-        previewImage: "image/copia_cartacea.png",
+        previewImage: "image/DIRITTO COSTITUZIONALE.png",
         previewPages: [
             "image/previews/cost-1.png",
             "image/previews/cost-2.png",
