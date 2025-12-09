@@ -281,7 +281,9 @@
         // Carica prodotti del primo anno
         document.addEventListener('DOMContentLoaded', function() {
             const grid = document.getElementById('productsGrid');
-            const yearProducts = getProductsByCategory('universita', 'sdsg', 1);
+            // Mostra solo i PDF digitali, escludendo i cartacei
+            const yearProducts = getProductsByCategory('universita', 'sdsg', 1)
+                .filter(p => p.tipo === 'digitale');
 
             if (yearProducts.length === 0) {
                 grid.innerHTML = '<div class="info-box" style="grid-column: 1/-1;"><div class="info-icon">🔒</div><p>I materiali per il primo anno non sono ancora disponibili.</p></div>';
