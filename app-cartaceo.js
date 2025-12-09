@@ -105,7 +105,10 @@ function renderProducts(productsToRender) {
                 ${previewButton}
                 <div class="product-footer">
                     <span class="product-price">${product.prezzo.toFixed(2)}€</span>
-                    <button class="add-to-cart-btn btn-small" onclick="viewProduct(${product.id})">Dettagli</button>
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <button class="add-to-cart-btn btn-small" onclick="viewProduct(${product.id})" style="flex: 1;">Dettagli</button>
+                        <button class="add-to-cart-btn btn-small" onclick="addToCartQuick(${product.id})" style="flex: 1; background: #f5a6c9; color: white; border: none;">🎒 Zaino</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -168,6 +171,26 @@ function addToCart(productId) {
     updateCartCount();
     closeProductModal();
     showNotification('Prodotto aggiunto al carrello!');
+}
+
+function addToCartQuick(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const existingItem = cart.find(item => item.id === productId);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1
+        });
+    }
+
+    saveCart();
+    updateCartCount();
+    showNotification(`✅ "${product.title}" aggiunto allo zaino!`);
 }
 
 function removeFromCart(productId) {
