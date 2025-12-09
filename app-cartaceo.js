@@ -228,8 +228,8 @@ function updateCartDisplay() {
     if (cart.length === 0) {
         cartItemsDiv.innerHTML = `
             <div style="text-align: center; padding: 40px 20px;">
-                <div style="font-size: 80px; margin-bottom: 20px;">🛒</div>
-                <h3 style="color: #0f172a; margin: 0 0 10px 0;">Il carrello è vuoto!</h3>
+                <div style="font-size: 80px; margin-bottom: 20px;">🎒</div>
+                <h3 style="color: #0f172a; margin: 0 0 10px 0;">Il tuo zaino è vuoto! Riempilo con i tuoi appunti!</h3>
                 <p style="color: #475569; margin: 0 0 20px 0;">Non ci sono ancora appunti dentro, ma puoi rimediare...</p>
                 <a href="lezioni.html" style="background: linear-gradient(135deg, #f5a6c9 0%, #e879a3 100%); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">📚 Vai alle Lezioni</a>
             </div>
@@ -286,7 +286,7 @@ function closeCart() {
 
 function proceedToCheckout() {
     if (cart.length === 0) {
-        alert('Il carrello è vuoto');
+        alert('Il tuo zaino è vuoto!');
         return;
     }
 
@@ -481,7 +481,7 @@ function submitCheckout(e) {
 
 function payWithPayPal() {
     if (cart.length === 0) {
-        alert('Il carrello è vuoto');
+        alert('Il tuo zaino è vuoto!');
         return;
     }
 
