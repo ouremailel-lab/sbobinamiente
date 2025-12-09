@@ -113,7 +113,7 @@ const products = [
     },
     {
         id: 103,
-        title: "COST - 1° Anno",
+        title: "Diritto Costituzionale - 1° Anno",
         materia: "diritto",
         tipo: "digitale",
         prezzo: 9.99,
@@ -128,7 +128,7 @@ const products = [
     },
     {
         id: 104,
-        title: "COST - 1° Anno - Appunti Stampati",
+        title: "Diritto Costituzionale - 1° Anno - Appunti Stampati",
         materia: "diritto",
         tipo: "fisico",
         prezzo: 22.00,
