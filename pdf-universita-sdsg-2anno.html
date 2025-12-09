@@ -6,55 +6,103 @@
     <title>Secondo Anno - SbobinaMente</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .anno-container {
-            min-height: 70vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+        /* Stile allineato a cartaceo/pdf */
+        .pdf-hero {
+            background: linear-gradient(135deg, #e3f2fd 0%, #fff7d1 100%);
+            padding: 90px 20px 70px;
+            text-align: center;
         }
 
-        .anno-title {
+        .pdf-hero img {
+            max-width: 640px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 30px;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .pdf-hero h2 {
             font-size: 42px;
-            color: #f5576c;
-            margin-bottom: 20px;
+            color: #4a90e2;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .pdf-hero p {
+            color: #0f172a;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .info-section {
+            background: #fff7d1;
+            padding: 70px 20px;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .info-card h3 {
+            color: #0f172a;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .info-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .products-section {
+            padding: 80px 20px;
+            background: #f8fafc;
+        }
+
+        .products-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #0f172a;
         }
 
         .breadcrumb {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 14px;
-            color: #888;
+            color: #4a90e2;
         }
 
         .breadcrumb a {
-            color: #f5576c;
+            color: #4a90e2;
             text-decoration: none;
             cursor: pointer;
+            font-weight: 700;
         }
 
         .breadcrumb a:hover {
             text-decoration: underline;
-        }
-
-        .info-box {
-            background: #f5f5f5;
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 500px;
-        }
-
-        .info-box p {
-            font-size: 16px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .info-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
         }
 
         .products-grid {
@@ -63,7 +111,7 @@
             gap: 24px;
             max-width: 1200px;
             width: 100%;
-            margin-top: 30px;
+            margin: 30px auto 0;
         }
 
         .product-card {
@@ -77,8 +125,8 @@
 
         .product-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(245, 87, 108, 0.2);
-            border-color: #f5576c;
+            box-shadow: 0 8px 16px rgba(74, 144, 226, 0.2);
+            border-color: #4a90e2;
         }
 
         .product-emoji {
@@ -112,12 +160,12 @@
         .product-price {
             font-size: 20px;
             font-weight: 800;
-            color: #f5576c;
+            color: #4a90e2;
         }
 
         .btn-add-cart {
             padding: 8px 16px;
-            background: #f5576c;
+            background: #4a90e2;
             color: white;
             border: none;
             border-radius: 6px;
@@ -127,17 +175,21 @@
         }
 
         .btn-add-cart:hover {
-            background: #e04455;
+            background: #3a78c0;
             transform: scale(1.05);
         }
 
         @media (max-width: 768px) {
-            .anno-title {
+            .pdf-hero {
+                padding: 60px 16px 50px;
+            }
+
+            .pdf-hero h2 {
                 font-size: 32px;
             }
 
-            .info-box {
-                padding: 30px 20px;
+            .products-section {
+                padding: 60px 16px;
             }
 
             .products-grid {
@@ -166,20 +218,55 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="anno-container">
-        <div class="breadcrumb">
-            <a href="lezioni.html">Lezioni</a> > 
-            <a href="pdf-lezioni.html">PDF</a> > 
-            <a href="pdf-universita.html">Università</a> > 
-            <a href="pdf-universita-sdsg.html">Scienze dei Servizi Giuridici</a> > 
-            <span>Secondo Anno</span>
+    <!-- Hero Section -->
+    <section class="hero pdf-hero">
+        <div class="container">
+            <div class="hero-content">
+                <img src="image/copia_cartacea.png" alt="Secondo Anno SDSG" loading="lazy">
+                <h2>📚 Secondo Anno</h2>
+                <p>Appunti universitari in PDF protetti con anteprima gratuita.</p>
+            </div>
         </div>
+    </section>
 
-        <h1 class="anno-title">📚 Secondo Anno</h1>
+    <!-- Info Section -->
+    <section class="info-section">
+        <div class="container">
+            <div class="info-cards">
+                <div class="info-card">
+                    <span class="info-icon">⚡️</span>
+                    <h3>Download Immediato</h3>
+                    <p>Scarica i PDF subito dopo l'acquisto.</p>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">👁️</span>
+                    <h3>Anteprima 4 pagine</h3>
+                    <p>Prova gratis le prime pagine prima di comprare.</p>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">🔒</span>
+                    <h3>Protezione Attiva</h3>
+                    <p>Watermark e blocco download per tutelare i contenuti.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <div class="products-grid" id="productsGrid"></div>
-    </div>
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <h2>PDF Secondo Anno</h2>
+            <div class="breadcrumb">
+                <a href="lezioni.html">Lezioni</a> > 
+                <a href="pdf-lezioni.html">PDF</a> > 
+                <a href="pdf-universita.html">Universita</a> > 
+                <a href="pdf-universita-sdsg.html">Scienze dei Servizi Giuridici</a> > 
+                <span>Secondo Anno</span>
+            </div>
+
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">

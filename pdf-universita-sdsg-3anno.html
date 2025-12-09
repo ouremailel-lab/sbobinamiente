@@ -6,80 +6,151 @@
     <title>Terzo Anno - SbobinaMente</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* Stile allineato a cartaceo/pdf */
+        .pdf-hero {
+            background: linear-gradient(135deg, #e3f2fd 0%, #fff7d1 100%);
+            padding: 90px 20px 70px;
+            text-align: center;
+        }
+
+        .pdf-hero img {
+            max-width: 640px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 30px;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .pdf-hero h2 {
+            font-size: 42px;
+            color: #4a90e2;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .pdf-hero p {
+            color: #0f172a;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .info-section {
+            background: #fff7d1;
+            padding: 70px 20px;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .info-card h3 {
+            color: #0f172a;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .info-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .products-section {
+            padding: 80px 20px;
+            background: #f8fafc;
+        }
+
+        .products-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #0f172a;
+        }
+
         .breadcrumb {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 14px;
-            color: #0f172a;
+            color: #4a90e2;
         }
 
         .breadcrumb a {
             color: #4a90e2;
             text-decoration: none;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .breadcrumb a:hover {
             text-decoration: underline;
         }
 
-        .anno-header {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .anno-title {
-            font-size: 42px;
-            margin-bottom: 20px;
-            font-weight: 800;
-        }
-
-        .pdf-grid {
+        .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
             max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
+            margin: 30px auto 0;
         }
 
-        .pdf-card {
+        .product-card {
             background: white;
-            border: 2px solid #f5a6c9;
+            border: 2px solid #e5e7eb;
             border-radius: 12px;
-            padding: 25px;
+            padding: 20px;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(245, 166, 201, 0.2);
+            cursor: pointer;
         }
 
-        .pdf-card:hover {
+        .product-card:hover {
             border-color: #4a90e2;
             box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
             transform: translateY(-3px);
         }
 
-        .pdf-icon {
+        .product-emoji {
             font-size: 48px;
             margin-bottom: 15px;
         }
 
-        .pdf-title {
+        .product-title {
             font-size: 18px;
             font-weight: 700;
             color: #0f172a;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             line-height: 1.4;
         }
 
-        .pdf-price {
+        .product-price {
             font-size: 24px;
             font-weight: 700;
-            color: #f5a6c9;
-            margin-bottom: 15px;
+            color: #4a90e2;
+            margin-bottom: 12px;
         }
 
-        .pdf-actions {
+        .product-actions {
             display: flex;
             gap: 10px;
             flex-direction: column;
@@ -97,20 +168,20 @@
         }
 
         @media (max-width: 768px) {
-            .anno-title {
+            .pdf-hero {
+                padding: 60px 16px 50px;
+            }
+
+            .pdf-hero h2 {
                 font-size: 32px;
             }
 
-            .pdf-grid {
+            .products-section {
+                padding: 60px 16px;
+            }
+
+            .products-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .pdf-card {
-                padding: 20px;
-            }
-
-            .pdf-title {
-                font-size: 16px;
             }
         }
     </style>
@@ -135,29 +206,53 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <!-- Blocco Rosa: Breadcrumb e Titolo -->
-    <section class="block block-pink">
+    <!-- Hero Section -->
+    <section class="hero pdf-hero">
         <div class="container">
-            <div class="breadcrumb">
-                <a href="lezioni.html">Lezioni</a> > 
-                <a href="pdf-lezioni.html">PDF</a> > 
-                <a href="pdf-universita.html">Università</a> > 
-                <a href="pdf-universita-sdsg.html">Scienze dei Servizi Giuridici</a> > 
-                <span>Terzo Anno</span>
-            </div>
-
-            <div class="anno-header">
-                <h1 class="anno-title" style="color: #4a90e2;">📚 Terzo Anno - Lezioni</h1>
-                <p style="color: #0f172a; font-size: 18px; font-weight: 500;">Scarica i tuoi PDF o ricevili via email</p>
+            <div class="hero-content">
+                <img src="image/copia_cartacea.png" alt="Terzo Anno SDSG" loading="lazy">
+                <h2>📚 Terzo Anno</h2>
+                <p>Appunti universitari in PDF protetti con anteprima gratuita.</p>
             </div>
         </div>
     </section>
 
-    <!-- Blocco Azzurro: Griglia PDF -->
-    <section class="block block-blue">
+    <!-- Info Section -->
+    <section class="info-section">
         <div class="container">
-            <div class="pdf-grid" id="pdfGrid">
+            <div class="info-cards">
+                <div class="info-card">
+                    <span class="info-icon">⚡️</span>
+                    <h3>Download Immediato</h3>
+                    <p>Scarica i PDF subito dopo l'acquisto.</p>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">👁️</span>
+                    <h3>Anteprima 4 pagine</h3>
+                    <p>Prova gratis le prime pagine prima di comprare.</p>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">🔒</span>
+                    <h3>Protezione Attiva</h3>
+                    <p>Watermark e blocco download per tutelare i contenuti.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <h2>PDF Terzo Anno</h2>
+            <div class="breadcrumb">
+                <a href="lezioni.html">Lezioni</a> > 
+                <a href="pdf-lezioni.html">PDF</a> > 
+                <a href="pdf-universita.html">Universita</a> > 
+                <a href="pdf-universita-sdsg.html">Scienze dei Servizi Giuridici</a> > 
+                <span>Terzo Anno</span>
+            </div>
+
+            <div class="products-grid" id="pdfGrid">
                 <!-- I PDF verranno caricati qui dinamicamente -->
             </div>
         </div>
@@ -194,13 +289,13 @@
 
             grid.innerHTML = yearProducts.map(product => {
                 return `
-                <div class="pdf-card">
-                    <div class="pdf-icon">${product.emoji}</div>
-                    <h3 class="pdf-title">${product.title}</h3>
-                    <div class="pdf-price">€${product.prezzo.toFixed(2)}</div>
+                <div class="product-card">
+                    <div class="product-emoji">${product.emoji}</div>
+                    <h3 class="product-title">${product.title}</h3>
+                    <div class="product-price">€${product.prezzo.toFixed(2)}</div>
                     <p style="font-size: 13px; color: #64748b; margin: 10px 0;">📄 ${product.pages} pagine • PDF protetto</p>
                     <p style="font-size: 12px; color: #999; margin: 8px 0; font-style: italic;">${product.descrizione}</p>
-                    <div class="pdf-actions">
+                    <div class="product-actions">
                         <button onclick="addToCartFromPage(${product.id})" class="pdf-btn pdf-buy-btn" style="background: #4a90e2; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
                             🛒 Aggiungi al carrello
                         </button>
@@ -209,7 +304,7 @@
                         </button>
                     </div>
                 </div>
-            `}).join('');
+            `;}).join('');
         });
     </script>
 </body>

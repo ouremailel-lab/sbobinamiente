@@ -6,100 +6,120 @@
     <title>Scienze dei Servizi Giuridici - SbobinaMente</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .sdsg-container {
-            min-height: 70vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+        /* Stile allineato a cartaceo/pdf */
+        .pdf-hero {
+            background: linear-gradient(135deg, #e3f2fd 0%, #fff7d1 100%);
+            padding: 90px 20px 70px;
+            text-align: center;
         }
 
-        .sdsg-title {
+        .pdf-hero img {
+            max-width: 640px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 30px;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .pdf-hero h2 {
             font-size: 42px;
-            color: #667eea;
-            margin-bottom: 40px;
+            color: #4a90e2;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .pdf-hero p {
+            color: #0f172a;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .info-section {
+            background: #fff7d1;
+            padding: 70px 20px;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
             text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .info-card h3 {
+            color: #0f172a;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .info-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .products-section {
+            padding: 80px 20px;
+            background: #f8fafc;
+        }
+
+        .products-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #0f172a;
         }
 
         .breadcrumb {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 14px;
-            color: #888;
+            color: #4a90e2;
         }
 
         .breadcrumb a {
-            color: #667eea;
+            color: #4a90e2;
             text-decoration: none;
             cursor: pointer;
+            font-weight: 700;
         }
 
         .breadcrumb a:hover {
             text-decoration: underline;
         }
 
-        .anni-buttons {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .anno-btn {
-            padding: 18px 35px;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .anno-1 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .anno-1:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .anno-2 {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .anno-2:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 12px rgba(245, 87, 108, 0.4);
-        }
-
-        .anno-3 {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .anno-3:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 12px rgba(79, 172, 254, 0.4);
+        .categories-view {
+            margin-top: 10px;
         }
 
         @media (max-width: 768px) {
-            .sdsg-title {
+            .pdf-hero {
+                padding: 60px 16px 50px;
+            }
+
+            .pdf-hero h2 {
                 font-size: 32px;
             }
 
-            .anni-buttons {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .anno-btn {
-                width: 100%;
-                max-width: 250px;
+            .products-section {
+                padding: 60px 16px;
             }
         }
     </style>
@@ -124,23 +144,70 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="sdsg-container">
-        <div class="breadcrumb">
-            <a href="lezioni.html">Lezioni</a> > 
-            <a href="pdf-lezioni.html">PDF</a> > 
-            <a href="pdf-universita.html">Università</a> > 
-            <span>Scienze dei Servizi Giuridici</span>
+    <!-- Hero Section -->
+    <section class="hero pdf-hero">
+        <div class="container">
+            <div class="hero-content">
+                <img src="image/copia_cartacea.png" alt="Scienze dei Servizi Giuridici" loading="lazy">
+                <h2>🎓 Scienze dei Servizi Giuridici</h2>
+                <p>PDF universitari protetti, con anteprima gratuita e download immediato.</p>
+            </div>
         </div>
+    </section>
 
-        <h1 class="sdsg-title">📚 Scienze dei Servizi Giuridici</h1>
-        
-        <div class="anni-buttons">
-            <a href="pdf-universita-sdsg-1anno.html" class="anno-btn anno-1">1️⃣ Primo Anno</a>
-            <a href="pdf-universita-sdsg-2anno.html" class="anno-btn anno-2">2️⃣ Secondo Anno</a>
-            <a href="pdf-universita-sdsg-3anno.html" class="anno-btn anno-3">3️⃣ Terzo Anno</a>
+    <!-- Info Section -->
+    <section class="info-section">
+        <div class="container">
+            <div class="info-cards">
+                <div class="info-card">
+                    <span class="info-icon">⚡️</span>
+                    <h3>Download Immediato</h3>
+                    <p>Scarica i PDF subito dopo l'acquisto.</p>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">👁️</span>
+                    <h3>Anteprima 4 pagine</h3>
+                    <p>Prova gratis le prime pagine prima di comprare.</p>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">🔒</span>
+                    <h3>Protezione Attiva</h3>
+                    <p>Watermark e blocco download per tutelare i contenuti.</p>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Sezione anni (stile cartaceo) -->
+    <section class="products-section">
+        <div class="container">
+            <h2>Seleziona l'Anno</h2>
+            <div class="breadcrumb">
+                <a href="lezioni.html">Lezioni</a> > 
+                <a href="pdf-lezioni.html">PDF</a> > 
+                <a href="pdf-universita.html">Universita</a> > 
+                <span>Scienze dei Servizi Giuridici</span>
+            </div>
+
+            <div class="categories-view">
+                <div class="category-card" onclick="window.location.href='pdf-universita-sdsg-1anno.html'">
+                    <span class="category-icon">1️⃣</span>
+                    <h3>Primo Anno</h3>
+                    <p>Appunti e PDF protetti del 1° anno</p>
+                </div>
+                <div class="category-card" onclick="window.location.href='pdf-universita-sdsg-2anno.html'">
+                    <span class="category-icon">2️⃣</span>
+                    <h3>Secondo Anno</h3>
+                    <p>Materiali del 2° anno</p>
+                </div>
+                <div class="category-card" onclick="window.location.href='pdf-universita-sdsg-3anno.html'">
+                    <span class="category-icon">3️⃣</span>
+                    <h3>Terzo Anno</h3>
+                    <p>Materiali del 3° anno</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
