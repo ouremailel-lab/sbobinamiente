@@ -369,7 +369,7 @@
     <div class="preview-notice">
         <h3>📖 Stai visualizzando un'anteprima</h3>
         <p>Puoi sfogliare solo le prime 4 pagine. Per accedere al documento completo, acquista il PDF.</p>
-        <a href="javascript:history.back()" class="buy-btn">🛒 Torna alla pagina di acquisto</a>
+        <button type="button" class="buy-btn" onclick="goBackToProduct()">🛒 Torna alla pagina di acquisto</button>
     </div>
 
     <div class="viewer-container">
@@ -395,7 +395,7 @@
             <p>Dai mi pare abbastanza, adesso compra!</p>
             <div class="checkout-product" id="checkoutProductName">PDF Diritto Costituzionale</div>
             <div class="checkout-buttons">
-                <a href="javascript:history.back()" class="checkout-btn checkout-btn-primary">🛒 Vai alla Pagina Prodotto</a>
+                <button class="checkout-btn checkout-btn-primary" onclick="goBackToProduct()">🛒 Vai alla Pagina Prodotto</button>
                 <button class="checkout-btn checkout-btn-secondary" onclick="closeCheckoutModal()">← Continua lettura</button>
             </div>
         </div>
@@ -414,6 +414,25 @@
         // Ottieni il file PDF dal parametro URL
         const urlParams = new URLSearchParams(window.location.search);
         const pdfFile = urlParams.get('file');
+
+        // Rileva e conserva la pagina di provenienza per tornare indietro in modo affidabile anche da una nuova scheda
+        const returnUrlParam = urlParams.get('returnUrl');
+        const referrerUrl = document.referrer && document.referrer.startsWith(window.location.origin)
+            ? document.referrer
+            : '';
+        const storedLastPage = sessionStorage.getItem('lastProductPage') || '';
+        const backUrl = returnUrlParam || referrerUrl || storedLastPage;
+        if (returnUrlParam || referrerUrl) {
+            sessionStorage.setItem('lastProductPage', returnUrlParam || referrerUrl);
+        }
+
+        function goBackToProduct() {
+            if (backUrl) {
+                window.location.href = backUrl;
+            } else {
+                window.history.back();
+            }
+        }
 
         if (!pdfFile) {
             document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: File PDF non specificato</p>';
