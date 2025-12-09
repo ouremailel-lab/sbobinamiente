@@ -304,7 +304,7 @@
                     <div class="product-meta" style="display: flex; flex-direction: column; gap: 12px;">
                         <span class="product-price">€${product.prezzo.toFixed(2)}</span>
                         <div style="display: flex; gap: 8px; width: 100%;">
-                            <button class="btn-add-cart" onclick="addToCartFromPage(${product.id})" style="flex: 1;">Aggiungi</button>
+                            <button class="btn-add-cart" onclick="showProductDetailModal(${product.id})" style="flex: 1; background: #4a90e2; color: white; border: none;">Dettagli</button>
                             <button class="btn-add-cart" onclick="addToCartQuickFromPage(${product.id})" style="flex: 1; background: #f5a6c9; color: white; border: none;">🎒 Zaino</button>
                         </div>
                     </div>

@@ -325,3 +325,61 @@ function addToCartQuickFromPage(productId) {
 
 // Esponi la variabile prodotti come globale per l'accesso dal viewer
 window.productsData = products;
+
+// Mostra modal con dettagli del prodotto per PDF
+function showProductDetailModal(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Crea o trova il modal
+    let modal = document.getElementById('product-detail-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'product-detail-modal';
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; display: none;';
+        document.body.appendChild(modal);
+    }
+
+    // Popola il contenuto
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                <div style="font-size: 32px;">${product.emoji}</div>
+                <button onclick="document.getElementById('product-detail-modal').style.display='none'" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">×</button>
+            </div>
+            
+            <h2 style="margin: 0 0 12px 0; color: #0f172a; font-size: 20px;">${product.title}</h2>
+            
+            <div style="display: flex; gap: 12px; margin-bottom: 16px; font-size: 13px; color: #64748b;">
+                <span>📄 ${product.pages} pagine</span>
+                <span>•</span>
+                <span>PDF protetto</span>
+            </div>
+            
+            <div style="background: #f8fafc; border-left: 4px solid #4a90e2; padding: 12px; margin-bottom: 16px; border-radius: 6px;">
+                <p style="margin: 0; color: #334155; font-size: 14px; line-height: 1.5;">${product.descrizione}</p>
+            </div>
+            
+            ${product.dettagli ? `<div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 12px; margin-bottom: 16px; border-radius: 6px;">
+                <p style="margin: 0; color: #334155; font-size: 14px; line-height: 1.5;"><strong>ℹ️ Dettagli:</strong> ${product.dettagli}</p>
+            </div>` : ''}
+            
+            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 16px; border-radius: 6px;">
+                <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.5;"><strong>💰 Prezzo:</strong> €${product.prezzo.toFixed(2)}</p>
+            </div>
+            
+            <button onclick="addToCartQuickFromPage(${product.id}); document.getElementById('product-detail-modal').style.display='none';" style="width: 100%; padding: 12px 16px; background: #f5a6c9; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer; margin-top: 16px;">
+                🎒 Aggiungi allo Zaino
+            </button>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+
+    // Chiudi il modal cliccando lo sfondo
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+}
