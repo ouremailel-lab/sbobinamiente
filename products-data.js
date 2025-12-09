@@ -112,6 +112,12 @@ const products = [
         dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
         pages: 60,
         previewImage: "image/copia_cartacea.png",
+        previewPages: [
+            "image/previews/cost-1.png",
+            "image/previews/cost-2.png",
+            "image/previews/cost-3.png",
+            "image/previews/cost-4.png"
+        ],
         categoria: "universita",
         corso: "sdsg",
         anno: 1
