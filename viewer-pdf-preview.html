@@ -424,9 +424,16 @@
 
         async function loadPDF(fileName) {
             try {
-                const pdfPath = `/PDF/${fileName}`;
-                
-                const loadingTask = pdfjsLib.getDocument(pdfPath);
+                // Usa lo stesso approccio del viewer principale per evitare problemi di encoding/CORS
+                const pathParts = fileName.split('/');
+                const encodedPath = pathParts.map(part => encodeURIComponent(part)).join('/');
+                const pdfPath = `/PDF/${encodedPath}`;
+
+                const response = await fetch(pdfPath);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const arrayBuffer = await response.arrayBuffer();
+
+                const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
                 pdfDoc = await loadingTask.promise;
                 
                 // Mostra solo max 4 pagine
