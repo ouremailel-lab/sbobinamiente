@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrello Vuoto - SbobinaMente</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .empty-cart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #f5a6c9 0%, #e3f2fd 100%);
+        }
+        
+        .empty-cart-content {
+            max-width: 600px;
+            background: white;
+            border-radius: 15px;
+            padding: 60px 40px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .empty-cart-emoji {
+            font-size: 120px;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .empty-cart-title {
+            font-size: 32px;
+            color: #0f172a;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .empty-cart-subtitle {
+            font-size: 18px;
+            color: #475569;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .empty-cart-message {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+        
+        .empty-cart-highlight {
+            font-weight: 700;
+            color: #f5a6c9;
+            display: block;
+            margin: 15px 0;
+        }
+        
+        .empty-cart-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-empty-cart {
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary-empty {
+            background: linear-gradient(135deg, #f5a6c9 0%, #e879a3 100%);
+            color: white;
+        }
+        
+        .btn-primary-empty:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(245, 166, 201, 0.4);
+        }
+        
+        .btn-secondary-empty {
+            background: white;
+            color: #f5a6c9;
+            border: 2px solid #f5a6c9;
+        }
+        
+        .btn-secondary-empty:hover {
+            background: #f5a6c9;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .back-home-link {
+            margin-top: 30px;
+            font-size: 14px;
+        }
+        
+        .back-home-link a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-home-link a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            .empty-cart-content {
+                padding: 40px 25px;
+            }
+            
+            .empty-cart-emoji {
+                font-size: 80px;
+            }
+            
+            .empty-cart-title {
+                font-size: 24px;
+            }
+            
+            .empty-cart-subtitle {
+                font-size: 16px;
+            }
+            
+            .empty-cart-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-empty-cart {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SbobinaMente</h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="lezioni.html" class="nav-link">Lezioni</a>
+                    <a href="chi-siamo.html" class="nav-link">Chi Siamo</a>
+                    <a href="empty-cart.html" class="nav-link" id="cartLink">Carrello <span class="cart-count">0</span></a>
+                    <a href="#" class="nav-link" id="userLink">Accedi</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="empty-cart-container">
+            <div class="empty-cart-content">
+                <span class="empty-cart-emoji">🛒</span>
+                
+                <h1 class="empty-cart-title">Ops! Il carrello è vuoto</h1>
+                
+                <p class="empty-cart-subtitle">
+                    Non ci sono ancora appunti dentro!
+                </p>
+                
+                <p class="empty-cart-message">
+                    Ma tranquillo, <span class="empty-cart-highlight">puoi rimediare!</span>
+                    <br>
+                    Scopri la nostra ampia collezione di appunti verificati e di alta qualità, creati dagli studenti universitari per gli studenti universitari.
+                </p>
+                
+                <div class="empty-cart-buttons">
+                    <a href="lezioni.html" class="btn-empty-cart btn-primary-empty">
+                        📚 Vai alle Lezioni
+                    </a>
+                    <a href="index.html" class="btn-empty-cart btn-secondary-empty">
+                        ← Torna alla Home
+                    </a>
+                </div>
+                
+                <div class="back-home-link">
+                    <a href="index.html">← Torna alla home</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
+            <p>Per domande: <a href="mailto:info@sbobinamante.com">info@sbobinamante.com</a></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>

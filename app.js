@@ -187,6 +187,12 @@ if (cartLink) {
 }
 
 function openCart() {
+    // Se il carrello è vuoto, reindirizza alla pagina del carrello vuoto
+    if (cart.length === 0) {
+        window.location.href = 'empty-cart.html';
+        return;
+    }
+    
     updateCartDisplay();
     const cartModal = document.getElementById('cartModal');
     if (cartModal) {
