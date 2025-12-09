@@ -6,67 +6,120 @@
     <title>Lezioni PDF - SbobinaMente</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .pdf-lezioni-container {
-            min-height: 70vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+        /* Stile allineato alla pagina cartaceo */
+        .pdf-hero {
+            background: linear-gradient(135deg, #e3f2fd 0%, #fff7d1 100%);
+            padding: 90px 20px 70px;
+            text-align: center;
         }
 
-        .pdf-lezioni-title {
+        .pdf-hero img {
+            max-width: 640px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 30px;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .pdf-hero h2 {
             font-size: 42px;
-            color: #667eea;
-            margin-bottom: 40px;
+            color: #4a90e2;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .pdf-hero p {
+            color: #0f172a;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .info-section {
+            background: #fff7d1;
+            padding: 70px 20px;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
             text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .info-card h3 {
+            color: #0f172a;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .info-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .products-section {
+            padding: 80px 20px;
+            background: #f8fafc;
+        }
+
+        .products-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #0f172a;
         }
 
         .breadcrumb {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 14px;
-            color: #888;
+            color: #4a90e2;
         }
 
         .breadcrumb a {
-            color: #667eea;
+            color: #4a90e2;
             text-decoration: none;
             cursor: pointer;
+            font-weight: 700;
         }
 
         .breadcrumb a:hover {
             text-decoration: underline;
         }
 
-        .categoria-btn {
-            padding: 20px 40px;
-            font-size: 18px;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .categoria-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 12px rgba(102, 126, 234, 0.4);
+        .categories-view {
+            margin-top: 10px;
         }
 
         @media (max-width: 768px) {
-            .pdf-lezioni-title {
+            .pdf-hero {
+                padding: 60px 16px 50px;
+            }
+
+            .pdf-hero h2 {
                 font-size: 32px;
             }
 
-            .categoria-btn {
-                width: 100%;
-                max-width: 300px;
+            .products-section {
+                padding: 60px 16px;
             }
         }
     </style>
@@ -91,16 +144,62 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="pdf-lezioni-container">
-        <div class="breadcrumb">
-            <a href="lezioni.html">Lezioni</a> > <span>PDF</span>
+    <!-- Hero Section (allineata al cartaceo) -->
+    <section class="hero pdf-hero">
+        <div class="container">
+            <div class="hero-content">
+                <img src="image/copia_cartacea.png" alt="Anteprima PDF" loading="lazy">
+                <h2>📄 PDF Protetti</h2>
+                <p>Scarica subito gli appunti digitali, con anteprima gratuita e protezione anti-copia.</p>
+            </div>
         </div>
+    </section>
 
-        <h1 class="pdf-lezioni-title">📄 Lezioni in PDF</h1>
-        
-        <a href="pdf-universita.html" class="categoria-btn">🎓 Università</a>
-    </div>
+    <!-- Info Section -->
+    <section class="info-section">
+        <div class="container">
+            <div class="info-cards">
+                <div class="info-card">
+                    <span class="info-icon">⚡️</span>
+                    <h3>Download Immediato</h3>
+                    <p>Ricevi il PDF subito dopo l'acquisto, senza attese.</p>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">👁️</span>
+                    <h3>Anteprima 4 pagine</h3>
+                    <p>Guarda gratis le prime pagine prima di comprare.</p>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">🔒</span>
+                    <h3>Protezione Attiva</h3>
+                    <p>Contenuti protetti con watermark e blocco download.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sezione categorie PDF (struttura come cartaceo) -->
+    <section class="products-section">
+        <div class="container">
+            <h2>Lezioni in PDF</h2>
+            <div class="breadcrumb">
+                <a href="lezioni.html">Lezioni</a> > <span>PDF</span>
+            </div>
+
+            <div class="categories-view">
+                <div class="category-card" onclick="window.location.href='pdf-universita.html'">
+                    <span class="category-icon">🎓</span>
+                    <h3>Università</h3>
+                    <p>Appunti universitari in PDF protetti</p>
+                </div>
+                <div class="category-card" onclick="window.location.href='lezioni.html'">
+                    <span class="category-icon">📚</span>
+                    <h3>Tutte le lezioni</h3>
+                    <p>Torna alla selezione completa</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
