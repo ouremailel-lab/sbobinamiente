@@ -369,16 +369,6 @@ function openAuth() {
         </form>
     `;
     
-    // Renderizza il bottone Google Sign-In
-    setTimeout(() => {
-        if (typeof google !== 'undefined' && google.accounts) {
-            google.accounts.id.renderButton(
-                document.querySelector('.g_id_signin'),
-                { theme: 'outline', size: 'large', text: 'signin_with' }
-            );
-        }
-    }, 100);
-    
     openModal('authModal');
 }
 
