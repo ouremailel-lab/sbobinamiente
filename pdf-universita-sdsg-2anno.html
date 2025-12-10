@@ -295,8 +295,12 @@
                 const previewButton = product.pdfFile 
                     ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="window.open('viewer-pdf-preview.html?file=${product.pdfFile}', '_blank')">👁️ Vedi Anteprima (4 pagine)</button>`
                     : '';
+                const coverImage = product.previewImage 
+                    ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; border-radius: 12px; margin-bottom: 12px; object-fit: cover; max-height: 220px;">`
+                    : '';
                 
                 card.innerHTML = `
+                    ${coverImage}
                     <div class="product-emoji">${product.emoji}</div>
                     <h3 class="product-title">${product.title}</h3>
                     <p class="product-description">${product.descrizione}</p>
