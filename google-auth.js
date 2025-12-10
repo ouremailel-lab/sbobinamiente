@@ -23,31 +23,43 @@ function initializeGoogleSignIn() {
 
 // Callback quando l'utente accede con Google
 function handleGoogleSignIn(response) {
-    if (!response.credential) {
-        console.error('No credential in response');
-        return;
+    try {
+        if (!response.credential) {
+            console.error('No credential in response');
+            alert('Errore: nessun token ricevuto da Google');
+            return;
+        }
+
+        // Decodifica il JWT token di Google in modo semplice
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split('')
+                .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+        );
+
+        const userData = JSON.parse(jsonPayload);
+        console.log('Google user data:', userData);
+        
+        // Estrai dati utente
+        const googleUser = {
+            id: userData.sub,
+            name: userData.name || 'Utente Google',
+            email: userData.email,
+            picture: userData.picture,
+            authMethod: 'google'
+        };
+
+        console.log('Processed user:', googleUser);
+
+        // Salva l'utente
+        loginWithGoogle(googleUser);
+    } catch (error) {
+        console.error('Errore durante decodifica Google token:', error);
+        alert('Errore durante il login con Google: ' + error.message);
     }
-
-    // Decodifica il JWT token di Google
-    const base64Url = response.credential.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    const userData = JSON.parse(jsonPayload);
-    
-    // Estrai dati utente
-    const googleUser = {
-        id: userData.sub,
-        name: userData.name,
-        email: userData.email,
-        picture: userData.picture,
-        authMethod: 'google'
-    };
-
-    // Salva l'utente
-    loginWithGoogle(googleUser);
 }
 
 // Login con Google
