@@ -1,127 +1,163 @@
-// Protezione PDF - Disabilita tasto destro e salvataggio
+// Protezione PDF avanzata
+const PDFProtection = {
+    userId: null,
+    userEmail: null,
+    pdfName: null,
+    
+    init: function(userId, userEmail, pdfName) {
+        this.userId = userId;
+        this.userEmail = userEmail;
+        this.pdfName = pdfName;
+        this.setupProtections();
+        this.addWatermark();
+        this.logAccess();
+    },
+    
+    setupProtections: function() {
+        // Disabilita tasto destro del mouse
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            this.showProtectionNotice();
+        });
+
+        // Disabilita F12 e DevTools
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J')) {
+                e.preventDefault();
+                this.showProtectionNotice();
+            }
+        });
+
+        // Disabilita Ctrl+S (salvataggio)
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                alert('⚠️ Il download è disabilitato. Questo contenuto è protetto da copyright.');
+            }
+        });
+
+        // Disabilita drag & drop
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+        });
+
+        // Disabilita copia
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            this.showProtectionNotice();
+        });
+
+        // Disabilita selezione testo
+        document.addEventListener('selectstart', (e) => {
+            if (e.target.closest('[data-protected]')) {
+                e.preventDefault();
+            }
+        });
+    },
+    
+    addWatermark: function() {
+        const watermark = document.createElement('div');
+        watermark.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120px;
+            color: rgba(255, 0, 0, 0.05);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 1;
+            white-space: nowrap;
+            width: 200%;
+            text-align: center;
+            letter-spacing: 20px;
+        `;
+        watermark.textContent = this.userEmail || 'PROTETTO';
+        watermark.setAttribute('data-protected', 'true');
+        document.body.appendChild(watermark);
+    },
+    
+    logAccess: function() {
+        // Registra l'accesso al PDF
+        if (window.supabaseClient && this.userId) {
+            window.supabaseClient
+                .from('pdf_access_logs')
+                .insert([{
+                    user_id: this.userId,
+                    user_email: this.userEmail,
+                    pdf_name: this.pdfName,
+                    accessed_at: new Date().toISOString(),
+                    ip_address: '(auto)',
+                    user_agent: navigator.userAgent
+                }])
+                .catch(err => console.log('Log non salvato (facoltativo)', err));
+        }
+    },
+    
+    showProtectionNotice: function() {
+        const notice = document.createElement('div');
+        notice.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            z-index: 10000;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            max-width: 400px;
+        `;
+        notice.innerHTML = `
+            🔒 CONTENUTO PROTETTO<br><br>
+            <small style="font-size: 14px; opacity: 0.8;">
+                Questo materiale è protetto da copyright.<br>
+                Download, copia e modifica sono vietati.
+            </small>
+        `;
+        document.body.appendChild(notice);
+
+        setTimeout(() => {
+            notice.remove();
+        }, 3000);
+    },
+    
+    monitorDevTools: function() {
+        setInterval(() => {
+            const start = new Date();
+            debugger;
+            const end = new Date();
+            if (end - start > 100) {
+                console.clear();
+                console.log('%c⚠️ PROTEZIONE ATTIVA', 'font-size: 20px; color: red; font-weight: bold;');
+                console.log('%cIl contenuto è protetto. Accesso non autorizzato verrà registrato.', 'font-size: 14px; color: orange;');
+            }
+        }, 2000);
+    }
+};
+
+// Inizializza protezione quando caricato
 document.addEventListener('DOMContentLoaded', function() {
-    // Disabilita tasto destro del mouse su tutta la pagina
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        showProtectionNotice();
-    });
-
-    // Disabilita F12 (DevTools)
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.shiftKey && e.key === 'C')) {
-            e.preventDefault();
-            showProtectionNotice();
-        }
-    });
-
-    // Disabilita Ctrl+S per salvare
-    document.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-            e.preventDefault();
-            alert('⚠️ Il download è disabilitato. Questo contenuto è protetto.');
-        }
-    });
-
-    // Disabilita drag & drop
-    document.addEventListener('dragstart', function(e) {
-        e.preventDefault();
-    });
-
-    // Disabilita selezione di testo su elementi sensibili
-    document.addEventListener('selectstart', function(e) {
-        if (e.target.closest('[data-protected]')) {
-            e.preventDefault();
-        }
-    });
-
-    // Disabilita copia
-    document.addEventListener('copy', function(e) {
-        if (e.target.closest('[data-protected]')) {
-            e.preventDefault();
-            showProtectionNotice();
-        }
-    });
+    // Ottieni i dati dell'utente
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const pdfName = document.title || 'PDF Protetto';
+    
+    // Inizializza protezione
+    PDFProtection.init(
+        currentUser.id || 'unknown',
+        currentUser.email || 'unknown@user.com',
+        pdfName
+    );
+    
+    // Monitora DevTools
+    PDFProtection.monitorDevTools();
 });
 
-// Monitora i tentativi di apertura DevTools
-setInterval(function() {
-    const start = new Date();
-    debugger;
-    const end = new Date();
-    if (end - start > 100) {
-        console.clear();
-        console.log('%c⚠️ PROTEZIONE ATTIVA', 'font-size: 20px; color: red; font-weight: bold;');
-        console.log('%cIl contenuto è protetto. Non è consentito copiare, scaricare o modificare il materiale.', 'font-size: 14px; color: orange;');
-    }
-}, 1000);
-
-function showProtectionNotice() {
-    const notice = document.createElement('div');
-    notice.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: rgba(0, 0, 0, 0.9);
-        color: white;
-        padding: 40px;
-        border-radius: 12px;
-        text-align: center;
-        z-index: 10000;
-        font-size: 18px;
-        font-weight: bold;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-    `;
-    notice.innerHTML = `
-        🔒 CONTENUTO PROTETTO<br><br>
-        <small style="font-size: 14px; opacity: 0.8;">Il download, la copia e la modifica sono disabilitate per proteggere i diritti d'autore.</small>
-    `;
-    document.body.appendChild(notice);
-
-    setTimeout(() => {
-        notice.remove();
-    }, 3000);
-}
-
-// Proteggi gli iframe dei PDF
-document.addEventListener('load', function(e) {
-    if (e.target.tagName === 'IFRAME') {
-        try {
-            const iframeDoc = e.target.contentDocument || e.target.contentWindow.document;
-            if (iframeDoc) {
-                iframeDoc.addEventListener('contextmenu', (evt) => evt.preventDefault());
-                iframeDoc.addEventListener('keydown', (evt) => {
-                    if (evt.key === 'F12' || (evt.ctrlKey && evt.shiftKey && evt.key === 'I')) {
-                        evt.preventDefault();
-                    }
-                });
-            }
-        } catch (err) {
-            console.log('Protezione iframe attiva');
-        }
-    }
-}, true);
-
-// Blocca le scorciatoie di salvataggio
-window.onkeydown = function(e) {
-    // Ctrl+S o Cmd+S
-    if ((e.ctrlKey || e.metaKey) && e.keyCode === 83) {
-        e.preventDefault();
-        return false;
-    }
-    // F12
-    if (e.keyCode === 123) {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+Shift+I
-    if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+Shift+C
-    if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
-        e.preventDefault();
-        return false;
-    }
 };

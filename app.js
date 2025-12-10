@@ -570,7 +570,10 @@ function updateUserLink() {
     const userLink = document.getElementById('userLink');
     if (!userLink) return;
     if (currentUser) {
-        userLink.textContent = `${currentUser.nome.split(' ')[0]} · Area personale`;
+        const firstName = currentUser.nome 
+            ? currentUser.nome.split(' ')[0] 
+            : currentUser.name?.split(' ')[0] || currentUser.email?.split('@')[0] || 'Utente';
+        userLink.textContent = `${firstName} · Area personale`;
         userLink.setAttribute('href', 'user-area.html');
     } else {
         userLink.textContent = 'Accedi';
