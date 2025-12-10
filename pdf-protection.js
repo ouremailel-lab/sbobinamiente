@@ -159,5 +159,3 @@ document.addEventListener('DOMContentLoaded', function() {
     // Monitora DevTools
     PDFProtection.monitorDevTools();
 });
-
-};
