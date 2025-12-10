@@ -2,7 +2,7 @@
 // Documentazione: https://stripe.com/docs/payments/payment-element
 
 // Chiave pubblica Stripe (da sostituire con la tua)
-const STRIPE_PUBLIC_KEY = 'pk_test_YOUR_PUBLISHABLE_KEY';
+const STRIPE_PUBLIC_KEY = 'pk_live_51Scdi3RqQxAAz0zVWpRBO1z2OU7juhkr4K1tO9QsCqdxFL6I8F3uNk5Rc6r4SnUtqdCX899U7S43New76YpQh1Hm00wiXT0PUR';
 
 let stripe;
 let elements;
