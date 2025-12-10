@@ -333,6 +333,11 @@ function openAuth() {
             <button type="submit" class="btn btn-primary" style="width: 100%;">Accedi</button>
         </form>
 
+        <div style="text-align: center; margin: 20px 0; color: #888;">
+            <p style="margin-bottom: 16px;">oppure</p>
+            <div id="googleSignInContainer" style="display: flex; justify-content: center;"></div>
+        </div>
+
         <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
             <div class="form-group">
                 <label>Nome Completo:</label>
@@ -360,6 +365,17 @@ function openAuth() {
             <p style="font-size: 12px; color: #888; margin-top: 12px;">Ti invieremo un email di conferma</p>
         </form>
     `;
+    
+    // Renderizza il bottone Google Sign-In dopo aver creato il form
+    setTimeout(() => {
+        if (typeof google !== 'undefined' && google.accounts) {
+            google.accounts.id.renderButton(
+                document.getElementById('googleSignInContainer'),
+                { theme: 'outline', size: 'large', text: 'signin_with' }
+            );
+        }
+    }, 100);
+    
     openModal('authModal');
 }
 
