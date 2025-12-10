@@ -1,25 +1,19 @@
-// Stripe Payment Integration con Apple Pay e Google Pay
-// Documentazione: https://stripe.com/docs/payments/payment-element
-
-// Chiave pubblica Stripe (da sostituire con la tua)
+// Sistema di pagamento semplice
 const STRIPE_PUBLIC_KEY = 'pk_live_51Scdi3RqQxAAz0zVWpRBO1z2OU7juhkr4K1tO9QsCqdxFL6I8F3uNk5Rc6r4SnUtqdCX899U7S43New76YpQh1Hm00wiXT0PUR';
 
 let stripe;
 let elements;
 let paymentElement;
 
-// Inizializza Stripe
 function initializeStripe() {
     if (typeof Stripe === 'undefined') {
         console.error('Stripe.js non caricato');
         return;
     }
-    
     stripe = Stripe(STRIPE_PUBLIC_KEY);
     console.log('Stripe inizializzato');
 }
 
-// Crea il Payment Intent e mostra il form di pagamento
 async function showStripeCheckout() {
     if (!stripe) {
         alert('Sistema di pagamento in caricamento, riprova tra un secondo');
@@ -31,171 +25,87 @@ async function showStripeCheckout() {
         return;
     }
     
-    // Calcola il totale
     const total = cart.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0);
-    const totalCents = Math.round(total * 100); // Stripe usa centesimi
+    const totalCents = Math.round(total * 100);
     
     try {
-        // Crea Payment Intent tramite la tua API
-        const response = await fetch('/.netlify/functions/create-payment-intent', {
+        const response = await fetch('https://lighthearted-biscuit-1bda10.netlify.app/.netlify/functions/create-payment-intent', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 amount: totalCents,
-                currency: 'eur',
-                items: cart.map(item => ({
-                    id: item.id,
-                    title: item.title,
-                    quantity: item.quantity,
-                    price: item.prezzo
-                }))
+                currency: 'eur'
             })
         });
         
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: 'Errore sconosciuto' }));
-            throw new Error(errorData.error || `Errore HTTP ${response.status}`);
+            throw new Error(`Errore HTTP ${response.status}`);
         }
         
         const data = await response.json();
+        if (data.error) throw new Error(data.error);
         
-        if (data.error) {
-            throw new Error(data.error);
-        }
-        
-        const { clientSecret } = data;
-        
-        // Mostra il form di pagamento Stripe
-        await displayStripePaymentForm(clientSecret, total);
+        await displayStripePaymentForm(data.clientSecret, total);
         
     } catch (error) {
-        console.error('Errore creazione pagamento:', error);
-        alert('Errore durante l\'inizializzazione del pagamento: ' + error.message);
+        console.error('Errore:', error);
+        alert('Errore pagamento: ' + error.message);
     }
 }
 
-// Mostra il form di pagamento Stripe con Apple Pay/Google Pay
 async function displayStripePaymentForm(clientSecret, total) {
     const checkoutContainer = document.getElementById('checkoutContainer');
     if (!checkoutContainer) return;
 
-    // UI con due opzioni: Stripe (carta/Apple Pay/Google Pay) e PayPal
     checkoutContainer.innerHTML = `
-        <div class="payment-tabs" style="display:flex; gap:8px; margin-bottom:12px;">
-            <button id="tab-stripe" class="btn btn-primary" style="flex:1;">Carta / Apple Pay / Google Pay</button>
-            <button id="tab-paypal" class="btn btn-secondary" style="flex:1;">PayPal</button>
-        </div>
-
-        <form id="checkoutForm">
-            <div class="form-group">
-                <label>Nome Completo:</label>
-                <input type="text" id="customerName" required>
-            </div>
-            <div class="form-group">
-                <label>Email:</label>
-                <input type="email" id="customerEmail" required value="${currentUser?.email || ''}">
-            </div>
-
-            <div id="stripe-area">
+        <h3>Scegli metodo di pagamento</h3>
+        <button type="button" id="btn-stripe" class="btn btn-primary" style="width:100%; margin-bottom:10px;">💳 Paga con Carta</button>
+        <button type="button" id="btn-paypal" class="btn btn-secondary" style="width:100%;">💰 Paga con PayPal</button>
+        
+        <div id="stripe-form" style="display:none; margin-top:20px;">
+            <form id="checkoutForm">
                 <div class="form-group">
-                    <label>Metodo di Pagamento:</label>
-                    <div id="payment-element" style="margin-top: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                        <!-- Stripe Payment Element (include Apple Pay/Google Pay) -->
-                    </div>
+                    <label>Nome:</label>
+                    <input type="text" id="customerName" required>
                 </div>
-                <div class="cart-summary">
-                    <div class="summary-row">
-                        <span>Totale:</span>
-                        <span class="checkout-total">${total.toFixed(2)}€</span>
-                    </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="customerEmail" required value="${currentUser?.email || ''}">
                 </div>
-                <button type="submit" id="submit-payment" class="btn btn-primary" style="width: 100%;">
+                <div id="payment-element"></div>
+                <div style="margin:15px 0;">
+                    <strong>Totale: ${total.toFixed(2)}€</strong>
+                </div>
+                <button type="submit" id="submit-payment" class="btn btn-primary" style="width:100%;">
                     Paga ${total.toFixed(2)}€
                 </button>
-                <div id="payment-message" style="margin-top: 15px; color: #e74c3c; display: none;"></div>
-            </div>
-
-            <div id="paypal-area" style="display:none; margin-top: 12px;">
-                <p style="margin-bottom:10px;">Paga con PayPal. Ti chiederemo conferma.</p>
-                <button type="button" id="paypal-button" class="btn btn-secondary" style="width: 100%;">Paga con PayPal</button>
-            </div>
-        </form>
+                <div id="payment-message" style="margin-top:15px; color:red; display:none;"></div>
+            </form>
+        </div>
     `;
 
-    // Crea il Payment Element con Apple Pay/Google Pay
-    elements = stripe.elements({
-        clientSecret,
-        appearance: {
-            theme: 'stripe',
-            variables: {
-                colorPrimary: '#f5a6c9',
-                borderRadius: '8px'
-            }
-        }
-    });
-
+    elements = stripe.elements({ clientSecret });
     paymentElement = elements.create('payment', {
         layout: 'tabs',
-        wallets: {
-            applePay: 'auto',  // Apple Pay su Safari/iOS
-            googlePay: 'auto'   // Google Pay su Chrome/Android
-        }
+        wallets: { applePay: 'auto', googlePay: 'auto' }
     });
 
-    paymentElement.mount('#payment-element');
+    document.getElementById('btn-stripe').onclick = () => {
+        document.getElementById('stripe-form').style.display = 'block';
+        paymentElement.mount('#payment-element');
+    };
 
-    // Logica tab Stripe/PayPal
-    let activeTab = 'stripe';
-    const tabStripe = document.getElementById('tab-stripe');
-    const tabPayPal = document.getElementById('tab-paypal');
-    const stripeArea = document.getElementById('stripe-area');
-    const paypalArea = document.getElementById('paypal-area');
-
-    function setTab(tab) {
-        activeTab = tab;
-        if (tab === 'stripe') {
-            tabStripe.classList.add('btn-primary');
-            tabStripe.classList.remove('btn-secondary');
-            tabPayPal.classList.add('btn-secondary');
-            tabPayPal.classList.remove('btn-primary');
-            stripeArea.style.display = 'block';
-            paypalArea.style.display = 'none';
-        } else {
-            tabPayPal.classList.add('btn-primary');
-            tabPayPal.classList.remove('btn-secondary');
-            tabStripe.classList.add('btn-secondary');
-            tabStripe.classList.remove('btn-primary');
-            stripeArea.style.display = 'none';
-            paypalArea.style.display = 'block';
-        }
-    }
-
-    tabStripe?.addEventListener('click', (e) => { e.preventDefault(); setTab('stripe'); });
-    tabPayPal?.addEventListener('click', (e) => { e.preventDefault(); setTab('paypal'); });
-    setTab('stripe');
-
-    // Submit solo se tab Stripe attivo
-    const form = document.getElementById('checkoutForm');
-    if (form) {
-        form.addEventListener('submit', (e) => {
-            if (activeTab !== 'stripe') {
-                e.preventDefault();
-                return;
-            }
-            handleStripeSubmit(e);
-        });
-    }
-
-    // Pulsante PayPal
-    const paypalButton = document.getElementById('paypal-button');
-    if (paypalButton) {
-        paypalButton.addEventListener('click', () => {
+    document.getElementById('btn-paypal').onclick = () => {
+        if (typeof payWithPayPal === 'function') {
             payWithPayPal();
-        });
-    }
+        } else {
+            alert('PayPal non disponibile');
+        }
+    };
+
+    document.getElementById('checkoutForm').onsubmit = handleStripeSubmit;
 }
 
-// Gestisce il pagamento Stripe
 async function handleStripeSubmit(e) {
     e.preventDefault();
     
@@ -205,9 +115,6 @@ async function handleStripeSubmit(e) {
     submitButton.disabled = true;
     submitButton.textContent = 'Elaborazione...';
     
-    const customerName = document.getElementById('customerName').value;
-    const customerEmail = document.getElementById('customerEmail').value;
-    
     try {
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
@@ -215,8 +122,8 @@ async function handleStripeSubmit(e) {
                 return_url: window.location.origin + '/payment-success.html',
                 payment_method_data: {
                     billing_details: {
-                        name: customerName,
-                        email: customerEmail
+                        name: document.getElementById('customerName').value,
+                        email: document.getElementById('customerEmail').value
                     }
                 }
             },
@@ -224,22 +131,23 @@ async function handleStripeSubmit(e) {
         });
         
         if (error) {
-            // Mostra errore
             messageDiv.textContent = error.message;
             messageDiv.style.display = 'block';
             submitButton.disabled = false;
-            submitButton.textContent = 'Paga ' + document.querySelector('.checkout-total').textContent;
+            submitButton.textContent = 'Riprova';
         } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-            // Pagamento riuscito!
-            await handleSuccessfulPayment(paymentIntent);
+            alert('✅ Pagamento completato!');
+            cart = [];
+            saveCart();
+            updateCartCount();
+            closeCheckout();
+            window.location.href = 'payment-success.html?order=' + paymentIntent.id;
         }
-        
     } catch (err) {
-        console.error('Errore pagamento:', err);
-        messageDiv.textContent = 'Errore durante il pagamento. Riprova.';
+        messageDiv.textContent = 'Errore: ' + err.message;
         messageDiv.style.display = 'block';
         submitButton.disabled = false;
-        submitButton.textContent = 'Paga ' + document.querySelector('.checkout-total').textContent;
+        submitButton.textContent = 'Riprova';
     }
 }
 
