@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Completato - SbobinaMente</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SbobinaMente</h1>
+                    <p class="tagline">Appunti e PDF Protetti</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="block block-pink" style="min-height: 70vh; display: flex; align-items: center;">
+        <div class="container" style="text-align: center;">
+            <div style="font-size: 80px; margin-bottom: 30px;">🎉</div>
+            <h1 style="color: #0f172a; margin-bottom: 20px;">Pagamento Completato!</h1>
+            <p style="font-size: 18px; color: #475569; max-width: 600px; margin: 0 auto 30px;">
+                Grazie per il tuo acquisto! Riceverai a breve un'email con tutti i dettagli dell'ordine e le istruzioni per accedere ai tuoi appunti.
+            </p>
+            <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; margin: 0 auto 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 15px;">Cosa succede ora?</h3>
+                <ul style="list-style: none; padding: 0; text-align: left;">
+                    <li style="margin: 15px 0; padding-left: 30px; position: relative;">
+                        <span style="position: absolute; left: 0;">📧</span>
+                        Riceverai un'email di conferma
+                    </li>
+                    <li style="margin: 15px 0; padding-left: 30px; position: relative;">
+                        <span style="position: absolute; left: 0;">🔐</span>
+                        Troverai le password per i PDF protetti
+                    </li>
+                    <li style="margin: 15px 0; padding-left: 30px; position: relative;">
+                        <span style="position: absolute; left: 0;">📚</span>
+                        Potrai accedere ai tuoi acquisti dalla tua area personale
+                    </li>
+                </ul>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="index.html" class="btn btn-primary">Torna alla Home</a>
+                <a href="user-area.html" class="btn btn-secondary">Area Personale</a>
+            </div>
+            <p style="margin-top: 30px; color: #888; font-size: 14px;">
+                Ordine: <span id="orderId" style="font-weight: 600;"></span>
+            </p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
+            <p>Per domande: <a href="mailto:info@sbobinamante.com">info@sbobinamante.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Mostra l'ID dell'ordine dall'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('order');
+        if (orderId) {
+            document.getElementById('orderId').textContent = orderId;
+        }
+    </script>
+</body>
+</html>

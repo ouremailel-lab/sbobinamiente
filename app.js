@@ -262,11 +262,19 @@ function proceedToCheckout() {
         return;
     }
 
-    let total = cart.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0);
-    document.querySelector('.checkout-total').textContent = total.toFixed(2) + '€';
-    
+    // Usa Stripe invece del checkout manuale
     closeCart();
+    
+    // Mostra modal checkout vuoto (verrà popolato da Stripe)
     openModal('checkoutModal');
+    
+    // Avvia Stripe checkout
+    if (typeof showStripeCheckout === 'function') {
+        showStripeCheckout();
+    } else {
+        alert('Sistema di pagamento in caricamento, riprova tra un secondo');
+        closeCheckout();
+    }
 }
 
 // ==================== FILTRI ====================

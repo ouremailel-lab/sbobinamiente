@@ -16,6 +16,7 @@
     "url": "https://github.com/elisaiannone/sbobinamiente.git"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "stripe": "^14.10.0"
   }
 }
