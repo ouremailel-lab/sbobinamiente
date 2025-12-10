@@ -126,6 +126,21 @@ const products = [
         anno: 1
     },
     {
+        id: 200,
+        title: "Diritto Privato - 2° Anno",
+        materia: "diritto",
+        tipo: "digitale",
+        prezzo: 15.00,
+        emoji: "📘",
+        descrizione: "Appunti completi di Diritto Privato per il secondo anno",
+        dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
+        pages: 75,
+        pdfFile: "diritto-privato-2.pdf",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 2
+    },
+    {
         id: 201,
         title: "Pensione - 2° Anno",
         materia: "diritto",
