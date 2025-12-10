@@ -56,6 +56,97 @@ const PDFProtection = {
                 e.preventDefault();
             }
         });
+
+        // Protezione mobile anti-screenshot
+        this.setupMobileProtection();
+    },
+
+    setupMobileProtection: function() {
+        // Rileva quando l'app va in background (possibile screenshot)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Nascondi contenuto quando va in background
+                document.body.style.filter = 'blur(20px)';
+                this.logScreenshotAttempt();
+            } else {
+                // Ripristina quando torna in foreground
+                document.body.style.filter = 'none';
+            }
+        });
+
+        // Rileva quando la finestra perde focus (Android screenshot)
+        window.addEventListener('blur', () => {
+            document.body.style.opacity = '0';
+            this.logScreenshotAttempt();
+        });
+
+        window.addEventListener('focus', () => {
+            document.body.style.opacity = '1';
+        });
+
+        // Previeni long-press su mobile (Android)
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (this.lastTouch && now - this.lastTouch < 300) {
+                e.preventDefault(); // Previeni doppio tap
+            }
+            this.lastTouch = now;
+        }, { passive: false });
+
+        // Watermark più aggressivo su mobile
+        if (this.isMobile()) {
+            this.addMobileWatermark();
+        }
+    },
+
+    isMobile: function() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    },
+
+    addMobileWatermark: function() {
+        // Aggiungi watermark multipli su mobile
+        for (let i = 0; i < 5; i++) {
+            const mobileWatermark = document.createElement('div');
+            mobileWatermark.style.cssText = `
+                position: fixed;
+                top: ${20 + i * 20}%;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                transform: rotate(-45deg);
+                font-size: 50px;
+                color: rgba(255, 0, 0, 0.15);
+                font-weight: bold;
+                pointer-events: none;
+                z-index: 9999;
+                white-space: nowrap;
+            `;
+            mobileWatermark.textContent = this.userEmail || 'PROTETTO';
+            mobileWatermark.setAttribute('data-protected', 'true');
+            document.body.appendChild(mobileWatermark);
+        }
+    },
+
+    logScreenshotAttempt: function() {
+        // Registra possibile tentativo di screenshot
+        if (window.supabaseClient && this.userId) {
+            window.supabaseClient
+                .from('screenshot_attempts')
+                .insert([{
+                    user_id: this.userId,
+                    user_email: this.userEmail,
+                    pdf_name: this.pdfName,
+                    attempt_at: new Date().toISOString(),
+                    user_agent: navigator.userAgent
+                }])
+                .catch(() => {}); // Silenzioso
+        }
     },
     
     addWatermark: function() {
