@@ -1,7 +1,7 @@
 // Google Sign-In Integration
 // Documentazione: https://developers.google.com/identity/gsi/web
 
-const GOOGLE_CLIENT_ID = 'TUA_GOOGLE_CLIENT_ID_QUI'; // Da configurare in Google Cloud Console
+const GOOGLE_CLIENT_ID = '985391348038-mrl9hkvh0gaogoqnb5r7hlocn9ikqi00.apps.googleusercontent.com';
 
 // Inizializza Google Sign-In
 function initializeGoogleSignIn() {
