@@ -135,7 +135,7 @@ const products = [
         descrizione: "Appunti completi di Diritto Privato per il secondo anno",
         dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
         pages: 40,
-        pdfFile: "diritto-privato-2.pdf",
+        pdfFile: "SECONDO ANNO/DIRITTO PRIVATO 2.pdf",
         categoria: "universita",
         corso: "sdsg",
         anno: 2
