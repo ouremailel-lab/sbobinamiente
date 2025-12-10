@@ -132,36 +132,10 @@
     <div id="checkoutModal" class="modal">
         <div class="modal-content modal-lg">
             <span class="close" onclick="closeCheckout()">&times;</span>
-            <h2>Checkout</h2>
-            <form id="checkoutForm" onsubmit="submitCheckout(event)">
-                <div class="form-group">
-                    <label>Nome Completo:</label>
-                    <input type="text" required>
-                </div>
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" required>
-                </div>
-                <div class="form-group">
-                    <label>Indirizzo (per spedizioni):</label>
-                    <input type="text">
-                </div>
-                <div class="form-group">
-                    <label>Città:</label>
-                    <input type="text">
-                </div>
-                <div class="form-group">
-                    <label>CAP:</label>
-                    <input type="text">
-                </div>
-                <div class="cart-summary">
-                    <div class="summary-row">
-                        <span>Totale:</span>
-                        <span class="checkout-total">0€</span>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-secondary" onclick="payWithPayPal()">Paga con PayPal</button>
-            </form>
+            <h2>💳 Pagamento</h2>
+            <div id="checkoutContainer">
+                <!-- Stripe Payment Form via JavaScript -->
+            </div>
         </div>
     </div>
 

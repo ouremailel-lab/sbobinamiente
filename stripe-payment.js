@@ -76,37 +76,38 @@ async function showStripeCheckout() {
 
 // Mostra il form di pagamento Stripe con Apple Pay/Google Pay
 async function displayStripePaymentForm(clientSecret, total) {
-    const checkoutModal = document.getElementById('checkoutModal');
-    const checkoutForm = document.getElementById('checkoutForm');
+    const checkoutContainer = document.getElementById('checkoutContainer');
     
-    if (!checkoutForm) return;
+    if (!checkoutContainer) return;
     
-    // Sostituisci il contenuto del modal con il form Stripe
-    checkoutForm.innerHTML = `
-        <div class="form-group">
-            <label>Nome Completo:</label>
-            <input type="text" id="customerName" required>
-        </div>
-        <div class="form-group">
-            <label>Email:</label>
-            <input type="email" id="customerEmail" required value="${currentUser?.email || ''}">
-        </div>
-        <div class="form-group">
-            <label>Metodo di Pagamento:</label>
-            <div id="payment-element" style="margin-top: 10px;">
-                <!-- Stripe Payment Element (include Apple Pay/Google Pay) -->
+    // Sostituisci il contenuto del container con il form Stripe
+    checkoutContainer.innerHTML = `
+        <form id="checkoutForm">
+            <div class="form-group">
+                <label>Nome Completo:</label>
+                <input type="text" id="customerName" required>
             </div>
-        </div>
-        <div class="cart-summary">
-            <div class="summary-row">
-                <span>Totale:</span>
-                <span class="checkout-total">${total.toFixed(2)}€</span>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="customerEmail" required value="${currentUser?.email || ''}">
             </div>
-        </div>
-        <button type="submit" id="submit-payment" class="btn btn-primary" style="width: 100%;">
-            Paga ${total.toFixed(2)}€
-        </button>
-        <div id="payment-message" style="margin-top: 15px; color: #e74c3c; display: none;"></div>
+            <div class="form-group">
+                <label>Metodo di Pagamento:</label>
+                <div id="payment-element" style="margin-top: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                    <!-- Stripe Payment Element (include Apple Pay/Google Pay) -->
+                </div>
+            </div>
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Totale:</span>
+                    <span class="checkout-total">${total.toFixed(2)}€</span>
+                </div>
+            </div>
+            <button type="submit" id="submit-payment" class="btn btn-primary" style="width: 100%;">
+                Paga ${total.toFixed(2)}€
+            </button>
+            <div id="payment-message" style="margin-top: 15px; color: #e74c3c; display: none;"></div>
+        </form>
     `;
     
     // Crea il Payment Element con Apple Pay/Google Pay
@@ -132,7 +133,10 @@ async function displayStripePaymentForm(clientSecret, total) {
     paymentElement.mount('#payment-element');
     
     // Gestisci il submit del form
-    checkoutForm.addEventListener('submit', handleStripeSubmit);
+    const form = document.getElementById('checkoutForm');
+    if (form) {
+        form.addEventListener('submit', handleStripeSubmit);
+    }
 }
 
 // Gestisce il pagamento Stripe
