@@ -133,7 +133,7 @@ const products = [
         prezzo: 15.00,
         emoji: "📘",
         descrizione: "Appunti completi di Diritto Privato per il secondo anno",
-        dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
+        dettagli: "PDF protetto con sentenze e casi pratici. Download immediato.",
         pages: 40,
         pdfFile: "SECONDO ANNO/DIRITTO PRIVATO 2.pdf",
         previewImage: "image/DIRITTO PRIVATO II.png",
