@@ -596,18 +596,19 @@ function payWithPayPal() {
     }
 
     const total = cart.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0);
-    
-    // Raccogli i dati del form
-    const formElements = document.getElementById('checkoutForm').elements;
+
+    // Raccogli i dati del form se presenti
+    const nameInput = document.getElementById('customerName');
+    const emailInput = document.getElementById('customerEmail');
     const orderData = {
         items: cart,
         total: total.toFixed(2),
         customerInfo: {
-            nome: formElements[0].value,
-            email: formElements[1].value,
-            indirizzo: formElements[2].value,
-            città: formElements[3].value,
-            cap: formElements[4].value
+            nome: nameInput?.value || currentUser?.nome || 'Cliente',
+            email: emailInput?.value || currentUser?.email || '',
+            indirizzo: '',
+            città: '',
+            cap: ''
         }
     };
 

@@ -9,7 +9,6 @@ const PDFProtection = {
         this.userEmail = userEmail;
         this.pdfName = pdfName;
         this.setupProtections();
-        this.addWatermark();
         this.logAccess();
     },
     
@@ -186,27 +185,6 @@ const PDFProtection = {
         }
     },
     
-    addWatermark: function() {
-        const watermark = document.createElement('div');
-        watermark.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
-            color: rgba(255, 0, 0, 0.05);
-            font-weight: bold;
-            pointer-events: none;
-            z-index: 1;
-            white-space: nowrap;
-            width: 200%;
-            text-align: center;
-            letter-spacing: 20px;
-        `;
-        watermark.textContent = this.userEmail || 'PROTETTO';
-        watermark.setAttribute('data-protected', 'true');
-        document.body.appendChild(watermark);
-    },
     
     logAccess: function() {
         // Registra l'accesso al PDF

@@ -77,11 +77,15 @@ async function showStripeCheckout() {
 // Mostra il form di pagamento Stripe con Apple Pay/Google Pay
 async function displayStripePaymentForm(clientSecret, total) {
     const checkoutContainer = document.getElementById('checkoutContainer');
-    
     if (!checkoutContainer) return;
-    
-    // Sostituisci il contenuto del container con il form Stripe
+
+    // UI con due opzioni: Stripe (carta/Apple Pay/Google Pay) e PayPal
     checkoutContainer.innerHTML = `
+        <div class="payment-tabs" style="display:flex; gap:8px; margin-bottom:12px;">
+            <button id="tab-stripe" class="btn btn-primary" style="flex:1;">Carta / Apple Pay / Google Pay</button>
+            <button id="tab-paypal" class="btn btn-secondary" style="flex:1;">PayPal</button>
+        </div>
+
         <form id="checkoutForm">
             <div class="form-group">
                 <label>Nome Completo:</label>
@@ -91,25 +95,33 @@ async function displayStripePaymentForm(clientSecret, total) {
                 <label>Email:</label>
                 <input type="email" id="customerEmail" required value="${currentUser?.email || ''}">
             </div>
-            <div class="form-group">
-                <label>Metodo di Pagamento:</label>
-                <div id="payment-element" style="margin-top: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                    <!-- Stripe Payment Element (include Apple Pay/Google Pay) -->
+
+            <div id="stripe-area">
+                <div class="form-group">
+                    <label>Metodo di Pagamento:</label>
+                    <div id="payment-element" style="margin-top: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                        <!-- Stripe Payment Element (include Apple Pay/Google Pay) -->
+                    </div>
                 </div>
-            </div>
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span>Totale:</span>
-                    <span class="checkout-total">${total.toFixed(2)}€</span>
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Totale:</span>
+                        <span class="checkout-total">${total.toFixed(2)}€</span>
+                    </div>
                 </div>
+                <button type="submit" id="submit-payment" class="btn btn-primary" style="width: 100%;">
+                    Paga ${total.toFixed(2)}€
+                </button>
+                <div id="payment-message" style="margin-top: 15px; color: #e74c3c; display: none;"></div>
             </div>
-            <button type="submit" id="submit-payment" class="btn btn-primary" style="width: 100%;">
-                Paga ${total.toFixed(2)}€
-            </button>
-            <div id="payment-message" style="margin-top: 15px; color: #e74c3c; display: none;"></div>
+
+            <div id="paypal-area" style="display:none; margin-top: 12px;">
+                <p style="margin-bottom:10px;">Paga con PayPal. Ti chiederemo conferma.</p>
+                <button type="button" id="paypal-button" class="btn btn-secondary" style="width: 100%;">Paga con PayPal</button>
+            </div>
         </form>
     `;
-    
+
     // Crea il Payment Element con Apple Pay/Google Pay
     elements = stripe.elements({
         clientSecret,
@@ -121,7 +133,7 @@ async function displayStripePaymentForm(clientSecret, total) {
             }
         }
     });
-    
+
     paymentElement = elements.create('payment', {
         layout: 'tabs',
         wallets: {
@@ -129,13 +141,57 @@ async function displayStripePaymentForm(clientSecret, total) {
             googlePay: 'auto'   // Google Pay su Chrome/Android
         }
     });
-    
+
     paymentElement.mount('#payment-element');
-    
-    // Gestisci il submit del form
+
+    // Logica tab Stripe/PayPal
+    let activeTab = 'stripe';
+    const tabStripe = document.getElementById('tab-stripe');
+    const tabPayPal = document.getElementById('tab-paypal');
+    const stripeArea = document.getElementById('stripe-area');
+    const paypalArea = document.getElementById('paypal-area');
+
+    function setTab(tab) {
+        activeTab = tab;
+        if (tab === 'stripe') {
+            tabStripe.classList.add('btn-primary');
+            tabStripe.classList.remove('btn-secondary');
+            tabPayPal.classList.add('btn-secondary');
+            tabPayPal.classList.remove('btn-primary');
+            stripeArea.style.display = 'block';
+            paypalArea.style.display = 'none';
+        } else {
+            tabPayPal.classList.add('btn-primary');
+            tabPayPal.classList.remove('btn-secondary');
+            tabStripe.classList.add('btn-secondary');
+            tabStripe.classList.remove('btn-primary');
+            stripeArea.style.display = 'none';
+            paypalArea.style.display = 'block';
+        }
+    }
+
+    tabStripe?.addEventListener('click', (e) => { e.preventDefault(); setTab('stripe'); });
+    tabPayPal?.addEventListener('click', (e) => { e.preventDefault(); setTab('paypal'); });
+    setTab('stripe');
+
+    // Submit solo se tab Stripe attivo
     const form = document.getElementById('checkoutForm');
     if (form) {
-        form.addEventListener('submit', handleStripeSubmit);
+        form.addEventListener('submit', (e) => {
+            if (activeTab !== 'stripe') {
+                e.preventDefault();
+                return;
+            }
+            handleStripeSubmit(e);
+        });
+    }
+
+    // Pulsante PayPal
+    const paypalButton = document.getElementById('paypal-button');
+    if (paypalButton) {
+        paypalButton.addEventListener('click', () => {
+            payWithPayPal();
+        });
     }
 }
 
