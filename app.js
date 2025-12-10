@@ -335,7 +335,8 @@ function openAuth() {
 
         <div style="text-align: center; margin: 20px 0; color: #888;">
             <p style="margin-bottom: 16px;">oppure</p>
-            <div id="googleSignInContainer" style="display: flex; justify-content: center;"></div>
+            <div id="g_id_onload" data-client_id="985391348038-mrl9hkvh0gaogoqnb5r7hlocn9ikqi00.apps.googleusercontent.com" data-callback="handleGoogleSignIn"></div>
+            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
         </div>
 
         <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
@@ -366,11 +367,11 @@ function openAuth() {
         </form>
     `;
     
-    // Renderizza il bottone Google Sign-In dopo aver creato il form
+    // Renderizza il bottone Google Sign-In
     setTimeout(() => {
         if (typeof google !== 'undefined' && google.accounts) {
             google.accounts.id.renderButton(
-                document.getElementById('googleSignInContainer'),
+                document.querySelector('.g_id_signin'),
                 { theme: 'outline', size: 'large', text: 'signin_with' }
             );
         }
