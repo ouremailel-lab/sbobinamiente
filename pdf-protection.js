@@ -62,35 +62,51 @@ const PDFProtection = {
     },
 
     setupMobileProtection: function() {
-        // Rileva quando l'app va in background (possibile screenshot)
+        // === iOS: Rileva quando l'app va in background ===
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
-                // Schermo nero quando va in background
-                document.body.style.background = '#000000';
-                document.body.style.color = 'transparent';
-                document.querySelector('canvas')?.style.display = 'none';
+                // Schermo nero quando l'app va in background
+                this.applyBlackScreen();
                 this.logScreenshotAttempt();
             } else {
                 // Ripristina quando torna in foreground
-                document.body.style.background = '';
-                document.body.style.color = '';
-                document.querySelector('canvas')?.style.display = '';
+                this.removeBlackScreen();
             }
         });
 
-        // Rileva quando la finestra perde focus (Android screenshot)
+        // === iOS: Rileva blur della finestra ===
         window.addEventListener('blur', () => {
-            document.body.style.background = '#000000';
-            document.body.style.filter = 'brightness(0)';
+            this.applyBlackScreen();
             this.logScreenshotAttempt();
         });
 
         window.addEventListener('focus', () => {
-            document.body.style.background = '';
-            document.body.style.filter = '';
+            this.removeBlackScreen();
         });
 
-        // Previeni long-press su mobile (Android)
+        // === iOS: Disabilita pinch-to-zoom ===
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // === iOS: Monitoraggio aggressivo con Intersection Observer ===
+        // Se l'elemento PDF non è visibile, schermo nero
+        const pdfContainer = document.getElementById('pdfContent');
+        if (pdfContainer && 'IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting && !document.hidden) {
+                        // PDF non è visibile (scrollato fuori o app in background)
+                        this.applyBlackScreen();
+                    }
+                });
+            });
+            observer.observe(pdfContainer);
+        }
+
+        // === Previeni long-press su mobile ===
         document.addEventListener('touchstart', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
@@ -100,10 +116,54 @@ const PDFProtection = {
         document.addEventListener('touchend', (e) => {
             const now = Date.now();
             if (this.lastTouch && now - this.lastTouch < 300) {
-                e.preventDefault(); // Previeni doppio tap
+                e.preventDefault();
             }
             this.lastTouch = now;
         }, { passive: false });
+
+        // === Protezione aggressiva: monitora tutto il documento ===
+        this.setupAggressiveMonitoring();
+    },
+
+    applyBlackScreen: function() {
+        // Crea overlay nero che copre tutto
+        if (!this.blackScreenOverlay) {
+            this.blackScreenOverlay = document.createElement('div');
+            this.blackScreenOverlay.id = 'pdf-black-screen';
+            this.blackScreenOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: #000000;
+                z-index: 999999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 16px;
+                text-align: center;
+                padding: 20px;
+            `;
+            this.blackScreenOverlay.innerHTML = '<p>📱 Accedi alla app per visualizzare il contenuto</p>';
+        }
+        document.body.appendChild(this.blackScreenOverlay);
+    },
+
+    removeBlackScreen: function() {
+        if (this.blackScreenOverlay && this.blackScreenOverlay.parentNode) {
+            this.blackScreenOverlay.remove();
+        }
+    },
+
+    setupAggressiveMonitoring: function() {
+        // Monitora ogni 100ms se l'app è ancora attiva
+        setInterval(() => {
+            if (document.hidden) {
+                this.applyBlackScreen();
+            }
+        }, 100);
     },
 
     isMobile: function() {
