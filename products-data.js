@@ -136,6 +136,7 @@ const products = [
         dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
         pages: 40,
         pdfFile: "SECONDO ANNO/DIRITTO PRIVATO 2.pdf",
+        previewImage: "image/DIRITTO PRIVATO II.png",
         categoria: "universita",
         corso: "sdsg",
         anno: 2
