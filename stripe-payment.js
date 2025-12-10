@@ -52,11 +52,18 @@ async function showStripeCheckout() {
             })
         });
         
-        const { clientSecret, error } = await response.json();
-        
-        if (error) {
-            throw new Error(error);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: 'Errore sconosciuto' }));
+            throw new Error(errorData.error || `Errore HTTP ${response.status}`);
         }
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        
+        const { clientSecret } = data;
         
         // Mostra il form di pagamento Stripe
         await displayStripePaymentForm(clientSecret, total);

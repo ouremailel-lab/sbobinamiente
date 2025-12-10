@@ -11,22 +11,49 @@ exports.handler = async (event) => {
     }
     
     try {
-        const { amount, currency, items } = JSON.parse(event.body);
+        // Verifica che la secret key sia disponibile
+        if (!process.env.STRIPE_SECRET_KEY) {
+            console.error('STRIPE_SECRET_KEY non configurata');
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ error: 'Stripe non è configurato correttamente' })
+            };
+        }
+        
+        let body;
+        try {
+            body = JSON.parse(event.body);
+        } catch (e) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'Invalid JSON in request body' })
+            };
+        }
+        
+        const { amount, currency, items } = body;
+        
+        if (!amount || amount <= 0) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'Invalid amount' })
+            };
+        }
         
         // Crea il Payment Intent
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount,
+            amount: Math.round(amount),
             currency: currency || 'eur',
             automatic_payment_methods: {
                 enabled: true,
             },
             metadata: {
-                items: JSON.stringify(items)
+                items: JSON.stringify(items || [])
             }
         });
         
         return {
             statusCode: 200,
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 clientSecret: paymentIntent.client_secret
             })
@@ -36,7 +63,10 @@ exports.handler = async (event) => {
         console.error('Errore Payment Intent:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                error: error.message || 'Errore durante la creazione del pagamento'
+            })
         };
     }
 };
