@@ -142,6 +142,22 @@ const products = [
         anno: 2
     },
     {
+        id: 200.5,
+        title: "Diritto Privato - 2° Anno - Appunti Stampati",
+        materia: "diritto",
+        tipo: "fisico",
+        prezzo: 30.00,
+        emoji: "📗",
+        descrizione: "Appunti di Diritto Privato stampati e rilegati",
+        dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
+        pages: 40,
+        pdfFile: "SECONDO ANNO/DIRITTO PRIVATO 2.pdf",
+        previewImage: "image/DIRITTO PRIVATO II.png",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 2
+    },
+    {
         id: 301,
         title: "Infortuni sul Lavoro - 3° Anno",
         materia: "diritto",
