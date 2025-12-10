@@ -15,7 +15,6 @@ const firebaseConfig = {
 // Inizializza Firebase
 let auth;
 let googleProvider;
-let appleProvider;
 
 function initializeFirebase() {
     try {
@@ -27,7 +26,6 @@ function initializeFirebase() {
         // Inizializza Auth
         auth = firebase.auth();
         googleProvider = new firebase.auth.GoogleAuthProvider();
-        appleProvider = new firebase.auth.OAuthProvider('apple.com');
         
         // Imposta la lingua italiana
         auth.languageCode = 'it';
@@ -74,36 +72,6 @@ function loginWithGoogleFirebase() {
                 alert('Il popup è stato bloccato dal browser. Abilita i popup per questo sito.');
             } else {
                 alert('Errore durante l\'accesso con Google: ' + error.message);
-            }
-        });
-}
-
-// Login con Apple tramite Firebase
-function loginWithAppleFirebase() {
-    if (!auth) {
-        alert('Firebase non è ancora inizializzato. Riprova tra un secondo.');
-        return;
-    }
-    
-    // Login con popup
-    auth.signInWithPopup(appleProvider)
-        .then((result) => {
-            const user = result.user;
-            console.log('Login Apple riuscito:', user);
-            handleFirebaseUser(user);
-            closeAuth();
-            showNotification(`Benvenuto, ${user.displayName || user.email}!`);
-        })
-        .catch((error) => {
-            console.error('Errore login Apple:', error);
-            
-            // Messaggi di errore più chiari
-            if (error.code === 'auth/popup-closed-by-user') {
-                showNotification('Accesso annullato');
-            } else if (error.code === 'auth/popup-blocked') {
-                alert('Il popup è stato bloccato dal browser. Abilita i popup per questo sito.');
-            } else {
-                alert('Errore durante l\'accesso con Apple: ' + error.message);
             }
         });
 }
