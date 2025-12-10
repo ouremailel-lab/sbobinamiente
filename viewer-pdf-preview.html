@@ -409,6 +409,19 @@
     <script src="pdf-protection.js"></script>
     <script src="products-data.js"></script>
     <script>
+        // Inizializza protezione PDF
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const pdfName = new URLSearchParams(window.location.search).get('file') || 'PDF Anteprima';
+            
+            PDFProtection.init(
+                currentUser.id || 'unknown',
+                currentUser.email || 'unknown@user.com',
+                pdfName
+            );
+            PDFProtection.monitorDevTools();
+        });
+
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         let pdfDoc = null;
