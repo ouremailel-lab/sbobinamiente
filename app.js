@@ -240,12 +240,8 @@ function openCart() {
     if (cartModal) {
         openModal('cartModal');
     } else {
-        // Se non c'è il modal (es. da pacchetti-premium.html), reindirizza
-        if (cart.length === 0) {
-            window.location.href = 'empty-cart.html';
-        } else {
-            window.location.href = 'index.html#cart';
-        }
+        // Se non c'è il modal (es. da pacchetti-premium.html), reindirizza a index.html che aprirà il modal
+        window.location.href = 'index.html';
     }
 }
 
