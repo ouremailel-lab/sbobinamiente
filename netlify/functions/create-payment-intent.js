@@ -44,9 +44,9 @@ exports.handler = async (event) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount),
       currency: currency || 'eur',
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      // Limita ai pagamenti con carta, escludendo altri metodi automatici
+      automatic_payment_methods: { enabled: false },
+      payment_method_types: ['card']
     });
 
     return {

@@ -20,14 +20,14 @@
 
     <section class="block block-pink" style="min-height: 70vh; display: flex; align-items: center;">
         <div class="container" style="text-align: center;">
-            <div style="font-size: 80px; margin-bottom: 30px;">🎉</div>
-            <h1 style="color: #0f172a; margin-bottom: 20px;">Pagamento Completato!</h1>
-            <p style="font-size: 18px; color: #475569; max-width: 600px; margin: 0 auto 30px;">
+            <div style="font-size: 80px; margin-bottom: 30px;" id="success-emoji">🎉</div>
+            <h1 style="color: #0f172a; margin-bottom: 20px;" id="success-title">Pagamento Completato!</h1>
+            <p style="font-size: 18px; color: #475569; max-width: 600px; margin: 0 auto 30px;" id="success-lead">
                 Grazie per il tuo acquisto! Riceverai a breve un'email con tutti i dettagli dell'ordine e le istruzioni per accedere ai tuoi appunti.
             </p>
             <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; margin: 0 auto 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <h3 style="margin-bottom: 15px;">Cosa succede ora?</h3>
-                <ul style="list-style: none; padding: 0; text-align: left;">
+                <ul style="list-style: none; padding: 0; text-align: left;" id="success-steps">
                     <li style="margin: 15px 0; padding-left: 30px; position: relative;">
                         <span style="position: absolute; left: 0;">📧</span>
                         Riceverai un'email di conferma
@@ -41,6 +41,17 @@
                         Potrai accedere ai tuoi acquisti dalla tua area personale
                     </li>
                 </ul>
+
+                <div id="bank-transfer-box" style="display: none; margin-top: 15px; background: #f5f5f5; padding: 16px; border-radius: 10px; border: 1px dashed #cbd5e1;">
+                    <h3 style="margin-top: 0;">Dettagli per il bonifico</h3>
+                    <p style="margin: 6px 0;"><strong>Importo:</strong> <span id="bank-amount"></span></p>
+                    <p style="margin: 6px 0;"><strong>IBAN:</strong> <span id="bank-iban"></span></p>
+                    <p style="margin: 6px 0;"><strong>Intestatario:</strong> <span id="bank-holder"></span></p>
+                    <p style="margin: 6px 0;"><strong>Banca:</strong> <span id="bank-bank"></span></p>
+                    <p style="margin: 6px 0;"><strong>Causale:</strong> <span id="bank-reason"></span></p>
+                    <p style="margin: 6px 0; color: #475569;"><strong>Invio riepilogo:</strong> <span id="bank-email"></span></p>
+                    <p style="margin: 6px 0; font-size: 13px; color: #475569;">Conferma il bonifico entro 24h per velocizzare la consegna.</p>
+                </div>
             </div>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <a href="index.html" class="btn btn-primary">Torna alla Home</a>
@@ -63,8 +74,51 @@
         // Mostra l'ID dell'ordine dall'URL
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('order');
+        const method = urlParams.get('method');
         if (orderId) {
             document.getElementById('orderId').textContent = orderId;
+        }
+
+        const successTitle = document.getElementById('success-title');
+        const successLead = document.getElementById('success-lead');
+        const successEmoji = document.getElementById('success-emoji');
+        const successSteps = document.getElementById('success-steps');
+        const bankBox = document.getElementById('bank-transfer-box');
+
+        if (method === 'bank_transfer') {
+            successTitle.textContent = 'Ordine registrato: completa il bonifico';
+            successLead.textContent = 'Abbiamo salvato il tuo ordine. Esegui il bonifico con i dati qui sotto e invia la ricevuta per attivare subito l\'accesso.';
+            successEmoji.textContent = '🏦';
+
+            successSteps.innerHTML = `
+                <li style="margin: 15px 0; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0;">🏦</span>
+                    Effettua il bonifico con i dati indicati
+                </li>
+                <li style="margin: 15px 0; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0;">📧</span>
+                    Invia la contabile a info@sbobinamante.com indicando l\'ID ordine
+                </li>
+                <li style="margin: 15px 0; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0;">📚</span>
+                    Riceverai conferma e accesso ai PDF appena registrato il pagamento
+                </li>
+            `;
+
+            const bankDataRaw = sessionStorage.getItem('lastBankTransfer');
+            if (bankDataRaw) {
+                const info = JSON.parse(bankDataRaw);
+                bankBox.style.display = 'block';
+                document.getElementById('bank-amount').textContent = `${info.amount}€`;
+                document.getElementById('bank-iban').textContent = info.iban || '-';
+                document.getElementById('bank-holder').textContent = info.holder || '-';
+                document.getElementById('bank-bank').textContent = info.bank || '-';
+                document.getElementById('bank-reason').textContent = info.reason || orderId || '-';
+                document.getElementById('bank-email').textContent = info.email || 'la tua email';
+            } else {
+                bankBox.style.display = 'block';
+                bankBox.innerHTML = '<p>Non trovi i dati? Controlla la mail di conferma o contattaci a info@sbobinamante.com.</p>';
+            }
         }
     </script>
 </body>
