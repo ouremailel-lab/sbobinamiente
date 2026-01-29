@@ -250,31 +250,12 @@ function closeCart() {
 }
 
 function proceedToCheckout() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     if (cart.length === 0) {
-        alert('Il tuo zaino è vuoto!')
+        alert('Il carrello è vuoto!');
         return;
     }
-
-    if (!currentUser) {
-        alert('Devi accedere per procedere con l\'acquisto');
-        closeCart();
-        openAuth();
-        return;
-    }
-
-    // Usa Stripe invece del checkout manuale
-    closeCart();
-    
-    // Mostra modal checkout vuoto (verrà popolato da Stripe)
-    openModal('checkoutModal');
-    
-    // Avvia Stripe checkout
-    if (typeof showStripeCheckout === 'function') {
-        showStripeCheckout();
-    } else {
-        alert('Sistema di pagamento in caricamento, riprova tra un secondo');
-        closeCheckout();
-    }
+    window.location.href = 'checkout.html';
 }
 
 // ==================== FILTRI ====================

@@ -136,6 +136,8 @@
       const taxesSpan = document.getElementById('taxes');
       const totalSpan = document.getElementById('total');
 
+      console.log('Cart data:', cart); // Debug
+
       if (cart.length === 0) {
         cartItemsDiv.innerHTML = '<p class="empty-message">Il carrello è vuoto</p>';
         document.getElementById('checkout-btn').disabled = true;
@@ -146,7 +148,14 @@
       let html = '';
 
       cart.forEach(item => {
-        const price = parseFloat(item.price) || 0;
+        // Gestisci diversi formati di prezzo
+        let price = 0;
+        if (typeof item.price === 'string') {
+          price = parseFloat(item.price.replace('€', '').replace(',', '.').trim()) || 0;
+        } else {
+          price = parseFloat(item.price) || 0;
+        }
+
         const qty = parseInt(item.quantity) || 1;
         const itemTotal = price * qty;
         subtotal += itemTotal;
@@ -154,8 +163,8 @@
         html += `
           <div class="cart-item">
             <div>
-              <div class="item-name">${item.name || 'Prodotto'}</div>
-              <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Qty: ${qty}</div>
+              <div class="item-name">${item.name || item.title || 'Prodotto'}</div>
+              <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Quantità: ${qty} × ${price.toFixed(2)}€</div>
             </div>
             <div class="item-price">${itemTotal.toFixed(2)}€</div>
           </div>
@@ -172,6 +181,8 @@
 
       // Store totals for checkout
       window.cartData = { cart, subtotal, taxes, total };
+      
+      console.log('Cart summary:', { subtotal, taxes, total }); // Debug
     }
 
     // Load cart on page load
@@ -193,7 +204,7 @@
       errorDiv.style.display = 'none';
 
       try {
-        const res = await fetch('/create-checkout-session', {
+        const res = await fetch('http://localhost:5000/create-checkout-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(window.cartData)
