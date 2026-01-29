@@ -1,0 +1,10 @@
+#!/bin/bash
+# Script di distribuzione per Vercel
+chmod +x deploy-vercel.sh && ./deploy-vercel.sh
+if [ ! -d "node_modules" ]; then
+npx vercel --prod
+cd /Users/elisaiannone/Desktop/SbobinaMente
+npm install  # Installa dipendenze locali
+npx vercel --prod  # Distribuisci
+chmod +x vercel
+./vercel

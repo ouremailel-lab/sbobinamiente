@@ -1,0 +1,14 @@
+{
+  "name": "my-static-site",
+  "version": "1.0.0",
+  "description": "A simple static site for demonstration purposes.",
+  "main": "src/index.html",
+  "scripts": {
+    "deploy": "surge ./src"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

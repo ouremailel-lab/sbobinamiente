@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - SbobinaMente</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 { color: #1f2937; margin-bottom: 10px; font-size: 28px; }
+    .subtitle { color: #6b7280; margin-bottom: 30px; font-size: 16px; }
+    .cart-items {
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 30px 0;
+      text-align: left;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .item-name { font-weight: 600; color: #1f2937; }
+    .item-price { color: #667eea; font-weight: 600; }
+    .empty-message { color: #6b7280; font-style: italic; }
+    .summary {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .total-row {
+      border-top: 2px solid #e5e7eb;
+      padding-top: 10px;
+      margin-top: 10px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+    .btn:hover { background: #5568d3; transform: translateY(-2px); }
+    .btn:disabled { background: #d1d5db; cursor: not-allowed; }
+    .error {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+      font-size: 14px;
+    }
+    .loading { display: none; text-align: center; margin-top: 20px; color: #667eea; }
+    .back-link { text-align: center; margin-top: 20px; }
+    .back-link a { color: #667eea; text-decoration: none; font-size: 14px; }
+    .back-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>💳 Checkout</h1>
+    <p class="subtitle">Completa il tuo acquisto</p>
+    
+    <div class="cart-items" id="cartItems">
+      <p class="empty-message">Caricamento carrello...</p>
+    </div>
+
+    <div class="summary">
+      <div class="summary-row">
+        <span>Subtotale:</span>
+        <span id="subtotal">0,00€</span>
+      </div>
+      <div class="summary-row">
+        <span>Tasse:</span>
+        <span id="taxes">0,00€</span>
+      </div>
+      <div class="summary-row total-row">
+        <span>Totale:</span>
+        <span id="total">0,00€</span>
+      </div>
+    </div>
+
+    <button class="btn" id="checkout-btn">Procedi al Pagamento</button>
+    <div class="loading" id="loading">⏳ Elaborazione...</div>
+    <div class="error" id="error"></div>
+
+    <div class="back-link">
+      <a href="lezioni.html">← Continua lo shopping</a>
+    </div>
+  </div>
+
+  <script>
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const cartItemsDiv = document.getElementById('cartItems');
+      const subtotalSpan = document.getElementById('subtotal');
+      const taxesSpan = document.getElementById('taxes');
+      const totalSpan = document.getElementById('total');
+
+      if (cart.length === 0) {
+        cartItemsDiv.innerHTML = '<p class="empty-message">Il carrello è vuoto</p>';
+        document.getElementById('checkout-btn').disabled = true;
+        return;
+      }
+
+      let subtotal = 0;
+      let html = '';
+
+      cart.forEach(item => {
+        const price = parseFloat(item.price) || 0;
+        const qty = parseInt(item.quantity) || 1;
+        const itemTotal = price * qty;
+        subtotal += itemTotal;
+
+        html += `
+          <div class="cart-item">
+            <div>
+              <div class="item-name">${item.name || 'Prodotto'}</div>
+              <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Qty: ${qty}</div>
+            </div>
+            <div class="item-price">${itemTotal.toFixed(2)}€</div>
+          </div>
+        `;
+      });
+
+      const taxes = subtotal * 0.22; // IVA 22%
+      const total = subtotal + taxes;
+
+      cartItemsDiv.innerHTML = html;
+      subtotalSpan.textContent = subtotal.toFixed(2) + '€';
+      taxesSpan.textContent = taxes.toFixed(2) + '€';
+      totalSpan.textContent = total.toFixed(2) + '€';
+
+      // Store totals for checkout
+      window.cartData = { cart, subtotal, taxes, total };
+    }
+
+    // Load cart on page load
+    loadCart();
+
+    const btn = document.getElementById('checkout-btn');
+    const errorDiv = document.getElementById('error');
+    const loading = document.getElementById('loading');
+
+    btn.addEventListener('click', async () => {
+      if (!window.cartData || window.cartData.cart.length === 0) {
+        errorDiv.textContent = '❌ Il carrello è vuoto';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      loading.style.display = 'block';
+      errorDiv.style.display = 'none';
+
+      try {
+        const res = await fetch('/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(window.cartData)
+        });
+
+        if (!res.ok) throw new Error('Errore server');
+        
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error('URL sessione non trovato');
+        }
+      } catch (err) {
+        errorDiv.textContent = `❌ ${err.message}`;
+        errorDiv.style.display = 'block';
+        btn.disabled = false;
+        loading.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

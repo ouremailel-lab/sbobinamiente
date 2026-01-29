@@ -1,0 +1,72 @@
+Stripe.api_key = '<<pk_test_51Sj7KMRpBvh64hNK0447gK6VE0HfVpe0mIhv179z6gUzg7jfmvOfRTnr65RThAar4FAB6Kf4omfR6RcZ4NV7VMtG00VkLBZKii>>'
+require "sinatra"
+require "stripe"
+require "json"
+require "dotenv/load"
+
+Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+DOMAIN = ENV.fetch("DOMAIN", "http://localhost:4242")
+
+# Endpoint: crea la sessione Checkout
+post "/create-checkout-session" do
+  content_type :json
+
+  # Opzione A (consigliata): usa un Price ID creato nel Dashboard Stripe
+  # price_id = "price_12345"
+
+  # Opzione B: crea price_data al volo (ok per prototipi / pochi prodotti)
+  session = Stripe::Checkout::Session.create(
+    mode: "payment",
+    payment_method_types: ["card"],
+    line_items: [{
+      price_data: {
+        currency: "eur",
+        product_data: { name: "SbobinaMente - Appunti PDF" },
+        unit_amount: 990 # 9,90€ in centesimi
+      },
+      quantity: 1
+    }],
+    success_url: "#{DOMAIN}/success.html?session_id={CHECKOUT_SESSION_ID}",
+    cancel_url: "#{DOMAIN}/cancel.html"
+  )
+
+  { url: session.url }.to_json
+end
+ruby server.rb -p 4242
+
+<button id="checkout">Vai al pagamento</button>
+
+<script>
+  document.getElementById("checkout").addEventListener("click", async () => {
+    const res = await fetch("/create-checkout-session", { method: "POST" });
+    const data = await res.json();
+    window.location = data.url;
+  });
+</script>
+
+require "sinatra"
+require "stripe"
+require "dotenv/load"
+
+Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+YOUR_DOMAIN = ENV.fetch("DOMAIN", "http://localhost:4242")
+
+post "/checkout" do
+  session = Stripe::Checkout::Session.create(
+    line_items: [{
+      price: "price_1234",  # <-- incolla qui il tuo Price ID vero
+      quantity: 1
+    }],
+    mode: "payment",        # <-- oppure "subscription" / "setup"
+    success_url: YOUR_DOMAIN + "/success.html?session_id={CHECKOUT_SESSION_ID}",
+    cancel_url: YOUR_DOMAIN + "/cancel.html"
+  )
+
+  redirect session.url, 303
+end
+
+STRIPE_SECRET_KEY=sk_test_...
+DOMAIN=http://localhost:4242
+
+success_url: ENV["DOMAIN"] + "/success.html?session_id={CHECKOUT_SESSION_ID}",
+cancel_url: ENV["DOMAIN"] + "/cancel.html",

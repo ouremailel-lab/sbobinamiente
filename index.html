@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SbobinaMente - Appunti e PDF Protetti</title>
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Nuovi meta per pubblicazione -->
+    <link rel="canonical" href="https://sbobinamente.it/">
+    <meta name="description" content="SbobinaMente — appunti e PDF protetti selezionati e verificati. Compra o vendi appunti di qualità per studiare meglio.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SbobinaMente - Appunti e PDF Protetti">
+    <meta property="og:description" content="Appunti verificati e PDF protetti per studiare in modo efficace. Scopri le lezioni e acquista anteprime sicure.">
+    <meta property="og:url" content="https://sbobinamente.it/">
+    <meta property="og:image" content="https://sbobinamente.it/image/copertina.jpg">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta name="theme-color" content="#f5a6c9">
 </head>
 <body>
     <!-- Header e Navigazione -->
@@ -84,7 +96,7 @@
             <p style="max-width: 820px; margin: 0 auto 24px;">Scegli la materia che ti serve, accedi all'anteprima e acquista il PDF protetto. Se vuoi vendere i tuoi appunti di qualità, scrivici.</p>
             <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <a href="lezioni.html" class="btn btn-primary" style="padding: 14px 32px;">Vai alle Lezioni</a>
-                <a href="mailto:ouremailel@gmail.com" class="btn btn-secondary" style="padding: 14px 32px;">Collabora con noi</a>
+                <a href="mailto:info@sbobinamente.it" class="btn btn-secondary" style="padding: 14px 32px;">Collabora con noi</a>
             </div>
         </div>
     </section>
@@ -143,7 +155,7 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 SbobinaMente. Tutti i diritti riservati.</p>
-            <p>Per domande: <a href="mailto:info@sbobinamante.com">info@sbobinamante.com</a></p>
+            <p>Per domande: <a href="mailto:info@sbobinamente.it">info@sbobinamente.it</a></p>
         </div>
     </footer>
 
@@ -176,5 +188,113 @@
     <script src="email-service.js"></script>
     <script src="app.js"></script>
     <script src="paypal-handler.js"></script>
+
+    <!--
+  SURGE DEPLOY (istruzioni rapide)
+
+  1) Se non serve build (siti statici nella root)
+     # usa npx per evitare install globale
+     npx surge ./ --domain sbobinamente.surge.sh
+
+  2) Se hai un build step (es: crea cartella build/ o dist/)
+     npm install
+     npm run build
+     # poi pubblica la cartella di output:
+     npx surge build/ --domain sbobinamente.surge.sh
+
+  3) Usare un dominio custom (sbobinamente.it)
+     - Puoi passare --domain sbobinamente.it direttamente:
+       npx surge build/ --domain sbobinamente.it
+     - Oppure pubblica prima su sbobinamente.surge.sh, poi aggiungi il dominio dalla dashboard Surge.
+     - Surge mostrerà istruzioni DNS se necessario; segui quelle per configurare A/CNAME.
+
+  4) Primo login Surge (se richiesto)
+     npx surge
+     # ti verrà chiesto email/password per creare/collegare account
+
+  5) Aggiornare il sito
+     # esegui di nuovo lo stesso comando (surge sovrascrive)
+     npx surge ./ --domain sbobinamente.surge.sh
+
+  Esempio completo (con build):
+     npm install
+     npm run build
+     npx surge build/ --domain sbobinamente.surge.sh
+
+  Note:
+   - Se vuoi un CNAME file: crea file 'CNAME' nella root con il contenuto:
+       sbobinamente.it
+     e poi esegui surge sulla root o sulla build/.
+   - Se hai bisogno, posso generare un file CNAME o uno script npm "deploy:surge".
+-->
+
+<!--
+  TROUBLESHOOT SURGE / DOMINIO (checklist rapida)
+
+  1) Verifica account Surge e ultimo deploy
+     npx surge whoami
+     # vedi l'email collegata; se nulla, esegui:
+     npx surge               # ti chiederà login
+
+  2) Controlla che il deploy sia andato a buon fine
+     # se hai usato la root:
+     npx surge ./ --domain sbobinamente.surge.sh
+     # se hai build output:
+     npx surge build/ --domain sbobinamente.surge.sh
+
+     Osserva l'output in terminal: Surge stampa "Success! Project is published..." con l'URL.
+
+  3) Controlla risposta HTTP del dominio (status / header)
+     curl -I https://sbobinamente.it
+     curl -I https://sbobinamente.surge.sh
+     # se ricevi 200 o 301 => server raggiungibile; 404/500 indica problema deployment/path.
+
+  4) Verifica risoluzione DNS e propagazione (dominio custom)
+     # mostra quali record risolvono ora
+     dig +short sbobinamente.it
+     nslookup sbobinamente.it
+
+     Se non risolve, aggiorna i record DNS secondo le istruzioni Surge (CNAME o A) e attendi la propagazione.
+
+  5) Controlla console / Network nel browser
+     - Apri DevTools (F12) -> Network -> ricarica.
+     - Verifica che index.html venga caricato e che CSS/JS/immagini non diano 404.
+     - Eventuali errori JS possono impedire il rendering.
+
+  6) Percorso file errato
+     - Assicurati che index.html sia nella cartella pubblicata (root o build/).
+     - Percorsi relativi in HTML (es: image/copertina.jpg) devono essere presenti sul server.
+
+  7) SSL / HTTPS
+     - Con dominio custom Surge può richiedere qualche minuto/ora per emettere certificato.
+     - Se https non funziona ma http sì, attendi o controlla le impostazioni DNS.
+
+  8) Ripubblicare per correggere
+     - Se hai trovato che hai caricato la cartella sbagliata, ripubblica con cartella corretta:
+       npx surge path/to/public/ --domain sbobinamente.it
+
+  9) Fornisci output
+     - Incolla qui i risultati di:
+         npx surge whoami
+         curl -I https://sbobinamente.it
+         dig +short sbobinamente.it
+     e controllo io cosa non va.
+
+  Note veloci:
+   - Se vedi pagina "project not found" o 404 da Surge: probabilmente pubblicata cartella vuota o index assente.
+   - Per creare CNAME: aggiungi file 'CNAME' con "sbobinamente.it" nella cartella pubblicata e poi esegui surge.
+-->
 </body>
 </html>
+<form action="http://localhost:4242/checkout" method="POST">
+  <button type="submit">Paga</button>
+</form>
+
+line_items: [{
+  # Provide the exact Price ID (for example, price_1234) of the product you want to sell
+  price: '{{PRICE_ID}}',
+  quantity: 1,
+}],
+mode: {{CHECKOUT_MODE}},
+success_url: <SbobinaMente class="IT"></SbobinaMente> + '/success.html',
+redirect session.url, 303
