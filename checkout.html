@@ -99,6 +99,9 @@
   <div class="card">
     <h1>💳 Checkout</h1>
     <p class="subtitle">Completa il tuo acquisto</p>
+    <p class="subtitle" style="font-size:14px;">
+      Pagamento solo con carta. Accredito su IBAN configurato in Stripe.
+    </p>
     
     <div class="cart-items" id="cartItems">
       <p class="empty-message">Caricamento carrello...</p>
@@ -215,9 +218,17 @@
       errorDiv.style.display = 'none';
 
       try {
-        const API_URL = (window.location.hostname === "localhost")
-          ? "http://localhost:4242/create-checkout-session"
-          : "https://TUA-API-PUBBLICA/create-checkout-session";
+        const supabaseUrl =
+          window?.SUPABASE_URL ||
+          window?.supabaseConfig?.url ||
+          window?.supabaseUrl ||
+          "";
+
+        if (!supabaseUrl) {
+          throw new Error("SUPABASE_URL mancante");
+        }
+
+        const API_URL = `${supabaseUrl}/functions/v1/create-checkout-session`;
 
         const res = await fetch(API_URL, {
           method: 'POST',
@@ -225,14 +236,24 @@
           body: JSON.stringify(window.cartData)
         });
 
-        if (!res.ok) throw new Error('Errore server');
-        
-        const data = await res.json();
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          throw new Error('URL sessione non trovato');
+        if (!res.ok) {
+          throw new Error(`Errore server (${res.status})`);
         }
+
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          const text = await res.text();
+          throw new Error(`Risposta non JSON: ${text.slice(0, 80)}...`);
+        }
+
+        if (data?.url) {
+          window.location.href = data.url;
+          return;
+        }
+
+        throw new Error(`URL sessione mancante`);
       } catch (err) {
         errorDiv.textContent = `❌ ${err.message}`;
         errorDiv.style.display = 'block';

@@ -1,7 +1,7 @@
 {
   "name": "sbobinamente",
   "version": "1.0.0",
-  "description": "E-commerce di appunti e PDF protetti",
+  "description": "E-commerce di appunti e PDF protetti con pagamenti carta via Stripe",
   "main": "index.html",
   "homepage": "https://elisaiannone.github.io/sbobinamente",
   "scripts": {
@@ -10,7 +10,10 @@
     "deploy:prod": "git push origin main && npm run deploy",
     "server": "node server.js",
     "server:prod": "APP_URL=https://elisaiannone.github.io/sbobinamente node server.js",
-    "preview": "python3 -m http.server 8000"
+    "preview": "python3 -m http.server 8000",
+    "dev": "vercel dev",
+    "deploy:vercel": "vercel --prod",
+    "supabase:deploy": "supabase functions deploy create-checkout-session"
   },
   "keywords": ["ecommerce", "appunti", "pdf"],
   "author": "Elisai Iannone",
@@ -27,6 +30,7 @@
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
-    "gh-pages": "^6.1.0"
+    "gh-pages": "^6.1.0",
+    "vercel": "^32.0.0"
   }
 }
