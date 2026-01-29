@@ -105,15 +105,11 @@
     </div>
 
     <div class="summary">
-      <div class="summary-row">
-        <span>Subtotale:</span>
-        <span id="subtotal">0,00€</span>
+      <div class="summary-row" id="shipping-row" style="display:none;">
+        <span>Spedizione:</span>
+        <span id="shipping">0,00€</span>
       </div>
       <div class="summary-row">
-        <span>Tasse:</span>
-        <span id="taxes">0,00€</span>
-      </div>
-      <div class="summary-row total-row">
         <span>Totale:</span>
         <span id="total">0,00€</span>
       </div>
@@ -132,9 +128,9 @@
     function loadCart() {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       const cartItemsDiv = document.getElementById('cartItems');
-      const subtotalSpan = document.getElementById('subtotal');
-      const taxesSpan = document.getElementById('taxes');
       const totalSpan = document.getElementById('total');
+      const shippingRow = document.getElementById('shipping-row');
+      const shippingSpan = document.getElementById('shipping');
 
       if (cart.length === 0) {
         cartItemsDiv.innerHTML = '<p class="empty-message">Il carrello è vuoto</p>';
@@ -144,9 +140,9 @@
 
       let subtotal = 0;
       let html = '';
+      let hasCartaceo = false;
 
       cart.forEach(item => {
-        // Supporta sia "price" che "prezzo", "quantity" che "quantita"
         let price = 0;
         if (item.price !== undefined) {
           price = typeof item.price === 'string'
@@ -162,6 +158,14 @@
         const itemTotal = price * qty;
         subtotal += itemTotal;
 
+        // Rileva se almeno un prodotto è cartaceo
+        if (
+          (item.type && item.type.toLowerCase() === "cartaceo") ||
+          (item.tipo && item.tipo.toLowerCase() === "cartaceo")
+        ) {
+          hasCartaceo = true;
+        }
+
         html += `
           <div class="cart-item">
             <div>
@@ -173,16 +177,23 @@
         `;
       });
 
-      const taxes = subtotal * 0.22; // IVA 22%
-      const total = subtotal + taxes;
+      let shipping = 0;
+      if (hasCartaceo) {
+        shipping = 7.0;
+        shippingRow.style.display = '';
+        shippingSpan.textContent = shipping.toFixed(2) + '€';
+      } else {
+        shippingRow.style.display = 'none';
+        shippingSpan.textContent = '0,00€';
+      }
+
+      const total = subtotal + shipping;
 
       cartItemsDiv.innerHTML = html;
-      subtotalSpan.textContent = subtotal.toFixed(2) + '€';
-      taxesSpan.textContent = taxes.toFixed(2) + '€';
       totalSpan.textContent = total.toFixed(2) + '€';
 
       // Store totals for checkout
-      window.cartData = { cart, subtotal, taxes, total };
+      window.cartData = { cart, total, shipping };
     }
 
     // Load cart on page load
