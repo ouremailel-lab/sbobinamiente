@@ -204,7 +204,11 @@
       errorDiv.style.display = 'none';
 
       try {
-        const res = await fetch('http://localhost:5000/create-checkout-session', {
+        const API_URL = (window.location.hostname === "localhost")
+          ? "http://localhost:4242/create-checkout-session"
+          : "https://TUA-API-PUBBLICA/create-checkout-session";
+
+        const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(window.cartData)
