@@ -136,8 +136,6 @@
       const taxesSpan = document.getElementById('taxes');
       const totalSpan = document.getElementById('total');
 
-      console.log('Cart data:', cart); // Debug
-
       if (cart.length === 0) {
         cartItemsDiv.innerHTML = '<p class="empty-message">Il carrello è vuoto</p>';
         document.getElementById('checkout-btn').disabled = true;
@@ -148,22 +146,26 @@
       let html = '';
 
       cart.forEach(item => {
-        // Gestisci diversi formati di prezzo
+        // Supporta sia "price" che "prezzo", "quantity" che "quantita"
         let price = 0;
-        if (typeof item.price === 'string') {
-          price = parseFloat(item.price.replace('€', '').replace(',', '.').trim()) || 0;
-        } else {
-          price = parseFloat(item.price) || 0;
+        if (item.price !== undefined) {
+          price = typeof item.price === 'string'
+            ? parseFloat(item.price.replace('€', '').replace(',', '.').trim()) || 0
+            : parseFloat(item.price) || 0;
+        } else if (item.prezzo !== undefined) {
+          price = typeof item.prezzo === 'string'
+            ? parseFloat(item.prezzo.replace('€', '').replace(',', '.').trim()) || 0
+            : parseFloat(item.prezzo) || 0;
         }
 
-        const qty = parseInt(item.quantity) || 1;
+        const qty = parseInt(item.quantity || item.quantita) || 1;
         const itemTotal = price * qty;
         subtotal += itemTotal;
 
         html += `
           <div class="cart-item">
             <div>
-              <div class="item-name">${item.name || item.title || 'Prodotto'}</div>
+              <div class="item-name">${item.name || item.titolo || item.title || 'Prodotto'}</div>
               <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Quantità: ${qty} × ${price.toFixed(2)}€</div>
             </div>
             <div class="item-price">${itemTotal.toFixed(2)}€</div>
@@ -181,8 +183,6 @@
 
       // Store totals for checkout
       window.cartData = { cart, subtotal, taxes, total };
-      
-      console.log('Cart summary:', { subtotal, taxes, total }); // Debug
     }
 
     // Load cart on page load
