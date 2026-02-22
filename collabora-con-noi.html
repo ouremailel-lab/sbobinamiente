@@ -68,7 +68,35 @@
                     <strong>Noi siamo qui per supportarti passo dopo passo.</strong>
                 </p>
                 <h3 style="color: #009688; margin-bottom: 18px;">Iniziamo?</h3>
-                <a href="mailto:ouremailel@gmail.com" class="btn btn-secondary" style="padding: 16px 40px; font-size: 18px; margin-bottom: 36px;">Scrivici ora</a>
+                
+                <!-- FREE COLLABORATION OPTION -->
+                <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <h4 style="color: #4a6fa5; margin-bottom: 12px;">✉️ Collaborazione Standard (Gratuita)</h4>
+                    <p style="font-size: 16px; margin-bottom: 16px;">
+                        Inviaci i tuoi appunti e inizia a guadagnare. Nessun costo iniziale.<br>
+                        <strong>Commissione: 50% per PDF, 30% per cartacei</strong>
+                    </p>
+                    <a href="mailto:ouremailel@gmail.com" class="btn btn-secondary" style="padding: 14px 32px; font-size: 16px;">Scrivici Gratis</a>
+                </div>
+
+                <!-- PREMIUM COLLABORATION OPTION (Optional) -->
+                <!-- Uncomment if you want to offer premium collaboration tiers -->
+                <!--
+                <div style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); border-radius: 12px; padding: 24px; margin-bottom: 32px; box-shadow: 0 4px 12px rgba(255,215,0,0.3); border: 2px solid #ffd700;">
+                    <h4 style="color: #0f172a; margin-bottom: 12px;">⭐ Collaborazione Premium - 29€</h4>
+                    <p style="font-size: 16px; margin-bottom: 16px; color: #1f2937;">
+                        Maggiore visibilità, promozione prioritaria e supporto dedicato.<br>
+                        <strong>Commissione ridotta: 40% per PDF, 20% per cartacei</strong>
+                    </p>
+                    <ul style="text-align: left; max-width: 500px; margin: 0 auto 20px; font-size: 15px; list-style: none; padding: 0; color: #1f2937;">
+                        <li>✨ Appunti in evidenza nella homepage</li>
+                        <li>📢 Post social dedicato</li>
+                        <li>🎯 Newsletter ai nostri iscritti</li>
+                        <li>💰 Commissioni ridotte a vita</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="startPremiumCollaboration()" style="padding: 14px 32px; font-size: 16px;">Attiva Premium</button>
+                </div>
+                -->
 
                 <div style="background: #f5f5f5; border-radius: 10px; padding: 28px 20px; margin-top: 36px; text-align: left;">
                     <h3 style="color: #d72660; margin-bottom: 16px;">Piccole cose che devi sapere prima di confermare la vendita dei tuoi appunti:</h3>
@@ -120,5 +148,37 @@
             <p>Per domande: <a href="mailto:info@sbobinamente.it">info@sbobinamente.it</a></p>
         </div>
     </footer>
+
+    <script>
+        // Premium collaboration checkout (optional)
+        async function startPremiumCollaboration() {
+            try {
+                const response = await fetch('https://sbobinamente.it/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: [{
+                            name: 'Collaborazione Premium SbobinaMente',
+                            description: 'Accesso a maggiore visibilità e commissioni ridotte',
+                            price: 29,
+                            quantity: 1
+                        }],
+                        shipping: 0,
+                        customerEmail: ''
+                    })
+                });
+
+                const { url } = await response.json();
+                if (url) {
+                    window.location.href = url;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Errore durante l\'avvio del checkout. Riprova o contattaci via email.');
+            }
+        }
+    </script>
 </body>
 </html>
+<!-- Nessuna modifica necessaria: la pagina collabora-con-noi.html non invia email automatiche, ma solo tramite mailto. -->
+<!-- Se vuoi aggiungere un form con invio automatico via EmailJS, chiedi e ti fornisco il codice. -->

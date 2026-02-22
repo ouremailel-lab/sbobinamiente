@@ -116,7 +116,7 @@
                     <span>Totale:</span>
                     <span class="total-price">0€</span>
                 </div>
-                <button class="btn btn-primary" id="checkoutBtn">Checkout</button>
+                <button class="btn btn-primary" id="checkoutBtn">Procedi al Pagamento</button>
             </div>
         </div>
     </div>
@@ -190,15 +190,7 @@
     <script src="app.js"></script>
     <script>
       document.getElementById("checkoutBtn")?.addEventListener("click", () => {
-        const w = 600;
-        const h = 800;
-        const left = (window.screen.width - w) / 2;
-        const top = (window.screen.height - h) / 2;
-        window.open(
-          'checkout.html',
-          'checkoutPopup',
-          `width=${w},height=${h},top=${top},left=${left},resizable=yes,scrollbars=yes`
-        );
+        window.location.href = 'checkout.html';
       });
     </script>
 

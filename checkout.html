@@ -87,7 +87,6 @@
       border-radius: 8px;
       margin-top: 20px;
       display: none;
-     
     }
     .loading { display: none; text-align: center; margin-top: 20px; color: #667eea; }
     .back-link { text-align: center; margin-top: 20px; }
@@ -100,7 +99,7 @@
     <h1>💳 Checkout</h1>
     <p class="subtitle">Completa il tuo acquisto</p>
     <p class="subtitle" style="font-size:14px;">
-      Pagamento solo con carta. Accredito su IBAN configurato in Stripe.
+      Pagamento con carta, PayPal o Link. Gestito da Stripe.
     </p>
     
     <div class="cart-items" id="cartItems">
@@ -161,7 +160,6 @@
         const itemTotal = price * qty;
         subtotal += itemTotal;
 
-        // Rileva se almeno un prodotto è cartaceo
         if (
           (item.type && item.type.toLowerCase() === "cartaceo") ||
           (item.tipo && item.tipo.toLowerCase() === "cartaceo")
@@ -218,37 +216,44 @@
       errorDiv.style.display = 'none';
 
       try {
-        const supabaseUrl =
-          window?.SUPABASE_URL ||
-          window?.supabaseConfig?.url ||
-          window?.supabaseUrl ||
-          "";
+        // Get current user email if available
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const customerEmail = currentUser?.email || '';
 
-        console.log("🔍 SUPABASE_URL letto:", supabaseUrl);
+        // ✅ Formato corretto per il server
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+          ? 'http://localhost:4242/api/create-checkout-session'
+          : 'https://sbobinamente.it/api/create-checkout-session';
 
-        if (!supabaseUrl) {
-          throw new Error("SUPABASE_URL mancante. Controlla supabase-config.js");
-        }
-
-        const API_URL = `${supabaseUrl}/functions/v1/create-checkout-session`;
+        const requestData = {
+          items: window.cartData.cart,
+          shipping: window.cartData.shipping || 0,
+          customerEmail: customerEmail
+        };
 
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(window.cartData)
+          body: JSON.stringify(requestData)
         });
 
         if (!res.ok) {
+          const errorText = await res.text();
+          console.error('❌ Server response:', errorText);
           throw new Error(`Errore server (${res.status})`);
         }
 
         const session = await res.json();
+        console.log('✅ Session received:', session); // Debug
+        
         if (session?.url) {
+          localStorage.setItem('pendingCart', JSON.stringify(window.cartData.cart));
           window.location.href = session.url;
           return;
         }
         throw new Error("URL sessione mancante");
       } catch (err) {
+        console.error('Checkout error:', err);
         errorDiv.textContent = `❌ ${err.message}`;
         errorDiv.style.display = 'block';
         btn.disabled = false;

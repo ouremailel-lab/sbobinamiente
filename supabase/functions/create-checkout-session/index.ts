@@ -28,6 +28,7 @@ serve(async (req) => {
     const body = await req.json();
     const cart = Array.isArray(body?.cart) ? body.cart : [];
     const shipping = Number(body?.shipping || 0);
+    const customerEmail = body?.customerEmail;
 
     if (!cart.length) {
       return new Response(JSON.stringify({ error: "Carrello vuoto" }), {
@@ -36,12 +37,9 @@ serve(async (req) => {
       });
     }
 
-    const params = new URLSearchParams();
-    params.append("mode", "payment");
-    params.append("success_url", `${appUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`);
-    params.append("cancel_url", `${appUrl}/checkout.html`);
-
-    let idx = 0;
+    // Build line items array
+    const lineItems = [];
+    
     for (const item of cart) {
       const name = item?.name || item?.title || item?.titolo || "Prodotto";
       const rawPrice = item?.price ?? item?.prezzo ?? 0;
@@ -50,38 +48,102 @@ serve(async (req) => {
         : Number(rawPrice);
       const quantity = Number(item?.quantity || item?.quantita || 1);
 
-      params.append(`line_items[${idx}][price_data][currency]`, "eur");
-      params.append(`line_items[${idx}][price_data][product_data][name]`, name);
-      params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.round(priceNum * 100)));
-      params.append(`line_items[${idx}][quantity]`, String(quantity));
-      idx++;
+      lineItems.push({
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: name,
+            description: item?.description || item?.descrizione || "",
+            metadata: {
+              product_id: String(item?.id || ""),
+              type: item?.tipo || item?.type || "digitale"
+            }
+          },
+          unit_amount: Math.round(priceNum * 100),
+        },
+        quantity: quantity,
+      });
     }
 
+    // Add shipping if present
     if (shipping > 0) {
-      params.append(`line_items[${idx}][price_data][currency]`, "eur");
-      params.append(`line_items[${idx}][price_data][product_data][name]`, "Spedizione");
-      params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.round(shipping * 100)));
-      params.append(`line_items[${idx}][quantity]`, "1");
+      lineItems.push({
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: "Spedizione",
+            description: "Costi di spedizione per prodotti fisici"
+          },
+          unit_amount: Math.round(shipping * 100),
+        },
+        quantity: 1,
+      });
     }
 
+    // Check if cart contains physical items
+    const hasPhysical = cart.some(item => 
+      item?.type === "fisico" || 
+      item?.tipo === "fisico" || 
+      item?.type === "cartaceo" || 
+      item?.tipo === "cartaceo"
+    );
+
+    // Build session configuration
+    // MODE OPTIONS:
+    // - 'payment': One-time payment (current implementation) ✓
+    // - 'subscription': Recurring payments (e.g., monthly subscriptions)
+    // - 'setup': Save payment method for future use without charging now
+    const sessionConfig = {
+      line_items: lineItems,
+      mode: "payment",
+      success_url: `${appUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`, // ✅ Correct
+      cancel_url: `${appUrl}/checkout.html`,
+
+      payment_method_types: ["card", "paypal", "link"],
+      billing_address_collection: "required",
+      automatic_tax: { enabled: true },
+      metadata: {
+        source: "sbobinamente_web",
+        order_type: hasPhysical ? "mixed" : "digital",
+        cart_items: JSON.stringify(cart.map(i => ({ id: i.id, qty: i.quantity || 1 })))
+      }
+    };
+
+    // Add customer email if provided
+    if (customerEmail) {
+      sessionConfig.customer_email = customerEmail;
+    }
+
+    // Add shipping address collection for physical items
+    if (hasPhysical) {
+      sessionConfig.shipping_address_collection = {
+        allowed_countries: ["IT", "FR", "DE", "ES", "NL", "BE", "AT", "CH"]
+      };
+    }
+
+    // Create Stripe Checkout Session using direct API call
     const stripeRes = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${stripeKey}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
-      body: params,
+      body: JSON.stringify(sessionConfig),
     });
 
     const stripeData = await stripeRes.json();
     if (!stripeRes.ok || !stripeData?.url) {
+      console.error("Stripe error:", stripeData);
       return new Response(JSON.stringify({ error: stripeData?.error?.message || "Stripe error" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ url: stripeData.url }), {
+    return new Response(JSON.stringify({ 
+      url: stripeData.url, // ✅ Stripe Checkout URL
+      session_id: stripeData.id 
+    }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

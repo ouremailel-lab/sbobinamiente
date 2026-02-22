@@ -1,5 +1,13 @@
-.DS_Store
-node_modules/
+# Variabili d'ambiente - NON caricare su Git!
 .env
-.env.local
-.vercel
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db

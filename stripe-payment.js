@@ -1,6 +1,6 @@
 // Questo file gestisce i pagamenti Stripe dal sito. Assicurati che la chiave pubblica e l'endpoint serverless siano corretti.
 // Sistema di pagamento semplice
-const STRIPE_PUBLIC_KEY = 'pk_live_51Scdi3RqQxAAz0zVWpRBO1z2OU7juhkr4K1tO9QsCqdxFL6I8F3uNk5Rc6r4SnUtqdCX899U7S43New76YpQh1Hm00wiXT0PUR';
+const STRIPE_PUBLIC_KEY = 'pk_live_51Sj7KCRt036j0vpehTeZIDMPqpBV1K84i9pKrRGMYD96q8le2oUxdyCHsPFIomWjEmC1x8xZ75mptnU1wxhsZWMM006WXP87Rl';
 
 let stripe;
 let elements;
@@ -165,11 +165,6 @@ async function handleSuccessfulPayment(paymentIntent) {
         date: new Date().toISOString()
     };
     
-    // Salva su Supabase
-    if (window.supabaseClient) {
-        await saveOrderToSupabase(order);
-    }
-    
     // Invia email di conferma
     if (typeof sendOrderConfirmation === 'function') {
         await sendOrderConfirmation(order);
@@ -188,20 +183,6 @@ async function handleSuccessfulPayment(paymentIntent) {
     
     // Reindirizza alla pagina di successo
     window.location.href = 'payment-success.html?order=' + paymentIntent.id;
-}
-
-// Salva l'ordine su Supabase
-async function saveOrderToSupabase(order) {
-    try {
-        const { data, error } = await window.supabaseClient
-            .from('orders')
-            .insert([order]);
-            
-        if (error) throw error;
-        console.log('Ordine salvato:', data);
-    } catch (error) {
-        console.error('Errore salvataggio ordine:', error);
-    }
 }
 
 // Inizializza quando Stripe.js è caricato

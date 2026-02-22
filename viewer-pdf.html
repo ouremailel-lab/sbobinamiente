@@ -439,14 +439,16 @@
         const MAX_PREVIEW_PAGES = 3;
 
         const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session'); // ✅ Nuovo parametro
         const orderId = urlParams.get('order');
         const password = urlParams.get('pwd');
         const productId = urlParams.get('product');
         const isPreview = urlParams.get('preview') === 'true';
 
+        // ✅ NUOVA LOGICA: Verifica password da checkout o da ordine
         if (!productId) {
             showError('Link di accesso non valido. ID prodotto mancante.');
-        } else if (!isPreview && (!orderId || !password)) {
+        } else if (!isPreview && !sessionId && (!orderId || !password)) {
             showError('Link di accesso non valido. Parametri mancanti.');
         } else {
             loadPDF();
@@ -455,20 +457,56 @@
         async function loadPDF() {
             try {
                 let product = null;
+                let accessGranted = false;
+
                 if (isPreview) {
+                    // Modalità anteprima
                     if (typeof window.productsData !== 'undefined') {
                         product = window.productsData.find(p => p.id == productId);
                     }
+                    accessGranted = true;
+                } else if (sessionId && password) {
+                    // ✅ NUOVO: Accesso tramite session ID e password dal checkout
+                    console.log('🔑 Validating access with session:', sessionId);
+                    
+                    // Verifica che la password corrisponda
+                    const expectedPassword = generatePassword(sessionId, productId);
+                    
+                    if (password === expectedPassword) {
+                        accessGranted = true;
+                        console.log('✅ Password correct - access granted');
+                        
+                        // Trova il prodotto
+                        if (typeof window.productsData !== 'undefined') {
+                            product = window.productsData.find(p => p.id == productId);
+                        }
+                        
+                        // Salva l'accesso in localStorage per uso futuro
+                        saveDigitalAccess(sessionId, productId, product?.title || 'PDF', password);
+                    } else {
+                        console.error('❌ Invalid password');
+                        showError('Password non valida. Verifica il link ricevuto via email.');
+                        return;
+                    }
                 } else {
+                    // Accesso tramite ordine salvato (vecchia modalità)
                     const orders = JSON.parse(localStorage.getItem('orders')) || [];
                     const order = orders.find(o => o.id == orderId || o.order_id == orderId);
+                    
                     if (order) {
                         currentOrderId = orderId;
                         product = order.items?.find(item => item.id == productId);
+                        accessGranted = true;
                     }
+                    
                     if (!product && typeof window.productsData !== 'undefined') {
                         product = window.productsData.find(p => p.id == productId);
                     }
+                }
+
+                if (!accessGranted) {
+                    showError('Accesso non autorizzato. Effettua l\'acquisto per visualizzare questo PDF.');
+                    return;
                 }
 
                 if (!product) {
@@ -505,8 +543,63 @@
             }
         }
 
+        // ✅ NUOVA FUNZIONE: Genera password come in success.html
+        function generatePassword(sessionId, productId) {
+            const seed = `${sessionId}-${productId}`;
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) {
+                const char = seed.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let password = '';
+            let num = Math.abs(hash);
+            
+            for (let i = 0; i < 12; i++) {
+                password += chars[num % chars.length];
+                num = Math.floor(num / chars.length) + (seed.charCodeAt(i % seed.length) || 1);
+            }
+            
+            return password;
+        }
+
+        // ✅ NUOVA FUNZIONE: Salva accesso digitale in localStorage
+        function saveDigitalAccess(sessionId, productId, title, password) {
+            try {
+                const access = {
+                    orderId: sessionId,
+                    productId: productId,
+                    title: title,
+                    password: password,
+                    accessUrl: window.location.href,
+                    expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+                    createdAt: new Date().toISOString()
+                };
+                
+                const accesses = JSON.parse(localStorage.getItem('myDigitalsAccess') || '[]');
+                
+                // Evita duplicati
+                const exists = accesses.find(a => a.orderId === sessionId && a.productId === productId);
+                if (!exists) {
+                    accesses.push(access);
+                    localStorage.setItem('myDigitalsAccess', JSON.stringify(accesses));
+                    console.log('✅ Digital access saved to localStorage');
+                }
+            } catch (error) {
+                console.error('Error saving digital access:', error);
+            }
+        }
+
         function createViewerUI() {
             const container = document.getElementById('viewerContainer');
+            const accessInfo = isPreview 
+                ? `👁️ ANTEPRIMA (${MAX_PREVIEW_PAGES} pagine) | Acquista per il documento completo`
+                : sessionId 
+                    ? `✅ Accesso autorizzato | Sessione #${sessionId.substring(0, 20)}... | 🔒 Documento protetto`
+                    : `✅ Accesso autorizzato | Ordine #${currentOrderId} | 🔒 Documento protetto`;
+            
             container.innerHTML = `
                 <div class="pdf-viewer">
                     <div class="controls">
@@ -521,7 +614,7 @@
                         </div>
                     </div>
                     <div class="access-info">
-                        ${isPreview ? `👁️ ANTEPRIMA (${MAX_PREVIEW_PAGES} pagine) | Acquista per il documento completo` : `✅ Accesso autorizzato | Ordine #${currentOrderId} | 🔒 Documento protetto`}
+                        ${accessInfo}
                     </div>
                 </div>
             `;
@@ -560,11 +653,8 @@
                 document.getElementById('prevBtn').disabled = pageNum <= 1;
                 document.getElementById('nextBtn').disabled = pageNum >= totalPages;
                 
-                // MOSTRA POPUP SULLA PAGINA 3 IN PREVIEW
                 if (isPreview && pageNum === MAX_PREVIEW_PAGES && !window.popupShown) {
                     window.popupShown = true;
-                    console.log('🔥 POPUP ATTIVATO PAGINA 3');
-                    
                     if (window.currentProduct) {
                         let cart = JSON.parse(localStorage.getItem('cart')) || [];
                         if (!cart.find(item => item.id == window.currentProduct.id)) {
@@ -600,12 +690,10 @@
 
         function showError(message) {
             const container = document.getElementById('viewerContainer');
-            container.innerHTML = `<div class="error-container"><h2>❌ Accesso Negato</h2><p>${message}</p><p style="color: #999; font-size: 12px;">Il link potrebbe essere scaduto o non valido.</p><button class="btn" onclick="window.close()">Chiudi</button></div>`;
+            container.innerHTML = `<div class="error-container"><h2>❌ Accesso Negato</h2><p>${message}</p><p style="color: #999; font-size: 12px;">Il link potrebbe essere scaduto o non valido.</p><button class="btn" onclick="window.location.href='lezioni.html'">Torna alle Lezioni</button></div>`;
         }
 
-        // POPUP FUNCTIONS
         function showCheckoutPopup(productTitle) {
-            console.log('✅ showCheckoutPopup:', productTitle);
             const modal = document.getElementById('checkoutModal');
             document.getElementById('checkoutProductName').textContent = productTitle;
             modal.classList.add('show');
@@ -617,7 +705,7 @@
             document.body.style.overflow = 'auto';
         }
 
-        document.getElementById('checkoutModal').addEventListener('click', function(event) {
+        document.getElementById('checkoutModal')?.addEventListener('click', function(event) {
             if (event.target === this) closeCheckoutModal();
         });
     </script>
