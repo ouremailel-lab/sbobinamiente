@@ -87,7 +87,7 @@
       border-radius: 8px;
       margin-top: 20px;
       display: none;
-      font-size: 14px;
+     
     }
     .loading { display: none; text-align: center; margin-top: 20px; color: #667eea; }
     .back-link { text-align: center; margin-top: 20px; }
@@ -118,7 +118,7 @@
       </div>
     </div>
 
-    <button class="btn" id="checkout-btn">Procedi al Pagamento</button>
+    <button class="btn" id="checkout-btn">Vai al pagamento</button>
     <div class="loading" id="loading">⏳ Elaborazione...</div>
     <div class="error" id="error"></div>
 
@@ -224,15 +224,17 @@
           window?.supabaseUrl ||
           "";
 
+        console.log("🔍 SUPABASE_URL letto:", supabaseUrl);
+
         if (!supabaseUrl) {
-          throw new Error("SUPABASE_URL mancante");
+          throw new Error("SUPABASE_URL mancante. Controlla supabase-config.js");
         }
 
         const API_URL = `${supabaseUrl}/functions/v1/create-checkout-session`;
 
         const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(window.cartData)
         });
 
@@ -240,20 +242,12 @@
           throw new Error(`Errore server (${res.status})`);
         }
 
-        let data;
-        try {
-          data = await res.json();
-        } catch {
-          const text = await res.text();
-          throw new Error(`Risposta non JSON: ${text.slice(0, 80)}...`);
-        }
-
-        if (data?.url) {
-          window.location.href = data.url;
+        const session = await res.json();
+        if (session?.url) {
+          window.location.href = session.url;
           return;
         }
-
-        throw new Error(`URL sessione mancante`);
+        throw new Error("URL sessione mancante");
       } catch (err) {
         errorDiv.textContent = `❌ ${err.message}`;
         errorDiv.style.display = 'block';

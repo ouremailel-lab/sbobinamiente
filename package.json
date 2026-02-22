@@ -6,14 +6,16 @@
   "homepage": "https://elisaiannone.github.io/sbobinamente",
   "scripts": {
     "start": "python3 -m http.server 8000",
-    "deploy": "gh-pages -d .",
+    "deploy": "gh-pages -d . -b gh-pages -f",
     "deploy:prod": "git push origin main && npm run deploy",
     "server": "node server.js",
     "server:prod": "APP_URL=https://elisaiannone.github.io/sbobinamente node server.js",
     "preview": "python3 -m http.server 8000",
-    "dev": "vercel dev",
-    "deploy:vercel": "vercel --prod",
-    "supabase:deploy": "supabase functions deploy create-checkout-session"
+    "dev": "npx vercel dev",
+    "deploy:vercel": "npx vercel --prod",
+    "supabase:deploy": "supabase functions deploy create-checkout-session",
+    "deploy:all": "npm run deploy:vercel && npm run deploy",
+    "start:all": "npm run server"
   },
   "keywords": ["ecommerce", "appunti", "pdf"],
   "author": "Elisai Iannone",
@@ -32,5 +34,6 @@
   "devDependencies": {
     "gh-pages": "^6.1.0",
     "vercel": "^32.0.0"
-  }
+  },
+  "type": "module"
 }

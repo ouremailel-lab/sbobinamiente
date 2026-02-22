@@ -96,7 +96,7 @@
             <p style="max-width: 820px; margin: 0 auto 24px;">Scegli la materia che ti serve, accedi all'anteprima e acquista il PDF protetto. Se vuoi vendere i tuoi appunti di qualità, scrivici.</p>
             <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <a href="lezioni.html" class="btn btn-primary" style="padding: 14px 32px;">Vai alle Lezioni</a>
-                <a href="mailto:info@sbobinamente.it" class="btn btn-secondary" style="padding: 14px 32px;">Collabora con noi</a>
+                <a href="mailto:ouremailel@gmail.com" class="btn btn-secondary" style="padding: 14px 32px;">Collabora con noi</a>
             </div>
         </div>
     </section>
@@ -115,7 +115,7 @@
                     <span>Totale:</span>
                     <span class="total-price">0€</span>
                 </div>
-                <button class="btn btn-primary" onclick="proceedToCheckout()">Procedi al Pagamento</button>
+                <button class="btn btn-primary" id="checkoutBtn">Checkout</button>
             </div>
         </div>
     </div>
@@ -160,8 +160,8 @@
     </footer>
 
     <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Firebase Authentication -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -187,6 +187,19 @@
     <script src="products-data.js"></script>
     <script src="email-service.js"></script>
     <script src="app.js"></script>
+    <script>
+      document.getElementById("checkoutBtn")?.addEventListener("click", () => {
+        const w = 600;
+        const h = 800;
+        const left = (window.screen.width - w) / 2;
+        const top = (window.screen.height - h) / 2;
+        window.open(
+          'checkout.html',
+          'checkoutPopup',
+          `width=${w},height=${h},top=${top},left=${left},resizable=yes,scrollbars=yes`
+        );
+      });
+    </script>
 
     <!--
   SURGE DEPLOY (istruzioni rapide)

@@ -216,66 +216,6 @@ const products = [
         categoria: "universita",
         corso: "sdsg",
         anno: 3
-    },
-    {
-        id: 'cartaceo-sdsg-2anno-filosofia-diritto',
-        title: 'Filosofia del Diritto',
-        descrizione: "Appunti completi di Filosofia del diritto integrati col Manuale di Filosofia del diritto del Professor Stefano Pietropaoli",
-        prezzo: 30.00,
-        tipo: 'fisico',
-        categoria: 'universita',
-        materia: 'diritto',
-        corso: 'sdsg',
-        anno: 2,
-        previewImage: "image/Filosofia del diritto.png",
-        previewPages: [],
-        pdfFile: 'PDF/FILOSOFIA DEL DIRITTO.pdf',
-        pages: 54,
-        dettagli: `<strong>PROGRAMMA ESAME</strong><br><br>
-            <ul style="text-align: left; display: inline-block;">
-                <li>GIUSNATURALISMO</li>
-                <li>ILLUMINISMO</li>
-                <li>LA FORMAZIONE DELLA FILOSOFIA DEL DIRITTO</li>
-                <li>AFFERMAZIONE E CRISI DEL POSITIVISMO GIURIDICO</li>
-                <li>POLEMICHE DEL PRIMO '900</li>
-                <li>IL DOPOGUERRA</li>
-                <li>LA FILOSOFIA PER IL DIRITTO</li>
-            </ul>`,
-        inStock: true,
-        trending: false
-    },
-    {
-        id: 305,
-        title: 'Filosofia del Diritto - PDF',
-        descrizione: "Appunti completi di Filosofia del diritto integrati col Manuale di Filosofia del diritto del Professor Stefano Pietropaoli - Versione PDF protetta",
-        prezzo: 15.00,
-        tipo: 'digitale',
-        categoria: 'universita',
-        materia: 'diritto',
-        corso: 'sdsg',
-        anno: 2,
-        emoji: '📄',
-        dettagli: `PDF protetto con password. Download immediato dopo l'acquisto.<br><br>
-            <strong>PROGRAMMA ESAME</strong><br><br>
-            <ul style="text-align: left; display: inline-block;">
-                <li>GIUSNATURALISMO</li>
-                <li>ILLUMINISMO</li>
-                <li>LA FORMAZIONE DELLA FILOSOFIA DEL DIRITTO</li>
-                <li>AFFERMAZIONE E CRISI DEL POSITIVISMO GIURIDICO</li>
-                <li>POLEMICHE DEL PRIMO '900</li>
-                <li>IL DOPOGUERRA</li>
-                <li>LA FILOSOFIA PER IL DIRITTO</li>
-            </ul>`,
-        pages: 54,
-        pdfFile: 'PDF/FILOSOFIA DEL DIRITTO.pdf',
-        previewImage: 'image/Filosofia del diritto.png',
-        previewPages: [
-            'image/anteprima 1.png',
-            'image/anteprima 2.png',
-            'image/anteprima 3.png'
-        ],
-        inStock: true,
-        trending: false
     }
 ];
 

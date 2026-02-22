@@ -13,5 +13,13 @@
 // Per ora, tutte le operazioni passano attraverso le Netlify Functions
 window.supabaseClient = null; // Disabilitato - usa API
 
-console.log('✅ Supabase configurato in modalità sicura (solo backend API)');
+window.supabaseConfig = {
+  url: "https://YOUR_PROJECT.supabase.co",
+  key: "YOUR_ANON_KEY"
+};
+
+window.SUPABASE_URL = window.supabaseConfig.url;
+window.supabaseUrl = window.supabaseConfig.url;
+
+console.log("✅ Supabase configurato in modalità sicura (solo backend API)");
 

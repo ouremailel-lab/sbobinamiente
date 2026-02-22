@@ -6,10 +6,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
@@ -77,7 +74,6 @@ serve(async (req) => {
     });
 
     const stripeData = await stripeRes.json();
-
     if (!stripeRes.ok || !stripeData?.url) {
       return new Response(JSON.stringify({ error: stripeData?.error?.message || "Stripe error" }), {
         status: 500,
