@@ -16,7 +16,7 @@ if (!stripeSecretKey || !stripeSecretKey.startsWith('sk_live_')) {
 */
 
 // ✅ Usa chiave di test hardcoded per sviluppo locale
-const stripe = new Stripe(stripeSecretKey || 'sk_test_51QRoKMCinZcgnEHd3bUMpuT4zE9Z3nJYiVvAJPH0FkFKI7LLfDtDNtZdPXlz2i0OBmvbvnpHJVXLZJYJr6kfRm7N00QVVmZpqj');
+const stripe = new Stripe(stripeSecretKey);
 
 app.use(cors());
 app.use(express.json());
