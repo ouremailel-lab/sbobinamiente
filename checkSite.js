@@ -1,6 +1,6 @@
 const https = require('https');
 
-const url = 'https://sbobinamente.it';
+const url = 'https://www.sbobinamente.it/index.html';
 
 https.get(url, (res) => {
   if (res.statusCode === 200) {
