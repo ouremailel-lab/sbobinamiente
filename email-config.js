@@ -8,9 +8,12 @@ const EMAIL_CONFIG = {
 
 // Funzione per inviare email con credenziali PDF
 async function sendPDFCredentialsEmail(customerEmail, customerName, sessionId, pdfAccesses) {
-  // customerEmail deve essere quello inserito dall'utente
   try {
-    console.log('📧 Preparing email for:', customerEmail);
+    // Controllo email valida
+    if (!customerEmail || typeof customerEmail !== 'string' || !customerEmail.includes('@')) {
+      console.error('❌ Email destinatario non valida:', customerEmail);
+      return { success: false, error: { message: 'Indirizzo email destinatario non valido.' } };
+    }
 
     const credentialsText = pdfAccesses.map(pdf => `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -23,7 +26,7 @@ async function sendPDFCredentialsEmail(customerEmail, customerName, sessionId, p
     `).join('\n');
 
     const templateParams = {
-      to_email: customerEmail, // ← Deve corrispondere al template EmailJS
+      to_email: customerEmail,
       customer_name: customerName || 'Cliente',
       session_id: sessionId,
       pdf_credentials: credentialsText,
@@ -36,14 +39,6 @@ async function sendPDFCredentialsEmail(customerEmail, customerName, sessionId, p
       })
     };
 
-    console.log('📤 Sending email via EmailJS...');
-    console.log('✅ Service ID:', EMAIL_CONFIG.serviceId);
-    console.log('✅ Template ID:', EMAIL_CONFIG.templateId);
-    console.log('✅ Public Key:', EMAIL_CONFIG.publicKey);
-    console.log('✅ To:', customerEmail);
-    console.log('📋 Template Params:', templateParams); // ← Debug completo
-
-    // Invia email tramite EmailJS
     const response = await emailjs.send(
       EMAIL_CONFIG.serviceId,
       EMAIL_CONFIG.templateId,
@@ -51,18 +46,17 @@ async function sendPDFCredentialsEmail(customerEmail, customerName, sessionId, p
       EMAIL_CONFIG.publicKey
     );
 
-    console.log('✅ Email sent successfully!', response);
+    if (response.status !== 200) {
+      console.error('❌ EmailJS non ha risposto con successo:', response);
+      return { success: false, error: { message: 'EmailJS non ha risposto con successo.' } };
+    }
+
+    console.log('✅ Email inviata con successo!', response);
     return { success: true, response };
 
   } catch (error) {
-    console.error('❌ Error sending email:', error);
-    console.error('Error details:', {
-      text: error.text,
-      status: error.status,
-      message: error.message,
-      fullError: error // ← Log completo dell'errore
-    });
-    return { success: false, error };
+    console.error('❌ Errore invio email:', error);
+    return { success: false, error: { message: error.message || 'Errore sconosciuto.' } };
   }
 }
 

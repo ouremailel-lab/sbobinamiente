@@ -222,8 +222,9 @@
     })();
 
     // Recupera l'utente loggato
-    let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     let customerEmail = currentUser.email || '';
+    const customerName = currentUser.nome || 'Cliente';
 
     // Fallback: se la mail non è presente, prova a recuperarla dagli ultimi dati ordine
     if (!customerEmail) {
@@ -234,8 +235,6 @@
         customerEmail = lastOrder.user_email || lastOrder.deliveryInfo?.email || '';
       }
     }
-
-    const customerName = currentUser.nome || 'Cliente';
 
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
@@ -251,10 +250,11 @@
           item.tipo === 'digitale' || item.type === 'digitale'
         );
 
-        if (pdfItems.length > 0 && customerEmail && customerEmail.includes('@')) {
+        if (pdfItems.length > 0) {
           displayPDFCredentials(sessionId, pdfItems);
 
           // Invia email automatica all'utente
+          console.log('📧 Invio email a:', customerEmail);
           sendCredentialsEmail(sessionId, pdfItems, { email: customerEmail, nome: customerName });
         } else {
           const emailNotice = document.querySelector('.email-notice');
@@ -387,36 +387,36 @@
             console.log('✅ Email sent successfully!');
             emailNotice.innerHTML = `
               <strong>📧 Email inviata con successo!</strong><br>
+              Controlla la tua casella di posta: <strong>${customerEmail}</strong><br>tella spam</small>
               Controlla la tua casella di posta: <strong>${customerEmail}</strong><br>
-              <small style="color: #6b7280;">Se non la vedi, controlla anche nella cartella spam</small>
-            `;
+              <small style="color: #6b7280;">Se non la vedi, controlla anche nella cartella spam</small>ailNotice.style.background = '#d1fae5';
+            `;;
             emailNotice.style.background = '#d1fae5';
-            emailNotice.style.borderColor = '#10b981';
+            emailNotice.style.borderColor = '#10b981';e.error('❌ Email failed to send:', result.error);
           } else {
-            console.error('❌ Email failed to send:', result.error);
-            emailNotice.innerHTML = `
-              <strong>⚠️ Attenzione</strong><br>
+            console.error('❌ Email failed to send:', result.error);strong><br>
+            emailNotice.innerHTML = `il. Le tue credenziali sono visibili qui sopra.<br>
+              <strong>⚠️ Attenzione</strong><br>all>
               Non siamo riusciti a inviare l'email. Le tue credenziali sono visibili qui sopra.<br>
-              <small>Salvale in un luogo sicuro! Errore: ${result.error?.text || 'Sconosciuto'}</small>
-            `;
+              <small>Salvale in un luogo sicuro! Errore: ${result.error?.text || 'Sconosciuto'}</small>ailNotice.style.background = '#fef3c7';
+            `;;
             emailNotice.style.background = '#fef3c7';
             emailNotice.style.borderColor = '#f59e0b';
-          }
-        }
+          }atch (error) {
+        }💥 Exception in sendCredentialsEmail:', error);
       } catch (error) {
         console.error('💥 Exception in sendCredentialsEmail:', error);
       }
-    }
+    }    async function fetchSessionDetails(sessionId) {
 
-    async function fetchSessionDetails(sessionId) {
-      try {
-        localStorage.removeItem('cart');
+    async function fetchSessionDetails(sessionId) {alStorage.removeItem('cart');
+      try {cartUpdated'));
+        localStorage.removeItem('cart');sessionId);
         window.dispatchEvent(new Event('cartUpdated'));
-        console.log('Payment successful for session:', sessionId);
+        console.log('Payment successful for session:', sessionId);Error fetching session:', error);
       } catch (error) {
         console.error('Error fetching session:', error);
-      }
+      }cript>
     }
-  </script>
-</body>
+  </script></body>
 </html>
