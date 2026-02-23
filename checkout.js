@@ -1,9 +1,7 @@
 async function createCheckoutSession(cartItems) {
   try {
-    const API_URL =
-      window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:4242/api/create-checkout-session'
-        : 'https://sbobinamente.it/api/create-checkout-session';
+    // Usa sempre il server di produzione
+    const API_URL = 'https://sbobinamente.it/api/create-checkout-session';
 
     const response = await fetch(API_URL, {
       method: 'POST',
@@ -13,15 +11,26 @@ async function createCheckoutSession(cartItems) {
       body: JSON.stringify({ items: cartItems }),
     });
 
+    // Controllo errore di certificato SSL
+    if (!response.ok && response.type === 'opaque') {
+      alert(
+        'Errore di connessione SSL.\n' +
+        'Il certificato del server non è valido o non corrisponde al dominio.\n' +
+        'Contatta il supporto tecnico o verifica la configurazione HTTPS del backend.'
+      );
+      throw new Error('Certificato SSL non valido');
+    }
+
     const { url } = await response.json();
     window.location.href = url;
   } catch (error) {
-    // Migliora il messaggio di errore per problemi di certificato
-    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+    if (
+      error instanceof TypeError &&
+      error.message.includes('Failed to fetch')
+    ) {
       alert(
         'Errore di connessione.\n' +
         'Verifica che il server sia raggiungibile e abbia un certificato SSL valido.\n' +
-        'Se stai testando in locale, usa http://localhost:4242.\n' +
         'Se il problema persiste, contatta il supporto tecnico.'
       );
     } else {
