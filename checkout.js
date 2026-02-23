@@ -16,8 +16,18 @@ async function createCheckoutSession(cartItems) {
     const { url } = await response.json();
     window.location.href = url;
   } catch (error) {
+    // Migliora il messaggio di errore per problemi di certificato
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      alert(
+        'Errore di connessione.\n' +
+        'Verifica che il server sia raggiungibile e abbia un certificato SSL valido.\n' +
+        'Se stai testando in locale, usa http://localhost:4242.\n' +
+        'Se il problema persiste, contatta il supporto tecnico.'
+      );
+    } else {
+      alert('Si è verificato un errore durante la creazione della sessione di pagamento.');
+    }
     console.error('Error:', error);
-    alert('Si è verificato un errore durante la creazione della sessione di pagamento.');
   }
 }
 
