@@ -1,7 +1,11 @@
 async function createCheckoutSession(cartItems) {
   try {
-    // Cambia l'endpoint al server di produzione
-    const response = await fetch('https://sbobinamente.it/api/create-checkout-session', {
+    const API_URL =
+      window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:4242/api/create-checkout-session'
+        : 'https://sbobinamente.it/api/create-checkout-session';
+
+    const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -10,8 +14,6 @@ async function createCheckoutSession(cartItems) {
     });
 
     const { url } = await response.json();
-    
-    // Redirect to Stripe Checkout
     window.location.href = url;
   } catch (error) {
     console.error('Error:', error);

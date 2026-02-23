@@ -1,9 +1,9 @@
 // Configurazione EmailJS per invio credenziali PDF
 
 const EMAIL_CONFIG = {
-  serviceId: 'service_r952gjr',
-  templateId: 'template_mgtk7fk',
-  publicKey: 'XhJ4ib2UUOt20rMxV'
+  serviceId: process.env.EMAILJS_SERVICE_ID,
+  templateId: process.env.EMAILJS_TEMPLATE_ID,
+  publicKey: process.env.EMAILJS_PUBLIC_KEY
 };
 
 // Funzione per inviare email con credenziali PDF

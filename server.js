@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import Stripe from "stripe";
 import cors from "cors";
+import https from 'https';
+import fs from 'fs';
 
 const app = express();
 
@@ -330,6 +332,13 @@ async function sendPDFCredentialsEmail(email, session, pdfAccesses) {
   console.log('ℹ️  To send real emails, configure an email service');
 }
 
-app.listen(process.env.PORT || 4242, () => {
-  console.log(`✅ Stripe server running on ${APP_URL}`);
+// Carica i certificati SSL (Let’s Encrypt o altro)
+const options = {
+  key: fs.readFileSync('/path/to/privkey.pem'),
+  cert: fs.readFileSync('/path/to/fullchain.pem')
+};
+
+// Avvia il server HTTPS sulla porta 443
+https.createServer(options, app).listen(443, () => {
+  console.log('✅ Stripe server HTTPS running on https://sbobinamente.it');
 });
