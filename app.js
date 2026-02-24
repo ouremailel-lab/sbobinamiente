@@ -255,7 +255,64 @@ function proceedToCheckout() {
         alert('Il carrello è vuoto!');
         return;
     }
-    window.location.href = 'checkout.html';
+
+    // Crea la pagina di checkout dinamicamente
+    const checkoutPage = document.createElement('div');
+    checkoutPage.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.7);
+        z-index: 9999;
+        display: flex; align-items: center; justify-content: center;
+    `;
+
+    // Calcola il totale
+    const total = cart.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0);
+
+    // Riepilogo articoli
+    let itemsHtml = '';
+    cart.forEach(item => {
+        itemsHtml += `
+            <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                <strong>${item.title}</strong> × ${item.quantity} — <span style="color:#4a90e2;">${(item.prezzo * item.quantity).toFixed(2)}€</span>
+            </div>
+        `;
+    });
+
+    checkoutPage.innerHTML = `
+        <div style="background: white; border-radius: 12px; max-width: 480px; width: 90%; padding: 32px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); text-align: center;">
+            <h2 style="margin-bottom: 18px;">Checkout</h2>
+            <div style="font-size: 22px; font-weight: bold; color: #4a90e2; margin-bottom: 12px;">
+                Totale: ${total.toFixed(2)}€
+            </div>
+            <div style="text-align:left; margin-bottom: 24px;">
+                ${itemsHtml}
+            </div>
+            <button id="payWithPayPalBtn" style="width:100%; padding: 14px; background: #ffc439; color: #222; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-bottom: 12px;">
+                <span style="vertical-align:middle;">💳</span> Paga con PayPal
+            </button>
+            <button onclick="this.closest('div').parentElement.remove()" style="width:100%; padding: 12px; background: #eee; color: #222; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                Annulla
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(checkoutPage);
+
+    // Collega il bottone PayPal al checkout PayPal
+    document.getElementById('payWithPayPalBtn').onclick = function() {
+        // Salva il carrello e il totale in localStorage per il checkout PayPal
+        localStorage.setItem('pendingOrder', JSON.stringify({
+            items: cart,
+            total: total.toFixed(2),
+            customerInfo: {
+                nome: currentUser?.nome || '',
+                email: currentUser?.email || ''
+            }
+        }));
+        // Apri la pagina di checkout PayPal (esempio: checkout-paypal.html)
+        window.location.href = 'checkout-paypal.html';
+    };
 }
 
 // ==================== FILTRI ====================
@@ -696,7 +753,7 @@ function showOrderSuccessModal(order, digitalsAccess) {
     if (digitalsAccess.length > 0) {
         html += `
             <h3 style="margin-top: 30px; color: #2e7d32;">🔐 I Tuoi PDF Protetti - Accesso Immediato</h3>
-            <p style="color: #666; font-size: 13px;">Clicca sul link sottostante per accedere al viewer protetto</p>
+            <p style="color: #666; font-size: 13px; margin-top: 4px; font-weight: 600;">Clicca sul link sottostante per accedere al viewer protetto</p>
         `;
         digitalsAccess.forEach(access => {
             html += `

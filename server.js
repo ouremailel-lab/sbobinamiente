@@ -2,8 +2,6 @@ import "dotenv/config";
 import express from "express";
 import Stripe from "stripe";
 import cors from "cors";
-import https from 'https';
-import fs from 'fs';
 
 const app = express();
 
@@ -25,6 +23,28 @@ app.use(express.json());
 app.use(express.static("."));
 
 const APP_URL = process.env.APP_URL || "https://sbobinamente.it";
+
+// Configura CORS per frontend www e non-www
+const allowedOrigins = [
+  "https://sbobinamente.it",
+  "https://www.sbobinamente.it"
+];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
+  next();
+});
 
 const toCents = (value) => {
   if (typeof value === "string") {
@@ -331,14 +351,3 @@ async function sendPDFCredentialsEmail(email, session, pdfAccesses) {
   console.log('✅ Email HTML generated (ready to send)');
   console.log('ℹ️  To send real emails, configure an email service');
 }
-
-// Carica i certificati SSL (Let’s Encrypt o altro)
-const options = {
-  key: fs.readFileSync('/path/to/privkey.pem'),
-  cert: fs.readFileSync('/path/to/fullchain.pem')
-};
-
-// Avvia il server HTTPS sulla porta 443
-https.createServer(options, app).listen(443, () => {
-  console.log('✅ Stripe server HTTPS running on https://sbobinamente.it');
-});

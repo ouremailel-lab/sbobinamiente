@@ -88,6 +88,11 @@ body {
     line-height: 1.6;
 }
 
+body#body {
+  background: #ffeb3b !important;
+  border: 2px solid #f44336 !important;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

@@ -1,96 +1,113 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  useStripe,
-  useElements,
-  PaymentElement,
-} from "@stripe/react-stripe-js";
-import convertToSubcurrency from "@/lib/convertToSubcurrency";
+import React, { useEffect, useRef, useState } from "react";
+
+// Usa il tuo client-id PayPal fornito
+const PAYPAL_CLIENT_ID = "AVggN8-bj-gG7OpJ1v5YsJs9F8OzeGD251_vlqGM3HkgsMKPWgdEzW6L0uhBEvG6U1hQITpRGU0FCBZQ";
 
 const CheckoutPage = ({ amount }: { amount: number }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [clientSecret, setClientSecret] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const paypalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/create-payment-intent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ amount: convertToSubcurrency(amount) }),
-    })
-      .then((res) => res.json())
-      .then((data) => setClientSecret(data.clientSecret));
-  }, [amount]);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
-
-    if (!stripe || !elements) {
-      return;
-    }
-
-    const { error: submitError } = await elements.submit();
-
-    if (submitError) {
-      setErrorMessage(submitError.message);
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      clientSecret,
-      confirmParams: {
-        return_url: `http://www.localhost:3000/payment-success?amount=${amount}`,
-      },
-    });
-
-    if (error) {
-      // This point is only reached if there's an immediate error when
-      // confirming the payment. Show the error to your customer (for example, payment details incomplete)
-      setErrorMessage(error.message);
+    if (!window.paypal && paypalRef.current) {
+      const script = document.createElement("script");
+      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR`;
+      script.async = true;
+      script.onload = () => renderPayPalButton();
+      paypalRef.current.appendChild(script);
     } else {
-      // The payment UI automatically closes with a success animation.
-      // Your customer is redirected to your `return_url`.
+      renderPayPalButton();
     }
+    // eslint-disable-next-line
+  }, [name, email, amount]);
 
-    setLoading(false);
-  };
+  function renderPayPalButton() {
+    if (
+      window.paypal &&
+      paypalRef.current &&
+      paypalRef.current.childElementCount === 0
+    ) {
+      window.paypal.Buttons({
+        createOrder: (data: any, actions: any) => {
+          return actions.order.create({
+            purchase_units: [
+              {
+                amount: {
+                  value: amount.toFixed(2),
+                  currency_code: "EUR",
+                },
+                payee: {
+                  email_address: "ouremailel@gmail.com", // ← tua email PayPal
+                },
+                description: `Acquisto SbobinaMente - ${name}`,
+              },
+            ],
+            payer: {
+              name: { given_name: name },
+              email_address: email,
+            },
+          });
+        },
+        onApprove: (data: any, actions: any) => {
+          return actions.order.capture().then(() => {
+            setSubmitted(true);
+          });
+        },
+        onError: (err: any) => {
+          alert("Errore PayPal: " + err);
+        },
+      }).render(paypalRef.current);
+    }
+  }
 
-  if (!clientSecret || !stripe || !elements) {
+  if (submitted) {
     return (
-      <div className="flex items-center justify-center">
-        <div
-          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-          role="status"
-        >
-          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-            Loading...
-          </span>
+      <div className="bg-white p-4 rounded-md text-center">
+        <h2 className="text-xl font-bold mb-4">Pagamento completato!</h2>
+        <p className="mb-2 text-gray-700">
+          Grazie per il tuo acquisto.<br />
+          Riceverai una email di conferma.
+        </p>
+        <div className="mt-4 font-bold text-lg">
+          Totale: €{amount}
         </div>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-2 rounded-md">
-      {clientSecret && <PaymentElement />}
-
-      {errorMessage && <div>{errorMessage}</div>}
-
-      <button
-        disabled={!stripe || loading}
-        className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse"
-      >
-        {!loading ? `Pay $${amount}` : "Processing..."}
-      </button>
-    </form>
+    <div className="bg-white p-4 rounded-md text-center">
+      <h2 className="text-xl font-bold mb-4">Checkout PayPal</h2>
+      <p className="mb-2 text-gray-700">
+        Compila i dati e paga con PayPal.<br />
+        Riceverai conferma via email.
+      </p>
+      <div className="mt-4 font-bold text-lg">
+        Totale: €{amount}
+      </div>
+      <input
+        type="text"
+        name="name"
+        placeholder="Nome e Cognome"
+        className="mt-4 p-2 rounded border w-full"
+        required
+        value={name}
+        onChange={e => setName(e.target.value)}
+      />
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        className="mt-2 p-2 rounded border w-full"
+        required
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+      />
+      <div ref={paypalRef} className="mt-4 flex justify-center"></div>
+    </div>
   );
 };
 
