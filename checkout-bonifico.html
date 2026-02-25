@@ -179,10 +179,8 @@
             items.forEach((item, idx) => {
                 itemsHtml += `
                     <div class="summary-item">
-                        <strong>${item.title}</strong> × 
-                        <input type="number" min="1" value="${item.quantity}" style="width:40px;" onchange="updateQuantity(${idx}, this.value)">
+                        <strong>${item.title}</strong> × ${item.quantity}
                         — <span style="color:#4a90e2;">${(item.prezzo * item.quantity).toFixed(2)}€</span>
-                        <button onclick="removeItem(${idx})" style="margin-left:8px; background:#ff6b6b; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">Rimuovi</button>
                     </div>
                 `;
             });
@@ -193,22 +191,6 @@
         function calcTotal() {
             return items.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0).toFixed(2);
         }
-
-        window.updateQuantity = function(idx, value) {
-            items[idx].quantity = Math.max(1, parseInt(value) || 1);
-            pendingOrder.items = items;
-            pendingOrder.total = calcTotal();
-            localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
-            renderCartSummary();
-        };
-
-        window.removeItem = function(idx) {
-            items.splice(idx, 1);
-            pendingOrder.items = items;
-            pendingOrder.total = calcTotal();
-            localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
-            renderCartSummary();
-        };
 
         renderCartSummary();
 
