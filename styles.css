@@ -198,12 +198,13 @@ body#body {
 
 .block h2 {
     font-size: 36px;
-.block-blue h2 {
-    color: #f5a6c9;
-}
     font-weight: 800;
     margin-bottom: 16px;
     letter-spacing: -0.5px;
+}
+
+.block-blue h2 {
+    color: #f5a6c9;
 }
 
 .block p {
