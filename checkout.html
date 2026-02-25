@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout PayPal - SbobinaMente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f3f4f6; }
+    .container { max-width: 480px; margin: 40px auto; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); padding: 32px; }
+    .summary { margin-bottom: 24px; }
+    .summary-item { padding: 8px 0; border-bottom: 1px solid #eee; }
+    .total { font-size: 22px; font-weight: bold; color: #4a90e2; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="margin-bottom: 18px;">Checkout</h2>
+    <div class="total" id="total">Totale: -</div>
+    <div class="summary" id="summary"></div>
+    <div id="cart-actions" style="margin-bottom: 24px;"></div>
+    <!-- Simil-checkout Bonifico Form -->
+    <div id="bonifico-checkout" style="margin-bottom:24px;">
+      <form id="bonificoForm" onsubmit="return mostraIstruzioniBonifico(event)" style="margin-bottom:16px;">
+        <label for="nome">Nome:</label><br>
+        <input type="text" id="nome" name="nome" required autocomplete="given-name"><br>
+        <label for="cognome">Cognome:</label><br>
+        <input type="text" id="cognome" name="cognome" required autocomplete="family-name"><br>
+        <label for="indirizzo">Indirizzo di casa:</label><br>
+        <input type="text" id="indirizzo" name="indirizzo" required autocomplete="street-address"><br>
+        <label for="citta">Città:</label><br>
+        <input type="text" id="citta" name="citta" required autocomplete="address-level2"><br>
+        <label for="cellulare">Numero di cellulare:</label><br>
+        <input type="tel" id="cellulare" name="cellulare" required autocomplete="tel"><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required autocomplete="email"><br>
+        <button type="submit" style="margin-top:12px; padding:10px 20px; background:#4a90e2; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer;">INVIA</button>
+      </form>
+      <div id="istruzioniBonifico" style="display:none;margin-top:20px;">
+        <h3>Istruzioni per il bonifico</h3>
+        <p>Effettua il bonifico ai seguenti dati:</p>
+        <ul>
+          <li><strong>IBAN:</strong> IT80Q3677***********657777 (verrà comunicato via email dopo l'ordine)</li>
+          <li><strong>Intestatario:</strong> ELISA IANNONE</li>
+          <li><strong>Banca:</strong> Nome Banca</li>
+          <li><strong>Causale:</strong> Acquisto appunti scolastici</li>
+          <li id="importoBonifico"><strong>Importo:</strong> </li>
+        </ul>
+        <p>Dopo aver effettuato il bonifico, riceverai una mail di conferma.</p>
+      </div>
+    </div>
+    <button onclick="window.location.href='index.html'" style="margin-top:24px; padding:12px 24px; background:#eee; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Torna indietro</button>
+  </div>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script type="module">
+    import CheckoutPage from "./api/components/CheckoutPage.js";
+    const root = document.getElementById('paypalReactRoot');
+    const totalValue = parseFloat(localStorage.getItem('pendingOrder') ? JSON.parse(localStorage.getItem('pendingOrder')).total : '0');
+    ReactDOM.createRoot(root).render(React.createElement(CheckoutPage, { amount: totalValue }));
+  </script>
+  <script>
+    // Carica il carrello e mostra il riepilogo
+    const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+    const items = pendingOrder.items || [];
+    const totalValue = pendingOrder.total || '0.00';
+
+    document.getElementById('total').textContent = 'Totale: ' + totalValue + '€';
+
+    let itemsHtml = '';
+    items.forEach(item => {
+      itemsHtml += `
+        <div class="summary-item">
+          <strong>${item.title}</strong> × ${item.quantity} — <span style="color:#4a90e2;">${(item.prezzo * item.quantity).toFixed(2)}€</span>
+        </div>
+      `;
+    });
+    document.getElementById('summary').innerHTML = itemsHtml;
+
+    // Al submit, mostra pagina scelta pagamento
+    function mostraIstruzioniBonifico(event) {
+      event.preventDefault();
+      // Raccogli dati form
+      const form = document.getElementById('bonificoForm');
+      const nome = form.nome.value.trim();
+      const cognome = form.cognome.value.trim();
+      const indirizzo = form.indirizzo.value.trim();
+      const citta = form.citta.value.trim();
+      const cellulare = form.cellulare.value.trim();
+      const email = form.email.value.trim();
+      if (!nome || !cognome || !indirizzo || !citta || !cellulare || !email) {
+        alert('Compila tutti i campi obbligatori.');
+        return false;
+      }
+      // Mostra pagina scelta pagamento
+      document.getElementById('bonificoForm').style.display = 'none';
+      mostraSceltaPagamento();
+      return false;
+    }
+
+    function mostraSceltaPagamento() {
+      // Crea dinamicamente la pagina scelta
+      const sceltaDiv = document.createElement('div');
+      sceltaDiv.id = 'sceltaPagamento';
+      sceltaDiv.style.marginTop = '32px';
+      // Calcola il totale dal carrello
+      let pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+      let totalValue = pendingOrder.total || '0.00';
+      // Genera link PayPal con destinatario e importo
+      const paypalLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info.icchetimetti.richieste@gmail.com&currency_code=EUR&amount=${encodeURIComponent(totalValue)}&item_name=Acquisto%20appunti%20SbobinaMente`;
+      sceltaDiv.innerHTML = `
+        <h3>Scegli il metodo di pagamento</h3>
+        <button onclick="mostraIstruzioniBonificoFinale()" style="margin:12px; padding:10px 20px; background:#4a90e2; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Bonifico Bancario</button>
+        <button onclick="window.open('${paypalLink}', '_blank')" style="margin:12px; padding:10px 20px; background:#ffc439; color:#222; border:none; border-radius:8px; font-size:16px; cursor:pointer;">PayPal</button>
+      `;
+      document.getElementById('bonifico-checkout').appendChild(sceltaDiv);
+    }
+
+    function mostraIstruzioniBonificoFinale() {
+      document.getElementById('sceltaPagamento').style.display = 'none';
+      // Aggiorna importo nelle istruzioni bonifico
+      let pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+      let totalValue = pendingOrder.total || '0.00';
+      document.getElementById('importoBonifico').innerHTML = `<strong>Importo:</strong> ${totalValue}€`;
+      document.getElementById('istruzioniBonifico').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

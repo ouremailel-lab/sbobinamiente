@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout Bonifico - SbobinaMente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #b2e0fb 0%, #e0c3fc 40%, #f9f586 80%, #b7f7c8 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 650px;
+            margin: 40px auto;
+            background: #fffefc;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(74,144,226,0.10);
+            padding: 40px 32px 32px 32px;
+        }
+        .summary {
+            margin-bottom: 24px;
+        }
+        .summary-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .summary-item strong {
+            color: #0f172a;
+        }
+        .total {
+            font-size: 22px;
+            font-weight: bold;
+            color: #4a90e2;
+            margin-bottom: 12px;
+        }
+        label {
+            font-weight: 600;
+            color: #4a90e2;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .asterisk {
+            color: #e879a3;
+            font-size: 1em;
+            margin-left: 2px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 16px 14px;
+            border-radius: 14px;
+            border: 1.5px solid #e0c3fc;
+            background: #f7faff;
+            font-size: 1.08em;
+            margin-bottom: 0;
+            margin-top: 2px;
+            box-sizing: border-box;
+            transition: border 0.2s;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
+            border: 1.5px solid #b2e0fb;
+            outline: none;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px 32px;
+            margin-bottom: 18px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0;
+        }
+        @media (max-width: 700px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 18px 0;
+            }
+        }
+        .note {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+        button {
+            background: linear-gradient(135deg, #4a90e2 0%, #f5a6c9 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #2e5ac1 0%, #e879a3 100%);
+        }
+        #istruzioniBonifico {
+            background: linear-gradient(135deg, #e0c3fc 0%, #b7f7c8 100%);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-top: 28px;
+            box-shadow: 0 2px 12px rgba(74,144,226,0.07);
+        }
+        h3 {
+            color: #0f172a;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+        <div class="container">
+                <h2 style="margin-bottom: 18px; color:#4a90e2; font-size:2em; font-weight:700; letter-spacing:-1px;">Checkout Bonifico</h2>
+                <div class="total" id="total">Totale: -</div>
+                <div class="summary" id="summary"></div>
+                <div id="cart-actions" style="margin-bottom: 24px;"></div>
+                <div id="bonifico-checkout" style="margin-bottom:24px;">
+                    <form id="bonificoForm" onsubmit="return mostraIstruzioniBonifico(event)" style="margin-bottom:16px;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="nome">Nome <span class="asterisk">*</span></label>
+                                <input type="text" id="nome" name="nome" required autocomplete="given-name">
+                            </div>
+                            <div class="form-group">
+                                <label for="cognome">Cognome <span class="asterisk">*</span></label>
+                                <input type="text" id="cognome" name="cognome" required autocomplete="family-name">
+                            </div>
+                            <div class="form-group">
+                                <label for="indirizzo">Indirizzo di casa <span class="asterisk">*</span></label>
+                                <input type="text" id="indirizzo" name="indirizzo" required autocomplete="street-address">
+                            </div>
+                            <div class="form-group">
+                                <label for="citta">Città <span class="asterisk">*</span></label>
+                                <input type="text" id="citta" name="citta" required autocomplete="address-level2">
+                            </div>
+                            <div class="form-group">
+                                <label for="cellulare">Numero di cellulare <span class="asterisk">*</span></label>
+                                <input type="tel" id="cellulare" name="cellulare" required autocomplete="tel">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email <span class="asterisk">*</span></label>
+                                <input type="email" id="email" name="email" required autocomplete="email">
+                            </div>
+                        </div>
+                        <div class="note">I campi contrassegnati con <span class="asterisk">*</span> sono obbligatori.</div>
+                        <button type="submit" style="margin-top:12px; padding:14px 0; width:100%; background: linear-gradient(90deg, #b2e0fb 0%, #e0c3fc 50%, #b7f7c8 100%); color:#4a90e2; border:none; border-radius:12px; font-size:1.15em; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(74,144,226,0.10);">INVIA</button>
+                    </form>
+                    <div class="note" style="margin-top:0; color:#e879a3; font-size:15px; background: #fff6f6; border-radius: 8px; padding: 10px 14px;">Se l'importo ricevuto sarà differente dalla somma richiesta, verranno resi i soldi e non verranno spediti gli articoli.</div>
+                    <div id="istruzioniBonifico" style="display:none;margin-top:20px;">
+                        <h3 style="color:#4a90e2;">Istruzioni per il bonifico</h3>
+                        <p>Effettua il bonifico ai seguenti dati:</p>
+                        <ul>
+                            <li><strong>IBAN:</strong> IT80Q36772223000EM001657777</li>
+                            <li><strong>Intestatario:</strong> ELISA IANNONE</li>
+                            <li><strong>Banca:</strong> Nome Banca</li>
+                            <li><strong>Causale:</strong> Acquisto appunti scolastici</li>
+                            <li id="importoBonifico"><strong>Importo:</strong> </li>
+                        </ul>
+                        <p>Dopo aver effettuato il bonifico, riceverai una mail di conferma.</p>
+                        <button onclick="window.location.href='https://www.sbobinamente.it/checkout-bonifico.html'" style="margin-top:24px; padding:12px 24px; background:#4a90e2; color:#fff; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Torna indietro</button>
+                    </div>
+                </div>
+                <button onclick="window.location.href='index.html'" style="margin-top:24px; padding:12px 24px; background:#eee; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Torna indietro</button>
+        </div>
+    <script>
+        // Carica il carrello e mostra il riepilogo
+        let pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+        let items = pendingOrder.items || [];
+        let totalValue = pendingOrder.total || '0.00';
+
+        function renderCartSummary() {
+            let itemsHtml = '';
+            items.forEach((item, idx) => {
+                itemsHtml += `
+                    <div class="summary-item">
+                        <strong>${item.title}</strong> × 
+                        <input type="number" min="1" value="${item.quantity}" style="width:40px;" onchange="updateQuantity(${idx}, this.value)">
+                        — <span style="color:#4a90e2;">${(item.prezzo * item.quantity).toFixed(2)}€</span>
+                        <button onclick="removeItem(${idx})" style="margin-left:8px; background:#ff6b6b; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">Rimuovi</button>
+                    </div>
+                `;
+            });
+            document.getElementById('summary').innerHTML = itemsHtml;
+            document.getElementById('total').textContent = 'Totale: ' + calcTotal() + '€';
+        }
+
+        function calcTotal() {
+            return items.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0).toFixed(2);
+        }
+
+        window.updateQuantity = function(idx, value) {
+            items[idx].quantity = Math.max(1, parseInt(value) || 1);
+            pendingOrder.items = items;
+            pendingOrder.total = calcTotal();
+            localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+            renderCartSummary();
+        };
+
+        window.removeItem = function(idx) {
+            items.splice(idx, 1);
+            pendingOrder.items = items;
+            pendingOrder.total = calcTotal();
+            localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+            renderCartSummary();
+        };
+
+        renderCartSummary();
+
+        // Al submit, mostra pagina scelta pagamento
+        function mostraIstruzioniBonifico(event) {
+            event.preventDefault();
+            // Raccogli dati form
+            const form = document.getElementById('bonificoForm');
+            const nome = form.nome.value.trim();
+            const cognome = form.cognome.value.trim();
+            const indirizzo = form.indirizzo.value.trim();
+            const citta = form.citta.value.trim();
+            const cellulare = form.cellulare.value.trim();
+            const email = form.email.value.trim();
+            if (!nome || !cognome || !indirizzo || !citta || !cellulare || !email) {
+                alert('Compila tutti i campi obbligatori.');
+                return false;
+            }
+
+            // Salva ordine in pendingOrders per l'admin
+            const orderId = 'ORD-' + Date.now();
+            const order = {
+                id: orderId,
+                orderId: orderId,
+                orderDate: new Date().toISOString(),
+                timestamp: Date.now(),
+                status: 'pending',
+                deliveryInfo: {
+                    nome: nome,
+                    cognome: cognome,
+                    email: email,
+                    cellulare: cellulare,
+                    indirizzo: indirizzo,
+                    citta: citta
+                },
+                email: email,
+                items: items,
+                total: calcTotal()
+            };
+
+            // Aggiungi a pendingOrders
+            let pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+            pendingOrders.push(order);
+            localStorage.setItem('pendingOrders', JSON.stringify(pendingOrders));
+
+            console.log('✅ Ordine salvato:', order);
+
+            // Mostra pagina scelta pagamento
+            document.getElementById('bonificoForm').style.display = 'none';
+            mostraSceltaPagamento();
+            return false;
+        }
+
+        function mostraSceltaPagamento() {
+            // Crea dinamicamente la pagina scelta
+            const sceltaDiv = document.createElement('div');
+            sceltaDiv.id = 'sceltaPagamento';
+            sceltaDiv.style.marginTop = '32px';
+            sceltaDiv.style.background = '#f3f4f6';
+            sceltaDiv.style.borderRadius = '12px';
+            sceltaDiv.style.padding = '20px';
+            sceltaDiv.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)';
+            // Calcola il totale dal carrello
+            let pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+            let totalValue = pendingOrder.total || '0.00';
+            // Genera link PayPal con destinatario e importo
+            const paypalLink = `https://paypal.me/Sbibinamente?locale.x=it_IT&country.x=IT&amount=${encodeURIComponent(totalValue)}`;
+            const revolutLink = `https://revolut.me/eiannone?amount=${encodeURIComponent(totalValue)}`;
+            sceltaDiv.innerHTML = `
+                <h3 style=\"color:#0f172a; font-size:20px; margin-bottom:12px;\">Scegli il metodo di pagamento</h3>
+                <div style=\"display:flex; gap:16px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;\">
+                    <button onclick=\"mostraIstruzioniBonificoFinale()\" style=\"background: linear-gradient(135deg, #4a90e2 0%, #f5a6c9 100%); color:white; border:none; border-radius:8px; font-size:16px; font-weight:600; padding:10px 20px; cursor:pointer;\">Bonifico Bancario</button>
+                    <button onclick=\"window.open('${paypalLink}', '_blank')\" style=\"background: linear-gradient(135deg, #ffc439 0%, #e879a3 100%); color:#222; border:none; border-radius:8px; font-size:16px; font-weight:600; padding:10px 20px; cursor:pointer;\">PayPal</button>
+                    <button onclick=\"window.open('${revolutLink}', '_blank')\" style=\"background: linear-gradient(135deg, #2e5ac1 0%, #00c3ff 100%); color:white; border:none; border-radius:8px; font-size:16px; font-weight:600; padding:10px 20px; cursor:pointer;\">Revolut</button>
+                </div>
+                <p style=\"color:#475569; font-size:15px;\">Il totale e il riepilogo sono riportati sopra. Scegli il metodo preferito per completare il pagamento.</p>
+            `;
+            document.getElementById('bonifico-checkout').appendChild(sceltaDiv);
+        }
+
+        function mostraIstruzioniBonificoFinale() {
+            document.getElementById('sceltaPagamento').style.display = 'none';
+            // Aggiorna importo nelle istruzioni bonifico
+            let pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+            let totalValue = pendingOrder.total || '0.00';
+            document.getElementById('importoBonifico').innerHTML = `<strong>Importo:</strong> ${totalValue}€`;
+            document.getElementById('istruzioniBonifico').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

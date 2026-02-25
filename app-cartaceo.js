@@ -238,31 +238,37 @@ function updateCartDisplay() {
         return;
     }
 
-    let html = '';
-    let total = 0;
-
-    cart.forEach(item => {
-        const itemTotal = item.prezzo * item.quantity;
-        total += itemTotal;
-        html += `
-            <div class="cart-item">
-                <div class="cart-item-info">
-                    <div class="cart-item-title">${item.title}</div>
-                    <div class="cart-item-price">
-                        ${item.prezzo.toFixed(2)}€ × <input type="number" value="${item.quantity}" min="1" 
-                        onchange="updateCartQuantity(${item.id}, this.value)" style="width: 40px;">
-                        = <strong>${itemTotal.toFixed(2)}€</strong>
-                    </div>
-                </div>
-                <div class="cart-item-actions">
-                    <button onclick="removeFromCart(${item.id})">Rimuovi</button>
-                </div>
-            </div>
-        `;
-    });
-
-    cartItemsDiv.innerHTML = html;
-    document.querySelector('.total-price').textContent = total.toFixed(2) + '€';
+        let html = `<table class="cart-table" style="width:100%;border-collapse:separate;border-spacing:0 8px;">
+            <thead>
+                <tr style="background: #f5f7fa; color: #0f172a;">
+                    <th style="text-align:left;padding:8px 6px;">Prodotto</th>
+                    <th style="text-align:center;padding:8px 6px;">Quantità</th>
+                    <th style="text-align:right;padding:8px 6px;">Prezzo</th>
+                    <th style="text-align:right;padding:8px 6px;">Subtotale</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>`;
+        let total = 0;
+        cart.forEach(item => {
+            const itemTotal = item.prezzo * item.quantity;
+            total += itemTotal;
+            html += `
+                <tr style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(74,144,226,0.07);">
+                    <td style="padding:8px 6px; font-weight:600; color:#0f172a;">${item.title}</td>
+                    <td style="padding:8px 6px; text-align:center;">
+                        <input type="number" value="${item.quantity}" min="1" onchange="updateCartQuantity(${item.id}, this.value)" style="width: 44px; border-radius:6px; border:1px solid #e3e3e3; padding:2px 6px; text-align:center;">
+                    </td>
+                    <td style="padding:8px 6px; text-align:right;">${item.prezzo.toFixed(2)}€</td>
+                    <td style="padding:8px 6px; text-align:right; font-weight:600;">${itemTotal.toFixed(2)}€</td>
+                    <td style="padding:8px 6px; text-align:center;">
+                        <button onclick="removeFromCart(${item.id})" style="background: #e879a3; color: #fff; border: none; border-radius: 6px; padding: 4px 10px; cursor:pointer; font-size:14px;">Rimuovi</button>
+                    </td>
+                </tr>`;
+        });
+        html += '</tbody></table>';
+        cartItemsDiv.innerHTML = html;
+        document.querySelector('.total-price').innerHTML = `<span style="font-size:1.2em; font-weight:700; color:#4a90e2;">${total.toFixed(2)}€</span>`;
 }
 
 // ==================== CARRELLO UI ====================

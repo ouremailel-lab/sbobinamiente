@@ -14,37 +14,123 @@
 </head>
 <body>
     <div class="container">
-        <h2 style="margin-bottom: 18px;">Checkout PayPal</h2>
+        <h2 style="margin-bottom: 18px;">Checkout</h2>
         <div class="total" id="total">Totale: -</div>
         <div class="summary" id="summary"></div>
-        <div id="paypalReactRoot"></div>
+        <div id="cart-actions" style="margin-bottom: 24px;"></div>
+        <!-- Simil-checkout Bonifico Form -->
+        <div id="bonifico-checkout" style="margin-bottom:24px;">
+          <form id="bonificoForm" onsubmit="return mostraIstruzioniBonifico(event)" style="margin-bottom:16px;">
+            <label for="nome">Nome:</label><br>
+            <input type="text" id="nome" name="nome" required><br>
+            <label for="cognome">Cognome:</label><br>
+            <input type="text" id="cognome" name="cognome" required><br>
+            <label for="indirizzo">Indirizzo di casa:</label><br>
+            <input type="text" id="indirizzo" name="indirizzo" required><br>
+            <label for="citta">Città:</label><br>
+            <input type="text" id="citta" name="citta" required><br>
+            <label for="cellulare">Numero di cellulare:</label><br>
+            <input type="tel" id="cellulare" name="cellulare" required><br>
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br>
+            <button type="submit" style="margin-top:12px; padding:10px 20px; background:#4a90e2; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Procedi al pagamento</button>
+          </form>
+          <div id="istruzioniBonifico" style="display:none;margin-top:20px;">
+            <h3>Istruzioni per il bonifico</h3>
+            <p>Effettua il bonifico ai seguenti dati:</p>
+            <ul>
+              <li><strong>IBAN:</strong> IT00A0000000000000000000000</li>
+              <li><strong>Intestatario:</strong> Elisa Iannone</li>
+              <li><strong>Banca:</strong> Nome Banca</li>
+              <li><strong>Causale:</strong> Acquisto appunti scolastici</li>
+              <li><strong>Importo:</strong> Inserisci l'importo concordato</li>
+            </ul>
+            <p>Dopo aver effettuato il bonifico, riceverai una mail di conferma.</p>
+          </div>
+        </div>
+        <div id="paypal-button-container"></div>
+        <button onclick="window.location.href='index.html'" style="margin-top:24px; padding:12px 24px; background:#eee; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Torna indietro</button>
     </div>
     <script>
+            // Simil-checkout bonifico: mostra istruzioni dopo invio form
+            function mostraIstruzioniBonifico(event) {
+              event.preventDefault();
+              document.getElementById('bonificoForm').style.display = 'none';
+              document.getElementById('istruzioniBonifico').style.display = 'block';
+              return false;
+            }
         // Carica il carrello e mostra il riepilogo
-        const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
-        const items = pendingOrder.items || [];
-        const totalValue = pendingOrder.total || '0.00'; // <-- rinominato per evitare conflitto
+        let pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+        let items = pendingOrder.items || [];
+        let totalValue = pendingOrder.total || '0.00';
 
-        document.getElementById('total').textContent = 'Totale: ' + totalValue + '€';
+        function renderCartSummary() {
+            let itemsHtml = '';
+            items.forEach((item, idx) => {
+                itemsHtml += `
+                    <div class="summary-item">
+                        <strong>${item.title}</strong> × 
+                        <input type="number" min="1" value="${item.quantity}" style="width:40px;" onchange="updateQuantity(${idx}, this.value)">
+                        — <span style="color:#4a90e2;">${(item.prezzo * item.quantity).toFixed(2)}€</span>
+                        <button onclick="removeItem(${idx})" style="margin-left:8px; background:#ff6b6b; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">Rimuovi</button>
+                    </div>
+                `;
+            });
+            document.getElementById('summary').innerHTML = itemsHtml;
+            document.getElementById('total').textContent = 'Totale: ' + calcTotal() + '€';
+        }
 
-        let itemsHtml = '';
-        items.forEach(item => {
-            itemsHtml += `
-                <div class="summary-item">
-                    <strong>${item.title}</strong> × ${item.quantity} — <span style="color:#4a90e2;">${(item.prezzo * item.quantity).toFixed(2)}€</span>
-                </div>
-            `;
-        });
-        document.getElementById('summary').innerHTML = itemsHtml;
+        function calcTotal() {
+            return items.reduce((sum, item) => sum + (item.prezzo * item.quantity), 0).toFixed(2);
+        }
+
+        window.updateQuantity = function(idx, value) {
+            items[idx].quantity = Math.max(1, parseInt(value) || 1);
+            pendingOrder.items = items;
+            pendingOrder.total = calcTotal();
+            localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+            renderCartSummary();
+        };
+
+        window.removeItem = function(idx) {
+            items.splice(idx, 1);
+            pendingOrder.items = items;
+            pendingOrder.total = calcTotal();
+            localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+            renderCartSummary();
+        };
+
+        renderCartSummary();
     </script>
-    <!-- Carica React e il componente CheckoutPage -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script type="module">
-        import CheckoutPage from "./api/components/CheckoutPage.js";
-        const root = document.getElementById('paypalReactRoot');
-        const totalValue = parseFloat(localStorage.getItem('pendingOrder') ? JSON.parse(localStorage.getItem('pendingOrder')).total : '0');
-        ReactDOM.createRoot(root).render(React.createElement(CheckoutPage, { amount: totalValue }));
+    <script src="https://www.paypal.com/sdk/js?client-id=AVggN8-bj-gG7OpJ1v5YsJs9F8OzeGD251_vlqGM3HkgsMKPWgdEzW6L0uhBEvG6U1hQITpRGU0FCBZQ&currency=EUR"></script>
+    <script>
+      // Mostra il bottone PayPal
+      let totalValue = parseFloat(localStorage.getItem('pendingOrder') ? JSON.parse(localStorage.getItem('pendingOrder')).total : '0');
+      paypal.Buttons({
+        createOrder: function(data, actions) {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: totalValue.toFixed(2),
+                currency_code: "EUR"
+              },
+              payee: {
+                email_address: "ouremailel@gmail.com"
+              },
+              description: "Acquisto SbobinaMente"
+            }]
+          });
+        },
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(details) {
+            alert('Pagamento completato da ' + details.payer.name.given_name);
+            window.location.href = "/grazie.html";
+          });
+        },
+        onError: function(err) {
+          alert("Errore PayPal: " + err);
+        }
+      }).render('#paypal-button-container');
     </script>
     <!--
   Assicurati che questo file sia nella stessa directory di index.html.
