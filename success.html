@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ordine Confermato - SbobinaMente</title>
+  
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      padding: 40px;
+      text-align: center;
+    }
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 30px;
+      background: #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+    h1 {
+      color: #1f2937;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+    .order-details {
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 30px 0;
+      text-align: left;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    .detail-label {
+      color: #6b7280;
+      font-weight: 500;
+    }
+    .detail-value {
+      color: #1f2937;
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+      flex-direction: column;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #1f2937;
+    }
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+    .email-notice {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: left;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #1e40af;
+    }
+    footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .pdf-credentials {
+      background: #f0f9ff;
+      border-left: 4px solid #3b82f6;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      text-align: left;
+    }
+    .pdf-item {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+    .password-box {
+      background: #fef3c7;
+      padding: 10px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 18px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #92400e;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="success-icon">✓</div>
+    <h1>Ordine Confermato!</h1>
+    <p class="subtitle">Grazie per il tuo acquisto su SbobinaMente</p>
+    
+    <div class="order-details">
+      <div class="detail-row">
+        <span class="detail-label">ID Sessione Checkout:</span>
+        <span class="detail-value" id="session-id">-</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Stato:</span>
+        <span class="detail-value" id="status">Completato</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Data:</span>
+        <span class="detail-value" id="date">-</span>
+      </div>
+    </div>
+
+    <!-- PDF Credentials Section -->
+    <div id="pdfCredentials" style="display:none;">
+      <div class="pdf-credentials">
+        <h3 style="color: #1e40af; margin-bottom: 15px;">🔐 Le Tue Credenziali PDF</h3>
+        <p style="margin-bottom: 15px; color: #374151;">
+          <strong>⚠️ IMPORTANTE:</strong> Conserva queste password in un luogo sicuro! 
+          Ti sono state inviate anche via email.
+        </p>
+        <div id="pdfList"></div>
+      </div>
+    </div>
+
+    <div class="email-notice">
+      <strong>📧 Controlla la tua email</strong><br>
+      Ti abbiamo inviato i dettagli dell'ordine e le password per i tuoi PDF
+    </div>
+
+    <div class="actions">
+      <a href="/" class="btn btn-primary">Torna in Home</a>
+      <a href="/lezioni.html" class="btn btn-secondary">Continua lo Shopping</a>
+    </div>
+
+    <footer>
+      <p>Pagamento gestito da Stripe.</p>
+      <p>
+        Per domande: <a href="mailto:info@sbobinamente.it">info@sbobinamente.it</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- ✅ Aggiungi email-config.js PRIMA dello script principale -->
+  <script src="email-config.js"></script>
+  <script>
+    // Inizializza EmailJS
+    (function() {
+      emailjs.init(EMAIL_CONFIG.publicKey);
+    })();
+
+    // Recupera l'utente loggato
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    let customerEmail = currentUser.email || '';
+    const customerName = currentUser.nome || 'Cliente';
+
+    // Fallback: se la mail non è presente, prova a recuperarla dagli ultimi dati ordine
+    if (!customerEmail) {
+      // Cerca nell'ultimo ordine salvato
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      if (orders.length > 0) {
+        const lastOrder = orders[orders.length - 1];
+        customerEmail = lastOrder.user_email || lastOrder.deliveryInfo?.email || '';
+      }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+
+    if (sessionId) {
+      document.getElementById('session-id').textContent = sessionId;
+      localStorage.removeItem('cart');
+
+      const pendingCart = localStorage.getItem('pendingCart');
+      if (pendingCart) {
+        const items = JSON.parse(pendingCart);
+        const pdfItems = items.filter(item =>
+          item.tipo === 'digitale' || item.type === 'digitale'
+        );
+
+        if (pdfItems.length > 0) {
+          displayPDFCredentials(sessionId, pdfItems);
+
+          // Invia email automatica all'utente
+          console.log('📧 Invio email a:', customerEmail);
+          sendCredentialsEmail(sessionId, pdfItems, { email: customerEmail, nome: customerName });
+        } else {
+          const emailNotice = document.querySelector('.email-notice');
+          if (emailNotice) {
+            emailNotice.innerHTML = `
+              <strong>⚠️ Attenzione</strong><br>
+              Non siamo riusciti a inviare l'email. Le tue credenziali sono visibili qui sopra.<br>
+              <small>Salvale in un luogo sicuro! Errore: The recipients address is empty</small>
+            `;
+            emailNotice.style.background = '#fef3c7';
+            emailNotice.style.borderColor = '#f59e0b';
+          }
+        }
+        
+        const orderData = {
+          session_id: sessionId,
+          items: items,
+          date: new Date().toISOString(),
+          status: 'completed'
+        };
+        
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        orders.push(orderData);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        localStorage.removeItem('pendingCart');
+      }
+      
+      fetchSessionDetails(sessionId);
+    } else {
+      setTimeout(() => window.location.href = '/', 3000);
+    }
+
+    const today = new Date();
+    document.getElementById('date').textContent = today.toLocaleDateString('it-IT', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    function displayPDFCredentials(sessionId, pdfItems) {
+      const credentialsDiv = document.getElementById('pdfCredentials');
+      const pdfList = document.getElementById('pdfList');
+      
+      let html = '';
+      pdfItems.forEach((item, index) => {
+        const password = generatePassword(sessionId, item.id);
+        const viewerUrl = `/viewer-pdf.html?session=${sessionId}&product=${item.id}&pwd=${password}`;
+        
+        html += `
+          <div class="pdf-item">
+            <h4 style="margin: 0 0 10px 0; color: #1f2937;">
+              📄 ${item.title || item.titolo || item.name}
+            </h4>
+            <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">
+              🔑 Password di accesso:
+            </p>
+            <div class="password-box">${password}</div>
+            <a href="${viewerUrl}" target="_blank" 
+               style="display: inline-block; margin-top: 10px; padding: 8px 16px; 
+                      background: #3b82f6; color: white; text-decoration: none; 
+                      border-radius: 6px; font-weight: 600;">
+              🔓 Visualizza PDF
+            </a>
+            <p style="margin-top: 10px; font-size: 12px; color: #9ca3af;">
+              ⏰ Accesso valido per 1 anno
+            </p>
+          </div>
+        `;
+      });
+      
+      pdfList.innerHTML = html;
+      credentialsDiv.style.display = 'block';
+    }
+
+    function generatePassword(sessionId, productId) {
+      const seed = `${sessionId}-${productId}`;
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        const char = seed.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let password = '';
+      let num = Math.abs(hash);
+      
+      for (let i = 0; i < 12; i++) {
+        password += chars[num % chars.length];
+        num = Math.floor(num / chars.length) + (seed.charCodeAt(i % seed.length) || 1);
+      }
+      
+      return password;
+    }
+
+    // ✅ Funzione per inviare email con credenziali
+    async function sendCredentialsEmail(sessionId, pdfItems, user) {
+      try {
+        console.log('🎯 Starting email sending process...');
+        console.log('Session ID:', sessionId);
+        console.log('PDF Items:', pdfItems);
+        console.log('User:', user);
+
+        const pdfAccesses = pdfItems.map(item => ({
+          productName: item.title || item.titolo || item.name,
+          password: generatePassword(sessionId, item.id),
+          accessUrl: `${window.location.origin}/viewer-pdf.html?session=${sessionId}&product=${item.id}&pwd=${generatePassword(sessionId, item.id)}`,
+          expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+        }));
+
+        // Usa la mail reale dell'utente
+        const customerEmail = user.email || '';
+        const customerName = user.nome || 'Cliente';
+
+        console.log('📧 Credentials prepared for:', customerEmail);
+        console.log('PDF Accesses:', pdfAccesses);
+        
+        const result = await sendPDFCredentialsEmail(
+          customerEmail,
+          customerName,
+          sessionId,
+          pdfAccesses
+        );
+
+        console.log('📬 Email result:', result);
+
+        const emailNotice = document.querySelector('.email-notice');
+        if (emailNotice) {
+          if (result.success) {
+            console.log('✅ Email sent successfully!');
+            emailNotice.innerHTML = `
+              <strong>📧 Email inviata con successo!</strong><br>
+              Controlla la tua casella di posta: <strong>${customerEmail}</strong><br>
+              <small style="color: #6b7280;">Se non la vedi, controlla anche nella cartella spam</small>
+            `;
+            emailNotice.style.background = '#d1fae5';
+            emailNotice.style.borderColor = '#10b981';
+          } else {
+            console.error('❌ Email failed to send:', result.error);
+            emailNotice.innerHTML = `
+              <strong>⚠️ Attenzione</strong><br>
+              Non siamo riusciti a inviare l'email. Le tue credenziali sono visibili qui sopra.<br>
+              <small>Salvale in un luogo sicuro! Errore: ${result.error?.text || 'Sconosciuto'}</small>
+            `;
+            emailNotice.style.background = '#fef3c7';
+            emailNotice.style.borderColor = '#f59e0b';
+          }
+        }
+      } catch (error) {
+        console.error('💥 Exception in sendCredentialsEmail:', error);
+      }
+    }
+
+    async function fetchSessionDetails(sessionId) {
+      try {
+        console.log('Fetching session details for:', sessionId);
+        const response = await fetch(`/api/sessioni/${sessionId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('Session details:', data);
+
+        // Aggiorna lo stato dell'ordine nella UI
+        document.getElementById('status').textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+
+        // Invia notifiche in base allo stato
+        switch (data.status) {
+          case 'completed':
+            // Ordine completato
+            break;
+          case 'pending':
+            // Ordine in attesa
+            break;
+          case 'failed':
+            // Ordine fallito
+            break;
+          default:
+            break;
+        }
+
+        // Rimuovi il carrello solo se il pagamento è andato a buon fine
+        if (data.status === 'completed') {
+          localStorage.removeItem('cart');
+          window.dispatchEvent(new Event('cartUpdated'));
+          console.log('Payment successful for session:', sessionId);
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      }
+    }
+  </script>
+</body>
+</html>

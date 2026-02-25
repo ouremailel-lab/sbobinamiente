@@ -1,0 +1,20 @@
+/* ...existing code... */
+.block-pink {
+    background: #fde2e4;
+}
+
+.block-blue h2 {
+    color: #f5a6c9;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* ...existing code... */

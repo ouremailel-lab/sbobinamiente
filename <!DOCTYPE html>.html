@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <script src="https://js.stripe.com/v3"></script>
+</head>
+<body>
+    <button id="checkout-button">Checkout</button>
+    <script>
+    const stripe = Stripe('pk_live_51Sj7KCRt036j0vpehTeZIDMPqpBV1K84i9pKrRGMYD96q8le2oUxdyCHsPFIomWjEmC1x8xZ75mptnU1wxhsZWMM006WXP87Rl');
+
+    document.getElementById('checkout-button').addEventListener('click', async function () {
+        try {
+            const response = await fetch('https://sbobinamente.it/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ /* dati prodotto */ })
+            });
+            if (!response.ok) throw new Error('Errore server');
+            const session = await response.json();
+            await stripe.redirectToCheckout({ sessionId: session.id });
+        } catch (error) {
+            alert('Checkout error: ' + error.message);
+        }
+    });
+    </script>
+</body>
+</html>

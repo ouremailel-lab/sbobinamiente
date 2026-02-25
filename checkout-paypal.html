@@ -23,9 +23,9 @@
         // Carica il carrello e mostra il riepilogo
         const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
         const items = pendingOrder.items || [];
-        const total = pendingOrder.total || '0.00';
+        const totalValue = pendingOrder.total || '0.00'; // <-- rinominato per evitare conflitto
 
-        document.getElementById('total').textContent = 'Totale: ' + total + '€';
+        document.getElementById('total').textContent = 'Totale: ' + totalValue + '€';
 
         let itemsHtml = '';
         items.forEach(item => {
@@ -43,8 +43,13 @@
     <script type="module">
         import CheckoutPage from "./api/components/CheckoutPage.js";
         const root = document.getElementById('paypalReactRoot');
-        const total = parseFloat(localStorage.getItem('pendingOrder') ? JSON.parse(localStorage.getItem('pendingOrder')).total : '0');
-        ReactDOM.createRoot(root).render(React.createElement(CheckoutPage, { amount: total }));
+        const totalValue = parseFloat(localStorage.getItem('pendingOrder') ? JSON.parse(localStorage.getItem('pendingOrder')).total : '0');
+        ReactDOM.createRoot(root).render(React.createElement(CheckoutPage, { amount: totalValue }));
     </script>
+    <!--
+  Assicurati che questo file sia nella stessa directory di index.html.
+  Se invece usi una sottocartella (es: /pages/checkout.html), aggiorna tutti i link e i redirect a /pages/checkout.html.
+  Esempio: <a href="/pages/checkout.html">Checkout</a>
+-->
 </body>
 </html>

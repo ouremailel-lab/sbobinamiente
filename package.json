@@ -46,5 +46,10 @@
     "nodemon": "^3.0.1",
     "vercel": "^32.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "audit": {
+    "fix": "npm audit fix",
+    "fix:force": "npm audit fix --force",
+    "note": "Nessuna modifica ai file necessaria per la correzione delle vulnerabilità. Esegui nel terminale nella root del progetto:"
+  }
 }

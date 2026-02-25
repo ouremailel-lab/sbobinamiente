@@ -123,3 +123,8 @@ const CheckoutPage = ({ amount }: { amount: number }) => {
 };
 
 export default CheckoutPage;
+
+// Assicurati che il tuo progetto abbia installato sia react che react-dom e i tipi:
+// Esegui questi comandi nella root del progetto:
+// npm install react react-dom
+// npm install --save-dev @types/react @types/react-dom
