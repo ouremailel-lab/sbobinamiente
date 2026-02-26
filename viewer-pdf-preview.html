@@ -444,6 +444,46 @@
             sessionStorage.setItem('lastProductPage', returnUrlParam || referrerUrl);
         }
 
+        // Trova il prodotto corrispondente al PDF
+        function findProductByPdfFile(pdfFileName) {
+            if (typeof products !== 'undefined' && pdfFileName) {
+                return products.find(p => p.pdfFile === pdfFileName);
+            }
+            return null;
+        }
+
+        // Aggiorna il bottone "Torna alla pagina di acquisto" con il link corretto
+        function updateBackButton() {
+            const buyBtn = document.querySelector('.buy-btn');
+            if (!buyBtn) return;
+
+            let targetUrl = null;
+
+            // Prova a trovare il prodotto dal file PDF
+            if (pdfFile) {
+                const product = findProductByPdfFile(pdfFile);
+                if (product) {
+                    // Determina la pagina corretta in base al tipo di prodotto
+                    if (product.categoria === 'universita') {
+                        if (product.tipo === 'fisico') {
+                            targetUrl = `cartaceo.html?product=${product.id}`;
+                        } else {
+                            targetUrl = `pdf-universita-sdsg-${product.anno}anno.html?product=${product.id}`;
+                        }
+                    } else if (product.categoria === 'lezioni') {
+                        targetUrl = `lezioni.html?product=${product.id}`;
+                    }
+                }
+            }
+
+            // Se non troviamo un prodotto, usa il backUrl o history.back
+            if (!targetUrl) {
+                targetUrl = backUrl || 'javascript:history.back()';
+            }
+
+            buyBtn.href = targetUrl;
+        }
+
         function goBackToProduct() {
             if (backUrl) {
                 window.location.href = backUrl;
@@ -451,6 +491,9 @@
                 window.history.back();
             }
         }
+
+        // Esegui l'aggiornamento del bottone quando la pagina è caricata
+        updateBackButton();
 
         async function getDeviceFingerprint() {
             const parts = [

@@ -848,12 +848,17 @@ function showOrderSuccessModal(order, digitalsAccess) {
 
 // ==================== ANTEPRIMA PAGINE ====================
 
+let currentPreviewProductId = null; // Memorizza l'ID del prodotto in anteprima
+
 function showPreview(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) {
         alert('Anteprima non disponibile per questo prodotto');
         return;
     }
+
+    // Memorizza l'ID del prodotto per il bottone "Torna alla pagina di acquisto"
+    currentPreviewProductId = productId;
 
     // Se il prodotto ha un PDF collegato, apri lo stesso viewer usato per i PDF
     if (product.pdfFile) {
@@ -930,4 +935,14 @@ function openFullImage(imagePath) {
 
 function closePreviewModal() {
     document.getElementById('previewModal').style.display = 'none';
+}
+
+function backToProduct() {
+    // Chiudi il modal di anteprima
+    closePreviewModal();
+    
+    // Se c'è un prodotto memorizzato, apri il suo modal di dettaglio
+    if (currentPreviewProductId !== null) {
+        openProductModal(currentPreviewProductId);
+    }
 }
