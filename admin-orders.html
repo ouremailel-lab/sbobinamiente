@@ -493,22 +493,19 @@
                 loadOrders();
 
             } catch (error) {
-                const errorDetails = formatEmailJsError(error);
-                console.error('❌ Errore EmailJS:', errorDetails, error);
-                alert(`❌ Errore nell'invio dell'email.\n\nDettagli: ${errorDetails}`);
+                console.error('❌ Errore completo:', error);
+                console.error('Status:', error?.status);
+                console.error('Text:', error?.text);
+                console.error('Message:', error?.message);
+                
+                let msg = '❌ Errore nell\'invio dell\'email.\n\n';
+                if (error?.status) msg += `Status: ${error.status}\n`;
+                if (error?.text) msg += `Messaggio: ${error.text}\n`;
+                if (error?.message) msg += `Errore: ${error.message}\n`;
+                msg += '\nApri la console per dettagli completi.';
+                
+                alert(msg);
             }
-        }
-
-        function formatEmailJsError(error) {
-            if (!error) return 'Errore sconosciuto';
-            if (typeof error === 'string') return error;
-
-            const status = error.status ? `Status: ${error.status}` : null;
-            const text = error.text ? `Messaggio: ${error.text}` : null;
-            const message = error.message ? `Errore: ${error.message}` : null;
-
-            return [message, text, status].filter(Boolean).join(' | ') || 'Errore sconosciuto';
-        }
 
         function cancelOrder(orderId) {
             if (!confirm('Annullare questo ordine?')) return;
