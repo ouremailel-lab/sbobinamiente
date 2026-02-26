@@ -253,6 +253,7 @@
         emailjs.init('XhJ4ib2UUOt20rMxV');
 
         const ADMIN_PASSWORD = 'ElisaLuigi2agosto!';
+        const TOKEN_EXPIRY_DAYS = 7;
         let currentFilter = 'all';
 
         // Login
@@ -386,6 +387,26 @@
             loadOrders();
         }
 
+        async function createPdfToken({ orderId, productId, email }) {
+            const response = await fetch('/api/create-pdf-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orderId: orderId,
+                    productId: productId,
+                    email: email,
+                    expiryDays: TOKEN_EXPIRY_DAYS
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Errore nella creazione del link PDF');
+            }
+
+            return response.json();
+        }
+
         // Conferma ordine e invia PDF
         async function confirmOrder(orderId) {
             if (!confirm('Confermare il pagamento e inviare i PDF al cliente?')) return;
@@ -411,18 +432,6 @@
                     return;
                 }
 
-                // Genera password per ogni PDF
-                const sessionId = order.id || order.orderId || Date.now().toString();
-                const pdfAccesses = pdfItems.map(item => {
-                    const password = generatePassword(sessionId, item.id);
-                    return {
-                        productName: item.title || item.titolo,
-                        password: password,
-                        accessUrl: `https://www.sbobinamente.it/viewer-pdf.html?session=${sessionId}&product=${item.id}&pwd=${password}`,
-                        expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('it-IT')
-                    };
-                });
-
                 // Estrai e valida email
                 const recipientEmail = (order.deliveryInfo?.email || order.email || '').trim();
                 
@@ -432,6 +441,25 @@
                     return;
                 }
 
+                const sessionId = order.id || order.orderId || Date.now().toString();
+
+                const tokenResponses = await Promise.all(
+                    pdfItems.map(item => createPdfToken({
+                        orderId: sessionId,
+                        productId: item.id,
+                        email: recipientEmail
+                    }))
+                );
+
+                const pdfAccesses = pdfItems.map((item, index) => {
+                    const tokenData = tokenResponses[index];
+                    return {
+                        productName: item.title || item.titolo,
+                        accessUrl: `https://www.sbobinamente.it/viewer-pdf.html?token=${tokenData.token}&product=${item.id}`,
+                        expiryDate: new Date(tokenData.expiresAt).toLocaleDateString('it-IT')
+                    };
+                });
+
                 // Invia email con EmailJS
                 const emailData = {
                     to_email: recipientEmail,
@@ -439,7 +467,7 @@
                     order_id: orderId,
                     order_date: new Date(order.orderDate || Date.now()).toLocaleDateString('it-IT'),
                     pdf_list: pdfAccesses.map(pdf => 
-                        `${pdf.productName}\n🔑 Password: ${pdf.password}\n🔗 Link: ${pdf.accessUrl}\n⏰ Valido fino al: ${pdf.expiryDate}`
+                        `${pdf.productName}\n🔗 Link: ${pdf.accessUrl}\n⏰ Valido fino al: ${pdf.expiryDate}\n🔒 Link personale (valido solo sul primo dispositivo)`
                     ).join('\n\n'),
                     total: order.total
                 };
@@ -465,9 +493,21 @@
                 loadOrders();
 
             } catch (error) {
-                console.error('❌ Errore:', error);
-                alert('❌ Errore nell\'invio dell\'email. Controlla la console.');
+                const errorDetails = formatEmailJsError(error);
+                console.error('❌ Errore EmailJS:', errorDetails, error);
+                alert(`❌ Errore nell'invio dell'email.\n\nDettagli: ${errorDetails}`);
             }
+        }
+
+        function formatEmailJsError(error) {
+            if (!error) return 'Errore sconosciuto';
+            if (typeof error === 'string') return error;
+
+            const status = error.status ? `Status: ${error.status}` : null;
+            const text = error.text ? `Messaggio: ${error.text}` : null;
+            const message = error.message ? `Errore: ${error.message}` : null;
+
+            return [message, text, status].filter(Boolean).join(' | ') || 'Errore sconosciuto';
         }
 
         function cancelOrder(orderId) {
@@ -494,8 +534,8 @@
                 details += `📄 Accessi PDF:\n\n`;
                 order.pdfAccesses.forEach(pdf => {
                     details += `• ${pdf.productName}\n`;
-                    details += `  🔑 Password: ${pdf.password}\n`;
-                    details += `  🔗 ${pdf.accessUrl}\n\n`;
+                        details += `  🔗 ${pdf.accessUrl}\n`;
+                        details += `  ⏰ Valido fino al: ${pdf.expiryDate || 'N/D'}\n\n`;
                 });
                 alert(details);
             }
