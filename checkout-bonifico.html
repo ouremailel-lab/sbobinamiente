@@ -152,19 +152,7 @@
                         <button type="submit" style="margin-top:12px; padding:14px 0; width:100%; background: linear-gradient(90deg, #b2e0fb 0%, #e0c3fc 50%, #b7f7c8 100%); color:#4a90e2; border:none; border-radius:12px; font-size:1.15em; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(74,144,226,0.10);">INVIA</button>
                     </form>
                     <div class="note" style="margin-top:0; color:#e879a3; font-size:15px; background: #fff6f6; border-radius: 8px; padding: 10px 14px;">Se l'importo ricevuto sarà differente dalla somma richiesta, verranno resi i soldi e non verranno spediti gli articoli.</div>
-                    <div id="istruzioniBonifico" style="display:none;margin-top:20px;">
-                        <h3 style="color:#4a90e2;">Istruzioni per il bonifico</h3>
-                        <p>Effettua il bonifico ai seguenti dati:</p>
-                        <ul>
-                            <li><strong>IBAN:</strong> IT80Q36772223000EM001657777</li>
-                            <li><strong>Intestatario:</strong> ELISA IANNONE</li>
-                            <li><strong>Banca:</strong> Nome Banca</li>
-                            <li><strong>Causale:</strong> Acquisto appunti scolastici</li>
-                            <li id="importoBonifico"><strong>Importo:</strong> </li>
-                        </ul>
-                        <p>Dopo aver effettuato il bonifico, riceverai una mail di conferma.</p>
-                        <button onclick="window.location.href='https://www.sbobinamente.it/checkout-bonifico.html'" style="margin-top:24px; padding:12px 24px; background:#4a90e2; color:#fff; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Torna indietro</button>
-                    </div>
+                    
                 </div>
                 <button onclick="window.location.href='index.html'" style="margin-top:24px; padding:12px 24px; background:#eee; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Torna indietro</button>
         </div>
@@ -262,7 +250,6 @@
             sceltaDiv.innerHTML = `
                 <h3 style=\"color:#0f172a; font-size:20px; margin-bottom:12px;\">Scegli il metodo di pagamento</h3>
                 <div style=\"display:flex; gap:16px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;\">
-                    <button onclick=\"mostraIstruzioniBonificoFinale()\" style=\"background: linear-gradient(135deg, #4a90e2 0%, #f5a6c9 100%); color:white; border:none; border-radius:8px; font-size:16px; font-weight:600; padding:10px 20px; cursor:pointer;\">Bonifico Bancario</button>
                     <button onclick=\"window.open('${paypalLink}', '_blank')\" style=\"background: linear-gradient(135deg, #ffc439 0%, #e879a3 100%); color:#222; border:none; border-radius:8px; font-size:16px; font-weight:600; padding:10px 20px; cursor:pointer;\">PayPal</button>
                     <button onclick=\"window.open('${revolutLink}', '_blank')\" style=\"background: linear-gradient(135deg, #2e5ac1 0%, #00c3ff 100%); color:white; border:none; border-radius:8px; font-size:16px; font-weight:600; padding:10px 20px; cursor:pointer;\">Revolut</button>
                 </div>
@@ -271,14 +258,7 @@
             document.getElementById('bonifico-checkout').appendChild(sceltaDiv);
         }
 
-        function mostraIstruzioniBonificoFinale() {
-            document.getElementById('sceltaPagamento').style.display = 'none';
-            // Aggiorna importo nelle istruzioni bonifico
-            let pendingOrder = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
-            let totalValue = pendingOrder.total || '0.00';
-            document.getElementById('importoBonifico').innerHTML = `<strong>Importo:</strong> ${totalValue}€`;
-            document.getElementById('istruzioniBonifico').style.display = 'block';
-        }
+        
     </script>
 </body>
 </html>

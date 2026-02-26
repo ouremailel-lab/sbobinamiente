@@ -70,3 +70,26 @@ COMMENT ON TABLE orders IS 'Ordini effettuati dagli utenti';
 COMMENT ON COLUMN users.verified IS 'Stato di verifica email (sempre true per MVP)';
 COMMENT ON COLUMN orders.items IS 'Array JSON dei prodotti ordinati';
 COMMENT ON COLUMN orders.delivery_info IS 'Informazioni di spedizione in formato JSON';
+
+-- =============================================
+-- TABELLA PDF ACCESS TOKENS (Link protetti)
+-- =============================================
+CREATE TABLE IF NOT EXISTS pdf_access_tokens (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    token VARCHAR(128) UNIQUE NOT NULL,
+    order_id VARCHAR(50),
+    product_id VARCHAR(50) NOT NULL,
+    user_email VARCHAR(255),
+    expires_at TIMESTAMP NOT NULL,
+    device_hash VARCHAR(128),
+    device_locked_at TIMESTAMP,
+    last_access_at TIMESTAMP,
+    access_count INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_pdf_tokens_token ON pdf_access_tokens(token);
+CREATE INDEX idx_pdf_tokens_product ON pdf_access_tokens(product_id);
+CREATE INDEX idx_pdf_tokens_expires ON pdf_access_tokens(expires_at);
+
+COMMENT ON TABLE pdf_access_tokens IS 'Token di accesso ai PDF con blocco dispositivo e scadenza';

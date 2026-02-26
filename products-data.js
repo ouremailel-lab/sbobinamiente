@@ -137,6 +137,11 @@ const products = [
         pages: 40,
         pdfFile: "SECONDO ANNO/DIRITTO PRIVATO 2.pdf",
         previewImage: "image/DIRITTO PRIVATO II.png",
+        previewImages: [
+            "image/previews/anteprimadirittoprivato.png",
+            "image/previews/anteprimadirittoprivato2.png",
+            "image/previews/anteprimadirittoprivato3.png"
+        ],
         categoria: "universita",
         corso: "sdsg",
         anno: 2
@@ -153,6 +158,11 @@ const products = [
         pages: 40,
         pdfFile: "SECONDO ANNO/DIRITTO PRIVATO 2.pdf",
         previewImage: "image/DIRITTO PRIVATO II.png",
+        previewImages: [
+            "image/previews/anteprimadirittoprivato.png",
+            "image/previews/anteprimadirittoprivato2.png",
+            "image/previews/anteprimadirittoprivato3.png"
+        ],
         categoria: "universita",
         corso: "sdsg",
         anno: 2
