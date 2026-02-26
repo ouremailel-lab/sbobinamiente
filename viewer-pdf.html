@@ -439,10 +439,11 @@
         const MAX_PREVIEW_PAGES = 3;
 
         const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('session'); // ✅ Nuovo parametro
+        const sessionId = urlParams.get('session');
         const orderId = urlParams.get('order');
         const password = urlParams.get('pwd');
         const productId = urlParams.get('product');
+        const token = urlParams.get('token');
         const isPreview = urlParams.get('preview') === 'true';
 
         // ✅ NUOVA LOGICA: Verifica password da checkout o da ordine
