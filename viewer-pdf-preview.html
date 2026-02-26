@@ -429,11 +429,11 @@
         const maxPreviewPages = 4; // Solo prime 4 pagine
         let currentProductFile = null;
 
-        // Ottieni il file PDF dal parametro URL
+        // Ottieni il file PDF dal parametro URL - supporta sia token che legacy file param
         const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const productId = urlParams.get('product');
         const pdfFile = urlParams.get('file');
-
-        // Rileva e conserva la pagina di provenienza per tornare indietro in modo affidabile anche da una nuova scheda
         const returnUrlParam = urlParams.get('returnUrl');
         const referrerUrl = document.referrer && document.referrer.startsWith(window.location.origin)
             ? document.referrer
@@ -452,11 +452,86 @@
             }
         }
 
-        if (!pdfFile) {
-            document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: File PDF non specificato</p>';
-        } else {
+        async function getDeviceFingerprint() {
+            const parts = [
+                navigator.userAgent,
+                navigator.language,
+                `${screen.width}x${screen.height}`,
+                String(screen.colorDepth || ''),
+                Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+                navigator.platform || '',
+                String(navigator.hardwareConcurrency || ''),
+                String(navigator.deviceMemory || '')
+            ].join('|');
+
+            if (window.crypto && window.crypto.subtle) {
+                const buffer = new TextEncoder().encode(parts);
+                const hashBuffer = await window.crypto.subtle.digest('SHA-256', buffer);
+                return Array.from(new Uint8Array(hashBuffer))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+            }
+
+            let hash = 0;
+            for (let i = 0; i < parts.length; i++) {
+                const char = parts.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return `legacy-${Math.abs(hash)}`;
+        }
+
+        async function verifyTokenAccess(tokenValue, productIdValue) {
+            try {
+                const deviceHash = await getDeviceFingerprint();
+                const response = await fetch('/api/verify-pdf-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: tokenValue,
+                        productId: productIdValue,
+                        deviceHash: deviceHash
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    return { ok: false, message: errorData.error || 'Accesso non autorizzato.' };
+                }
+
+                return { ok: true };
+            } catch (error) {
+                return { ok: false, message: 'Errore di verifica accesso. Riprova più tardi.' };
+            }
+        }
+
+        // Inizializza il caricamento del PDF
+        if (token && productId) {
+            // Token-based access
+            loadPDFWithToken(token, productId);
+        } else if (pdfFile) {
+            // Legacy file-based access
             currentProductFile = pdfFile;
             loadPDF(pdfFile);
+        } else {
+            document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: Accesso non autorizzato</p>';
+        }
+
+        async function loadPDFWithToken(tokenValue, productIdValue) {
+            try {
+                const verifyResult = await verifyTokenAccess(tokenValue, productIdValue);
+                if (!verifyResult.ok) {
+                    document.getElementById('pdfContent').innerHTML = `<p style="color: red; padding: 40px;">${verifyResult.message}</p>`;
+                    return;
+                }
+                console.log('✅ Token verificato - accesso garantito');
+                
+                // Il token non specifica il file, quindi non possiamo caricarlo direttamente
+                document.getElementById('pdfContent').innerHTML = '<p style="color: orange; padding: 40px;">Link di anteprima non disponibile con accesso token. Usa il viewer principale.</p>';
+            } catch (error) {
+                console.error('Errore verifica token:', error);
+                document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore di verifica: ' + error.message + '</p>';
+            }
         }
 
         async function loadPDF(fileName) {

@@ -334,34 +334,114 @@
         let totalPages = 0;
 
         const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
         const accessId = urlParams.get('access');
         const password = urlParams.get('pwd');
         const pdfFile = urlParams.get('file');
         const pdfTitle = urlParams.get('title') || 'Lezione PDF';
         const fullAccess = urlParams.get('full') === 'true';
+        const productId = urlParams.get('product');
 
-        if (!accessId || !password || !pdfFile) {
+        if (!token && (!accessId || !password || !pdfFile)) {
             showError('Link di accesso non valido. Parametri mancanti.');
         } else {
             loadPDF();
         }
 
+        async function getDeviceFingerprint() {
+            const parts = [
+                navigator.userAgent,
+                navigator.language,
+                `${screen.width}x${screen.height}`,
+                String(screen.colorDepth || ''),
+                Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+                navigator.platform || '',
+                String(navigator.hardwareConcurrency || ''),
+                String(navigator.deviceMemory || '')
+            ].join('|');
+
+            if (window.crypto && window.crypto.subtle) {
+                const buffer = new TextEncoder().encode(parts);
+                const hashBuffer = await window.crypto.subtle.digest('SHA-256', buffer);
+                return Array.from(new Uint8Array(hashBuffer))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+            }
+
+            let hash = 0;
+            for (let i = 0; i < parts.length; i++) {
+                const char = parts.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return `legacy-${Math.abs(hash)}`;
+        }
+
+        async function verifyTokenAccess(tokenValue, productIdValue) {
+            try {
+                const deviceHash = await getDeviceFingerprint();
+                const response = await fetch('/api/verify-pdf-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: tokenValue,
+                        productId: productIdValue,
+                        deviceHash: deviceHash
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    return { ok: false, message: errorData.error || 'Accesso non autorizzato.' };
+                }
+
+                return { ok: true };
+            } catch (error) {
+                return { ok: false, message: 'Errore di verifica accesso. Riprova più tardi.' };
+            }
+        }
+
         async function loadPDF() {
             try {
-                // Verifica se è un link diretto (con password nell'URL)
-                const isDirectLink = password && pdfFile;
-                
-                if (isDirectLink) {
-                    // Link diretto - accesso senza localStorage
-                    console.log('✅ Accesso diretto al PDF con password dall\'URL');
-                    console.log('File richiesto:', pdfFile);
+                // Nuova sistema: verifica token-based access se disponibile
+                if (token && productId) {
+                    const verifyResult = await verifyTokenAccess(token, productId);
+                    if (!verifyResult.ok) {
+                        showError(verifyResult.message || 'Accesso non autorizzato.');
+                        return;
+                    }
+                    console.log('✅ Token verificato - accesso garantito');
                     
+                    // Con token, accesso completo
                     document.getElementById('productName').textContent = `📄 ${decodeURIComponent(pdfTitle)}`;
-
-                    // Il file è già URL-encoded, non decodificare
-                    const pdfPath = `/PDF/${pdfFile}`;
-                    console.log('Percorso PDF:', pdfPath);
                     
+                    const pdfPath = `/PDF/${pdfFile}`;
+                    const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
+                    pdfDoc = pdfData;
+                    totalPages = pdfDoc.numPages; // Accesso completo con token
+                    
+                    createViewerUI();
+                    renderPage(1);
+                    return;
+                }
+                
+                // Sistema legacy: verifica accessId + password per retrocompatibilità
+                if (accessId && password && pdfFile) {
+                    const tempAccess = JSON.parse(localStorage.getItem('tempPDFAccess')) || {};
+                    const access = tempAccess[accessId];
+
+                    if (!access) {
+                        showError('Link di accesso non trovato o scaduto.');
+                        return;
+                    }
+
+                    if (access.password !== password) {
+                        showError('Password non valida.');
+                        return;
+                    }
+
+                    document.getElementById('productName').textContent = `📄 ${decodeURIComponent(pdfTitle)}`;
+                    const pdfPath = `/PDF/${decodeURIComponent(pdfFile)}`;
                     const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
                     pdfDoc = pdfData;
                     totalPages = fullAccess ? pdfDoc.numPages : 1;
@@ -370,30 +450,8 @@
                     renderPage(1);
                     return;
                 }
-
-                // Altrimenti verifica localStorage (metodo vecchio)
-                const tempAccess = JSON.parse(localStorage.getItem('tempPDFAccess')) || {};
-                const access = tempAccess[accessId];
-
-                if (!access) {
-                    showError('Link di accesso non trovato o scaduto.');
-                    return;
-                }
-
-                if (access.password !== password) {
-                    showError('Password non valida.');
-                    return;
-                }
-
-                document.getElementById('productName').textContent = `📄 ${decodeURIComponent(pdfTitle)}`;
-
-                const pdfPath = `/PDF/${decodeURIComponent(pdfFile)}`;
-                const pdfData = await pdfjsLib.getDocument(pdfPath).promise;
-                pdfDoc = pdfData;
-                totalPages = fullAccess ? pdfDoc.numPages : 1; // Solo 1 pagina in preview
-
-                createViewerUI();
-                renderPage(1);
+                
+                showError('Nessun metodo di accesso valido.');
             } catch (error) {
                 console.error('Errore caricamento PDF:', error);
                 showError('Errore nel caricamento del PDF: ' + error.message);
