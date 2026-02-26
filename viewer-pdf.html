@@ -448,10 +448,63 @@
         // ✅ NUOVA LOGICA: Verifica password da checkout o da ordine
         if (!productId) {
             showError('Link di accesso non valido. ID prodotto mancante.');
-        } else if (!isPreview && !sessionId && (!orderId || !password)) {
+        } else if (!isPreview && !token && !sessionId && (!orderId || !password)) {
             showError('Link di accesso non valido. Parametri mancanti.');
         } else {
             loadPDF();
+        }
+
+        async function getDeviceFingerprint() {
+            const parts = [
+                navigator.userAgent,
+                navigator.language,
+                `${screen.width}x${screen.height}`,
+                String(screen.colorDepth || ''),
+                Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+                navigator.platform || '',
+                String(navigator.hardwareConcurrency || ''),
+                String(navigator.deviceMemory || '')
+            ].join('|');
+
+            if (window.crypto && window.crypto.subtle) {
+                const buffer = new TextEncoder().encode(parts);
+                const hashBuffer = await window.crypto.subtle.digest('SHA-256', buffer);
+                return Array.from(new Uint8Array(hashBuffer))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+            }
+
+            let hash = 0;
+            for (let i = 0; i < parts.length; i++) {
+                const char = parts.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return `legacy-${Math.abs(hash)}`;
+        }
+
+        async function verifyTokenAccess(tokenValue, productIdValue) {
+            try {
+                const deviceHash = await getDeviceFingerprint();
+                const response = await fetch('/api/verify-pdf-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: tokenValue,
+                        productId: productIdValue,
+                        deviceHash: deviceHash
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    return { ok: false, message: errorData.error || 'Accesso non autorizzato.' };
+                }
+
+                return { ok: true };
+            } catch (error) {
+                return { ok: false, message: 'Errore di verifica accesso. Riprova più tardi.' };
+            }
         }
 
         async function loadPDF() {
@@ -461,6 +514,18 @@
 
                 if (isPreview) {
                     // Modalità anteprima
+                    if (typeof window.productsData !== 'undefined') {
+                        product = window.productsData.find(p => p.id == productId);
+                    }
+                    accessGranted = true;
+                } else if (token) {
+                    // ✅ NUOVO: Accesso tramite token protetto
+                    const verifyResult = await verifyTokenAccess(token, productId);
+                    if (!verifyResult.ok) {
+                        showError(verifyResult.message || 'Accesso non autorizzato.');
+                        return;
+                    }
+
                     if (typeof window.productsData !== 'undefined') {
                         product = window.productsData.find(p => p.id == productId);
                     }
@@ -596,9 +661,11 @@
             const container = document.getElementById('viewerContainer');
             const accessInfo = isPreview 
                 ? `👁️ ANTEPRIMA (${MAX_PREVIEW_PAGES} pagine) | Acquista per il documento completo`
-                : sessionId 
-                    ? `✅ Accesso autorizzato | Sessione #${sessionId.substring(0, 20)}... | 🔒 Documento protetto`
-                    : `✅ Accesso autorizzato | Ordine #${currentOrderId} | 🔒 Documento protetto`;
+                : token
+                    ? `✅ Accesso autorizzato | Link personale | 🔒 Documento protetto`
+                    : sessionId 
+                        ? `✅ Accesso autorizzato | Sessione #${sessionId.substring(0, 20)}... | 🔒 Documento protetto`
+                        : `✅ Accesso autorizzato | Ordine #${currentOrderId} | 🔒 Documento protetto`;
             
             container.innerHTML = `
                 <div class="pdf-viewer">
