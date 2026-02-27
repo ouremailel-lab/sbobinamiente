@@ -3,7 +3,7 @@
 // Dati di esempio - Recensioni Italiane
 const sampleReviews = [
     {
-        name: "Marco Rossi",
+        name: "Marco",
         age: 22,
         faculty: "Giurisprudenza",
         product: "Diritto Privato I anno",
@@ -11,44 +11,44 @@ const sampleReviews = [
         text: "Appunti chiarissimi e ben organizzati. Ho passato l'esame con 28, grazie a questi materiali. Complimenti!"
     },
     {
-        name: "Giulia Bianchi",
+        name: "Giulia",
         age: 21,
-        faculty: "Medicina",
-        product: "Anatomia I anno",
+        faculty: "Scienze dei Servizi Giuridici",
+        product: "Diritto Costituzionale",
         rating: 5,
-        text: "Finalmente appunti che spiegano davvero bene l'anatomia. Le illustrazioni sono perfette per lo studio."
+        text: "Finalmente materiale che spiega bene gli articoli della costituzione. Perfetto per preparare l'esame."
     },
     {
-        name: "Federico Conti",
+        name: "Federico",
         age: 20,
-        faculty: "Ingegneria Civile",
-        product: "Analisi Matematica I",
+        faculty: "Giurisprudenza",
+        product: "Diritto Civile II anno",
         rating: 4,
-        text: "Buona qualità, esercizi pratici molto utili. Un po' dense alcune pagine ma nel complesso eccellenti."
+        text: "Buona qualità, appunti ben strutturati. Un po' densi ma nel complesso molto utili per lo studio."
     },
     {
-        name: "Sofia Ferretti",
+        name: "Sofia",
         age: 23,
-        faculty: "Economia Aziendale",
-        product: "Contabilità Generale",
+        faculty: "Scienze dei Servizi Giuridici",
+        product: "Diritto Penale",
         rating: 5,
-        text: "Consiglio vivamente! Appunti completi e facili da seguire. La professoressa di economia mia ha apprezzato moltissimo."
+        text: "Consiglio vivamente! Appunti completi e facili da seguire. Ho capito finalmente le distinzioni fondamentali."
     },
     {
-        name: "Antonio Moretti",
+        name: "Antonio",
         age: 21,
-        faculty: "Informatica",
-        product: "Programmazione C++",
+        faculty: "Giurisprudenza",
+        product: "Diritto Amministrativo",
         rating: 4,
-        text: "Bene spiegato, buoni esempi di codice. Avrei voluto più esercizi svolti ma nel complesso è ottimo."
+        text: "Bene spiegato, con schemi pratici. Avrei voluto più esercizi svolti ma nel complesso è ottimo."
     },
     {
-        name: "Laura Guccione",
+        name: "Laura",
         age: 22,
-        faculty: "Psicologia",
-        product: "Psicologia Generale",
+        faculty: "Giurisprudenza",
+        product: "Procedura Civile",
         rating: 5,
-        text: "Appunti completi e ben strutturati. Mi hanno aiutato a capire i concetti difficili. Grazie!"
+        text: "Appunti completi e ben strutturati. Mi hanno aiutato a capire i passaggi del processo civile. Grazie!"
     }
 ];
 
