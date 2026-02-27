@@ -41,6 +41,14 @@ const sampleReviews = [
         product: "Pensione - 3° Anno",
         rating: 4,
         text: "Bene spiegato, con calcoli pratici e esempi reali. Avrei voluto più esercizi svolti ma nel complesso è ottimo."
+    },
+    {
+        name: "Silvia",
+        age: 22,
+        faculty: "Scienze dei Servizi Giuridici",
+        product: "Disoccupazione - 3° Anno",
+        rating: 5,
+        text: "Appunti completi e ben strutturati sui sussidi e ammortizzatori sociali. Mi hanno aiutato moltissimo. Grazie!"
     }
 ];
 
