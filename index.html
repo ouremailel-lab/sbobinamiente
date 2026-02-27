@@ -102,6 +102,64 @@
         </div>
     </section>
 
+    <!-- Sezione Recensioni -->
+    <section class="block block-pink" id="reviews">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 40px;">⭐ Cosa dicono di noi</h2>
+            
+            <!-- Griglia Recensioni -->
+            <div id="reviewsGrid" class="reviews-grid">
+                <!-- Recensioni caricate da JavaScript -->
+            </div>
+
+            <!-- Form Aggiungi Recensione -->
+            <div style="margin-top: 50px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                <h3 style="text-align: center; margin-bottom: 30px;">Lascia la tua recensione</h3>
+                <form id="reviewForm" class="review-form">
+                    <div class="form-group">
+                        <label for="reviewName">Nome *</label>
+                        <input type="text" id="reviewName" name="name" placeholder="Il tuo nome" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewAge">Età *</label>
+                        <input type="number" id="reviewAge" name="age" placeholder="La tua età" min="18" max="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewFaculty">Facoltà/Corso *</label>
+                        <input type="text" id="reviewFaculty" name="faculty" placeholder="Es: Giurisprudenza, Medicina, Ingegneria..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewProduct">File/Prodotto acquistato *</label>
+                        <input type="text" id="reviewProduct" name="product" placeholder="Es: Diritto Privato, Anatomia I anno..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewRating">Voto ⭐ *</label>
+                        <div class="star-rating" id="starRating">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" id="reviewRating" name="rating" value="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewText">La tua opinione (facoltativo)</label>
+                        <textarea id="reviewText" name="text" placeholder="Che cosa ti è piaciuto? Consigli per altri studenti?" rows="5"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">Invia Recensione</button>
+                </form>
+                <p style="text-align: center; font-size: 14px; color: #666; margin-top: 15px;">Le tue recensioni aiutano altri studenti a fare scelte consapevoli.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Modal Carrello -->
     <div id="cartModal" class="modal">
         <div class="modal-content modal-lg">
@@ -187,6 +245,7 @@
 
     <script src="products-data.js"></script>
     <script src="email-service.js"></script>
+    <script src="reviews-manager.js"></script>
     <script src="app.js"></script>
     <script>
             document.getElementById("checkoutBtn")?.addEventListener("click", () => {
