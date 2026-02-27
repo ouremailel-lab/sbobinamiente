@@ -6,7 +6,7 @@ const sampleReviews = [
         name: "Marco",
         age: 22,
         faculty: "Giurisprudenza",
-        product: "Diritto Privato I anno",
+        product: "Diritto Privato - 2° Anno",
         rating: 5,
         text: "Appunti chiarissimi e ben organizzati. Ho passato l'esame con 28, grazie a questi materiali. Complimenti!"
     },
@@ -14,7 +14,7 @@ const sampleReviews = [
         name: "Giulia",
         age: 21,
         faculty: "Scienze dei Servizi Giuridici",
-        product: "Diritto Costituzionale",
+        product: "Diritto Costituzionale - 1° Anno",
         rating: 5,
         text: "Finalmente materiale che spiega bene gli articoli della costituzione. Perfetto per preparare l'esame."
     },
@@ -22,15 +22,15 @@ const sampleReviews = [
         name: "Federico",
         age: 20,
         faculty: "Giurisprudenza",
-        product: "Diritto Civile II anno",
+        product: "Infortuni sul Lavoro - 3° Anno",
         rating: 4,
-        text: "Buona qualità, appunti ben strutturati. Un po' densi ma nel complesso molto utili per lo studio."
+        text: "Buona qualità, appunti ben strutturati con schemi pratici. Molto utile per capire la materia."
     },
     {
         name: "Sofia",
         age: 23,
         faculty: "Scienze dei Servizi Giuridici",
-        product: "Diritto Penale",
+        product: "Invalidità e Inabilità - 3° Anno",
         rating: 5,
         text: "Consiglio vivamente! Appunti completi e facili da seguire. Ho capito finalmente le distinzioni fondamentali."
     },
@@ -38,17 +38,17 @@ const sampleReviews = [
         name: "Antonio",
         age: 21,
         faculty: "Giurisprudenza",
-        product: "Diritto Amministrativo",
+        product: "Pensione - 3° Anno",
         rating: 4,
-        text: "Bene spiegato, con schemi pratici. Avrei voluto più esercizi svolti ma nel complesso è ottimo."
+        text: "Bene spiegato, con calcoli pratici e esempi reali. Avrei voluto più esercizi svolti ma nel complesso è ottimo."
     },
     {
         name: "Laura",
         age: 22,
-        faculty: "Giurisprudenza",
-        product: "Procedura Civile",
+        faculty: "Scienze dei Servizi Giuridici",
+        product: "Disoccupazione - 3° Anno",
         rating: 5,
-        text: "Appunti completi e ben strutturati. Mi hanno aiutato a capire i passaggi del processo civile. Grazie!"
+        text: "Appunti completi e ben strutturati sui sussidi e ammortizzatori sociali. Mi hanno aiutato moltissimo. Grazie!"
     }
 ];
 
