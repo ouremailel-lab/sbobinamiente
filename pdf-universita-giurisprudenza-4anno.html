@@ -227,22 +227,6 @@
         </div>
     </footer>
 
-    <!-- Modal Galleria Anteprima -->
-    <div id="previewModal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);">
-        <div style="background-color: white; margin: 5% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 800px; max-height: 85vh; overflow-y: auto;">
-            <span style="color: #000; float: right; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 20px;" onclick="closePreviewModal()">&times;</span>
-            <h2 id="previewTitle" style="margin-top: 0; color: #0f172a;"></h2>
-            <div id="previewContainer" style="text-align: center; margin: 20px 0;">
-                <img id="previewImage" src="" alt="Anteprima" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px;">
-            </div>
-            <div style="display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap;">
-                <button onclick="previousPreview()" style="padding: 10px 16px; background: #4a90e2; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">← Precedente</button>
-                <span id="previewCounter" style="font-weight: 600; color: #0f172a; min-width: 80px; text-align: center;">1 / 1</span>
-                <button onclick="nextPreview()" style="padding: 10px 16px; background: #4a90e2; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Successiva →</button>
-            </div>
-        </div>
-    </div>
-
     <!-- EmailJS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>emailjs.init('Bo-Kyor5W-Q_BRDf3');</script>
@@ -269,8 +253,8 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 
-                const previewButton = product.previewPages && product.previewPages.length > 0
-                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" data-images='${JSON.stringify(product.previewPages).replace(/'/g, "&apos;")}' data-title="${product.title}" onclick="openPreviewGallery(this)">👁️ Anteprima (${product.previewPages.length} immagini)</button>`
+                const previewButton = product.pdfFile
+                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="window.open('viewer-pdf-preview.html?file=${product.pdfFile}', '_blank')">👁️ Vedi Anteprima (4 pagine)</button>`
                     : '';
                 const coverImage = product.previewImage 
                     ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; border-radius: 12px; margin-bottom: 12px; object-fit: cover; max-height: 220px;">`
@@ -294,78 +278,6 @@
                 grid.appendChild(card);
             });
         });
-
-        // Funzioni per la galleria di anteprima
-        let currentPreviewData = null;
-
-        function openPreviewGallery(button) {
-            const imagesJson = button.getAttribute('data-images');
-            const title = button.getAttribute('data-title');
-            
-            if (!imagesJson) {
-                alert('Anteprima non disponibile');
-                return;
-            }
-
-            try {
-                const pages = JSON.parse(imagesJson);
-                if (!pages || pages.length === 0) {
-                    alert('Anteprima non disponibile');
-                    return;
-                }
-
-                currentPreviewData = {
-                    pages: pages,
-                    currentPage: 0,
-                    title: title
-                };
-
-                const modal = document.getElementById('previewModal');
-                document.getElementById('previewTitle').textContent = 'Anteprima - ' + title;
-                updatePreviewImage();
-                modal.style.display = 'block';
-            } catch (e) {
-                console.error('Errore nel parsing delle immagini:', e);
-                alert('Errore nel caricamento dell\'anteprima');
-            }
-        }
-
-        function closePreviewModal() {
-            document.getElementById('previewModal').style.display = 'none';
-            currentPreviewData = null;
-        }
-
-        function nextPreview() {
-            if (!currentPreviewData) return;
-            currentPreviewData.currentPage = (currentPreviewData.currentPage + 1) % currentPreviewData.pages.length;
-            updatePreviewImage();
-        }
-
-        function previousPreview() {
-            if (!currentPreviewData) return;
-            currentPreviewData.currentPage = (currentPreviewData.currentPage - 1 + currentPreviewData.pages.length) % currentPreviewData.pages.length;
-            updatePreviewImage();
-        }
-
-        function updatePreviewImage() {
-            if (!currentPreviewData) return;
-            const img = document.getElementById('previewImage');
-            const counter = document.getElementById('previewCounter');
-            
-            if (img && counter) {
-                img.src = currentPreviewData.pages[currentPreviewData.currentPage];
-                counter.textContent = `${currentPreviewData.currentPage + 1} / ${currentPreviewData.pages.length}`;
-            }
-        }
-
-        // Chiudi il modal se clicchi fuori
-        window.onclick = function(event) {
-            const modal = document.getElementById('previewModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-                currentPreviewData = null;
-            }
-        }
     </script>
 </body>
 </html>
