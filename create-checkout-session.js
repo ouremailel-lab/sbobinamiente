@@ -17,6 +17,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
                 quantity: 1,
             }],
             mode: 'payment',
+            currency: 'eur',
             success_url: 'https://www.sbobinamente.it/success',
             cancel_url: 'https://www.sbobinamente.it/cancel',
         });
