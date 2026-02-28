@@ -239,7 +239,7 @@ const products = [
         dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
         pages: 0,
         pdfFile: "QUARTO ANNO/Procedura Civile parte uno.pdf",
-        previewImage: "image/ANTEPRIMA PROCEDURA PARTE 1.png",
+        previewImage: "image/proceduracivile2.png",
         previewPages: [
             "image/ANTEPRIMA PROCEDURA PARTE 1.png",
             "image/4.png",
