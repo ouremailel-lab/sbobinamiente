@@ -439,6 +439,8 @@ body#body {
     transition: var(--transition);
     display: flex;
     flex-direction: column;
+    padding: 20px; /* 1cm ≈ 37.8px, ma 20-24px è già molto su web, si può aumentare se serve */
+    margin: 10px;
 }
 
 .product-card:hover {
