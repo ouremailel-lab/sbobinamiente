@@ -227,6 +227,22 @@
         </div>
     </footer>
 
+    <!-- Modal Galleria Anteprima -->
+    <div id="previewModal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);">
+        <div style="background-color: white; margin: 5% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 800px; max-height: 85vh; overflow-y: auto;">
+            <span style="color: #000; float: right; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 20px;" onclick="closePreviewModal()">&times;</span>
+            <h2 id="previewTitle" style="margin-top: 0; color: #0f172a;"></h2>
+            <div id="previewContainer" style="text-align: center; margin: 20px 0;">
+                <img id="previewImage" src="" alt="Anteprima" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px;">
+            </div>
+            <div style="display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <button onclick="previousPreview()" style="padding: 10px 16px; background: #4a90e2; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">← Precedente</button>
+                <span id="previewCounter" style="font-weight: 600; color: #0f172a; min-width: 80px; text-align: center;">1 / 1</span>
+                <button onclick="nextPreview()" style="padding: 10px 16px; background: #4a90e2; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Successiva →</button>
+            </div>
+        </div>
+    </div>
+
     <!-- EmailJS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>emailjs.init('Bo-Kyor5W-Q_BRDf3');</script>
@@ -278,6 +294,66 @@
                 grid.appendChild(card);
             });
         });
+
+        // Funzioni per la galleria di anteprima
+        let currentPreviewData = null;
+
+        function openPreviewGallery(productId) {
+            const product = window.products.find(p => p.id === productId);
+            if (!product || !product.previewPages || product.previewPages.length === 0) {
+                alert('Anteprima non disponibile');
+                return;
+            }
+
+            currentPreviewData = {
+                productId: productId,
+                pages: product.previewPages,
+                currentPage: 0,
+                title: product.title
+            };
+
+            const modal = document.getElementById('previewModal');
+            document.getElementById('previewTitle').textContent = 'Anteprima - ' + product.title;
+            updatePreviewImage();
+            modal.style.display = 'block';
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').style.display = 'none';
+            currentPreviewData = null;
+        }
+
+        function nextPreview() {
+            if (!currentPreviewData) return;
+            currentPreviewData.currentPage = (currentPreviewData.currentPage + 1) % currentPreviewData.pages.length;
+            updatePreviewImage();
+        }
+
+        function previousPreview() {
+            if (!currentPreviewData) return;
+            currentPreviewData.currentPage = (currentPreviewData.currentPage - 1 + currentPreviewData.pages.length) % currentPreviewData.pages.length;
+            updatePreviewImage();
+        }
+
+        function updatePreviewImage() {
+            if (!currentPreviewData) return;
+            const img = document.getElementById('previewImage');
+            const counter = document.getElementById('previewCounter');
+            
+            if (img && counter) {
+                img.src = currentPreviewData.pages[currentPreviewData.currentPage];
+                counter.textContent = `${currentPreviewData.currentPage + 1} / ${currentPreviewData.pages.length}`;
+            }
+        }
+
+        // Chiudi il modal se clicchi fuori
+        window.onclick = function(event) {
+            const modal = document.getElementById('previewModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                currentPreviewData = null;
+            }
+        }
     </script>
 </body>
 </html>
