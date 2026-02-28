@@ -56,9 +56,15 @@ function viewProduct(productId) {
 
     const detailDiv = document.getElementById('productDetail');
     let pdfAccessSection = '';
+    let previewButton = '';
     
     if (product.tipo === 'digitale' && product.pdfFile) {
         pdfAccessSection = `<p style="color: var(--primary-green); font-size: 13px; font-weight: 600;">📥 Accesso istantaneo al PDF dopo l'acquisto</p>`;
+    }
+
+    if (product.previewPages && product.previewPages.length > 0) {
+        const previewImagesJson = JSON.stringify(product.previewPages).replace(/"/g, '&quot;');
+        previewButton = `<button class="btn btn-secondary" onclick="openPreviewGallery(${productId})" style="margin-right: 10px;">👁️ Anteprima</button>`;
     }
     
     detailDiv.innerHTML = `
@@ -77,7 +83,10 @@ function viewProduct(productId) {
             <label>Quantità:</label>
             <input type="number" id="quantityInput" value="1" min="1" max="10">
         </div>
-        <button class="btn btn-primary" onclick="addToCart(${product.id})">Aggiungi al Carrello</button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            ${previewButton}
+            <button class="btn btn-primary" onclick="addToCart(${product.id})" style="flex: 1; min-width: 150px;">Aggiungi al Carrello</button>
+        </div>
     `;
 
     openModal('productModal');
@@ -915,6 +924,67 @@ function closeAuth() {
 
 function closeProductModal() {
     closeModal('productModal');
+}
+
+// ==================== PREVIEW GALLERY ====================
+function openPreviewGallery(productId) {
+    const product = productList.find(p => p.id === productId);
+    if (!product || !product.previewPages || product.previewPages.length === 0) {
+        alert('Anteprima non disponibile');
+        return;
+    }
+
+    // Crea un modal per la galleria
+    let previewHTML = `
+        <div class="preview-gallery" style="text-align: center;">
+            <h2 style="margin-bottom: 20px; color: #0f172a;">Anteprima - ${product.title}</h2>
+            <div id="previewContainer" style="max-height: 600px; overflow-y: auto; border-radius: 8px; margin-bottom: 20px;">
+                <img id="previewImage" src="${product.previewPages[0]}" alt="Anteprima" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            </div>
+            <div style="display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="previousPreview()" style="padding: 10px 16px;">← Precedente</button>
+                <span id="previewCounter" style="font-weight: 600; color: #0f172a; min-width: 60px;">1 / ${product.previewPages.length}</span>
+                <button class="btn btn-secondary" onclick="nextPreview()" style="padding: 10px 16px;">Successiva →</button>
+            </div>
+        </div>
+    `;
+
+    // Salva i dati della galleria globalmente
+    window.currentPreviewData = {
+        productId: productId,
+        pages: product.previewPages,
+        currentPage: 0
+    };
+
+    const detailDiv = document.getElementById('productDetail');
+    detailDiv.innerHTML = previewHTML;
+    openModal('productModal');
+}
+
+function nextPreview() {
+    if (!window.currentPreviewData) return;
+    const data = window.currentPreviewData;
+    data.currentPage = (data.currentPage + 1) % data.pages.length;
+    updatePreviewImage();
+}
+
+function previousPreview() {
+    if (!window.currentPreviewData) return;
+    const data = window.currentPreviewData;
+    data.currentPage = (data.currentPage - 1 + data.pages.length) % data.pages.length;
+    updatePreviewImage();
+}
+
+function updatePreviewImage() {
+    if (!window.currentPreviewData) return;
+    const data = window.currentPreviewData;
+    const img = document.getElementById('previewImage');
+    const counter = document.getElementById('previewCounter');
+    
+    if (img && counter) {
+        img.src = data.pages[data.currentPage];
+        counter.textContent = `${data.currentPage + 1} / ${data.pages.length}`;
+    }
 }
 
 function scrollToProdotti() {
