@@ -241,16 +241,16 @@ const products = [
         pdfFile: "QUARTO ANNO/Procedura Civile parte uno.pdf",
         previewImage: "image/proceduracivile2.png",
         previewPages: [
+            "image/anteprima procedura 1/1.png",
+            "image/anteprima procedura 1/2.png",
+            "image/anteprima procedura 1/3.png",
             "image/anteprima procedura 1/4.png",
             "image/anteprima procedura 1/5.png",
             "image/anteprima procedura 1/6.png",
             "image/anteprima procedura 1/7.png",
             "image/anteprima procedura 1/8.png",
             "image/anteprima procedura 1/9.png",
-            "image/anteprima procedura 1/10.png",
-            "image/anteprima procedura 1/ANTEPRIMA PROCEDURA CIVILE 2.png",
-            "image/anteprima procedura 1/ANTEPRIMA PROCEDURA CIVILE3.png",
-            "image/anteprima procedura 1/ANTEPRIMA PROCEDURA PARTE 1.png"
+            "image/anteprima procedura 1/10.png"
         ],
         categoria: "universita",
         corso: "giurisprudenza",
