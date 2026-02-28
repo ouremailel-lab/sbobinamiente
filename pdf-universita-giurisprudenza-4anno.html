@@ -227,21 +227,11 @@
         </div>
     </footer>
 
-    <!-- Modal Prodotto -->
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeProductModal()">&times;</span>
-            <div class="product-detail" id="productDetail">
-                <!-- Dettagli prodotto via JavaScript -->
-            </div>
-        </div>
-    </div>
-
     <!-- EmailJS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>emailjs.init('Bo-Kyor5W-Q_BRDf3');</script>
-    <script src="products-data.js?v=20260228b"></script>
-    <script src="app.js?v=20260228b"></script>
+    <script src="products-data.js"></script>
+    <script src="app.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -259,26 +249,34 @@
                 return;
             }
 
-            grid.innerHTML = yearProducts.map(product => {
-                const imageHtml = product.previewImage 
-                    ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">` 
-                    : product.emoji;
+            yearProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
                 
-                return `
-                    <div class="product-card">
-                        <div class="product-image">${imageHtml}</div>
-                        <div class="product-info">
-                            <h3 class="product-title">${product.title}</h3>
-                            <p class="product-description">${product.descrizione}</p>
-                            <div class="product-footer">
-                                <span class="product-price">€${product.prezzo.toFixed(2)}</span>
-                                <button class="btn btn-small" onclick="openPreviewGallery(${product.id})" style="margin-right: 8px;">Anteprima</button>
-                                <button class="btn btn-small" onclick="addToCart(${product.id})">Aggiungi</button>
-                            </div>
+                const previewButton = product.previewPages && product.previewPages.length > 0
+                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="openPreviewGallery(${product.id})">👁️ Anteprima (${product.previewPages.length} immagini)</button>`
+                    : '';
+                const coverImage = product.previewImage 
+                    ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; border-radius: 12px; margin-bottom: 12px; object-fit: cover; max-height: 220px;">`
+                    : '';
+                
+                card.innerHTML = `
+                    ${coverImage}
+                    <div class="product-emoji">${product.emoji}</div>
+                    <h3 class="product-title">${product.title}</h3>
+                    <p class="product-description">${product.descrizione}</p>
+                    <div style="font-size: 13px; color: #94a3b8;">📄 ${product.pages} pagine • PDF protetto</div>
+                    ${previewButton}
+                    <div class="product-meta" style="display: flex; flex-direction: column; gap: 12px;">
+                        <span class="product-price">€${product.prezzo.toFixed(2)}</span>
+                        <div style="display: flex; gap: 8px; width: 100%;">
+                            <button class="btn-add-cart" onclick="showProductDetailModal(${product.id})" style="flex: 1; background: #4a90e2; color: white; border: none;">Dettagli</button>
+                            <button class="btn-add-cart" onclick="addToCartQuickFromPage(${product.id})" style="flex: 1; background: #f5a6c9; color: white; border: none;">🎒 Zaino</button>
                         </div>
                     </div>
                 `;
-            }).join('');
+                grid.appendChild(card);
+            });
         });
     </script>
 </body>
