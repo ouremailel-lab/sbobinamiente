@@ -98,7 +98,8 @@ function addToCart(productId) {
     const product = productList.find(p => p.id === productId);
     if (!product) return;
 
-    const quantity = parseInt(document.getElementById('quantityInput').value) || 1;
+    const quantityInput = document.getElementById('quantityInput');
+    const quantity = quantityInput ? (parseInt(quantityInput.value) || 1) : 1;
     const existingItem = cart.find(item => item.id === productId);
 
     if (existingItem) {
