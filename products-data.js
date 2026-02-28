@@ -226,6 +226,22 @@ const products = [
         categoria: "universita",
         corso: "sdsg",
         anno: 3
+    },
+    // Prodotti Universitari - Giurisprudenza
+    {
+        id: 401,
+        title: "Procedura Civile Parte Prima - 4° Anno",
+        materia: "diritto",
+        tipo: "digitale",
+        prezzo: 35.00,
+        emoji: "📄",
+        descrizione: "Appunti completi di Procedura Civile Parte Prima",
+        dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
+        pages: 0,
+        pdfFile: "QUARTO ANNO/Procedura Civile parte uno.pdf",
+        categoria: "universita",
+        corso: "giurisprudenza",
+        anno: 4
     }
 ];
 

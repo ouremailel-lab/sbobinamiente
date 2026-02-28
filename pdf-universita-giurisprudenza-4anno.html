@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Università - SbobinaMente</title>
+    <title>Quarto Anno - SbobinaMente</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Stile allineato alla pagina cartaceo/pdf */
+        /* Stile allineato a cartaceo/pdf */
         .pdf-hero {
             background: linear-gradient(135deg, #e3f2fd 0%, #fff7d1 100%);
             padding: 90px 20px 70px;
@@ -105,8 +105,27 @@
             text-decoration: underline;
         }
 
-        .categories-view {
-            margin-top: 10px;
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1/-1;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h2 {
+            color: #0f172a;
+            margin-bottom: 10px;
         }
 
         @media (max-width: 768px) {
@@ -120,6 +139,10 @@
 
             .products-section {
                 padding: 60px 16px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -145,13 +168,13 @@
         </div>
     </header>
 
-    <!-- Hero Section (allineata al cartaceo/pdf) -->
+    <!-- Hero Section -->
     <section class="hero pdf-hero">
         <div class="container">
             <div class="hero-content">
-                <img src="image/copia_cartacea.png" alt="Lezioni Universitarie" loading="lazy">
-                <h2>🎓 PDF Universitari</h2>
-                <p>Appunti digitali protetti per i tuoi esami, con anteprima gratuita.</p>
+                <img src="image/copia_cartacea.png" alt="Quarto Anno Giurisprudenza" loading="lazy">
+                <h2>📚 Quarto Anno</h2>
+                <p>Appunti universitari in PDF protetti con anteprima gratuita.</p>
             </div>
         </div>
     </section>
@@ -163,12 +186,12 @@
                 <div class="info-card">
                     <span class="info-icon">⚡️</span>
                     <h3>Download Immediato</h3>
-                    <p>Scarica subito i PDF e studia senza attese.</p>
+                    <p>Scarica i PDF subito dopo l'acquisto.</p>
                 </div>
                 <div class="info-card">
                     <span class="info-icon">👁️</span>
                     <h3>Anteprima 4 pagine</h3>
-                    <p>Prova gratis le prime pagine prima di acquistare.</p>
+                    <p>Prova gratis le prime pagine prima di comprare.</p>
                 </div>
                 <div class="info-card">
                     <span class="info-icon">🔒</span>
@@ -179,32 +202,20 @@
         </div>
     </section>
 
-    <!-- Sezione categorie universita (stile cartaceo) -->
+    <!-- Products Section -->
     <section class="products-section">
         <div class="container">
-            <h2>PDF Universita</h2>
+            <h2>PDF Quarto Anno</h2>
             <div class="breadcrumb">
                 <a href="lezioni.html">Lezioni</a> > 
                 <a href="pdf-lezioni.html">PDF</a> > 
-                <span>Universita</span>
+                <a href="pdf-universita.html">Universita</a> > 
+                <a href="pdf-universita-giurisprudenza.html">Giurisprudenza</a> > 
+                <span>Quarto Anno</span>
             </div>
 
-            <div class="categories-view">
-                <div class="category-card" onclick="window.location.href='pdf-universita-sdsg.html'">
-                    <span class="category-icon">⚖️</span>
-                    <h3>Scienze dei Servizi Giuridici</h3>
-                    <p>Appunti universitari SDSG in PDF protetti</p>
-                </div>
-                <div class="category-card" onclick="window.location.href='pdf-universita-giurisprudenza.html'">
-                    <span class="category-icon">⚖️</span>
-                    <h3>Giurisprudenza</h3>
-                    <p>Appunti universitari di Giurisprudenza in PDF</p>
-                </div>
-                <div class="category-card" style="opacity: 0.7; cursor: not-allowed;">
-                    <span class="category-icon">🧠</span>
-                    <h3>Altri corsi</h3>
-                    <p>Stiamo aggiungendo nuovi materiali</p>
-                </div>
+            <div class="products-grid" id="pdfGrid">
+                <!-- I PDF verranno caricati qui dinamicamente -->
             </div>
         </div>
     </section>
@@ -216,6 +227,44 @@
         </div>
     </footer>
 
+    <!-- EmailJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>emailjs.init('Bo-Kyor5W-Q_BRDf3');</script>
+    <script src="products-data.js"></script>
     <script src="app.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const grid = document.getElementById('pdfGrid');
+            const yearProducts = getProductsByCategory('universita', 'giurisprudenza', 4);
+
+            if (yearProducts.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">📭</div>
+                        <h2>Nessun PDF disponibile</h2>
+                        <p>Stiamo aggiungendo i materiali del quarto anno. Torna presto!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = yearProducts.map(product => {
+                return `
+                    <div class="product-card" onclick="openProductDetail(${product.id})">
+                        <div class="product-image">${product.emoji}</div>
+                        <div class="product-info">
+                            <h3 class="product-title">${product.title}</h3>
+                            <p class="product-description">${product.descrizione}</p>
+                            <div class="product-footer">
+                                <span class="product-price">€${product.prezzo.toFixed(2)}</span>
+                                <button class="btn btn-small" onclick="event.stopPropagation(); addToCart(${product.id})">Aggiungi</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        });
+    </script>
 </body>
 </html>
