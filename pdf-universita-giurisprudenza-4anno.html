@@ -299,7 +299,7 @@
         let currentPreviewData = null;
 
         function openPreviewGallery(productId) {
-            const product = window.products.find(p => p.id === productId);
+            const product = (window.products || []).find(p => p.id === productId);
             if (!product || !product.previewPages || product.previewPages.length === 0) {
                 alert('Anteprima non disponibile');
                 return;
