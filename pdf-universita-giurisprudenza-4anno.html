@@ -253,8 +253,9 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 
+                const imagesJson = product.previewPages ? JSON.stringify(product.previewPages) : '';
                 const previewButton = product.previewPages && product.previewPages.length > 0
-                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="window.open('viewer-pdf-preview.html?images=' + encodeURIComponent(JSON.stringify(${JSON.stringify(product.previewPages)})), '_blank')">👁️ Vedi Anteprima (4 pagine)</button>`
+                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="window.open('viewer-pdf-preview.html?images=' + encodeURIComponent('${imagesJson}'), '_blank')">👁️ Vedi Anteprima (4 pagine)</button>`
                     : '';
                 const coverImage = product.previewImage 
                     ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; border-radius: 12px; margin-bottom: 12px; object-fit: cover; max-height: 220px;">`
