@@ -261,14 +261,15 @@
 
             grid.innerHTML = yearProducts.map(product => {
                 return `
-                    <div class="product-card" onclick="viewProduct(${product.id})">
+                    <div class="product-card">
                         <div class="product-image">${product.emoji}</div>
                         <div class="product-info">
                             <h3 class="product-title">${product.title}</h3>
                             <p class="product-description">${product.descrizione}</p>
                             <div class="product-footer">
                                 <span class="product-price">€${product.prezzo.toFixed(2)}</span>
-                                <button class="btn btn-small" onclick="event.stopPropagation(); addToCart(${product.id})">Aggiungi</button>
+                                <button class="btn btn-small" onclick="viewProduct(${product.id})" style="margin-right: 8px;">Dettagli</button>
+                                <button class="btn btn-small" onclick="addToCart(${product.id})">Aggiungi</button>
                             </div>
                         </div>
                     </div>
