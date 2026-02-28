@@ -239,6 +239,22 @@ const products = [
         dettagli: "PDF protetto con schemi, sentenze e casi pratici. Download immediato.",
         pages: 0,
         pdfFile: "QUARTO ANNO/Procedura Civile parte uno.pdf",
+        previewImage: "image/ANTEPRIMA PROCEDURA PARTE 1.png",
+        previewPages: [
+            "image/ANTEPRIMA PROCEDURA PARTE 1.png",
+            "image/4.png",
+            "image/5.png",
+            "image/6.png",
+            "image/7.png",
+            "image/8.png",
+            "image/9.png",
+            "image/10.png",
+            "image/anteprima 1.png",
+            "image/anteprima 2.png",
+            "image/anteprima 3.png",
+            "image/ANTEPRIMA PROCEDURA CIVILE 2.png",
+            "image/ANTEPRIMA PROCEDURA CIVILE3.png"
+        ],
         categoria: "universita",
         corso: "giurisprudenza",
         anno: 4
