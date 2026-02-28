@@ -270,7 +270,7 @@
                 card.className = 'product-card';
                 
                 const previewButton = product.previewPages && product.previewPages.length > 0
-                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="openPreviewGallery(${product.id})">👁️ Anteprima (${product.previewPages.length} immagini)</button>`
+                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" data-images='${JSON.stringify(product.previewPages).replace(/'/g, "&apos;")}' data-title="${product.title}" onclick="openPreviewGallery(this)">👁️ Anteprima (${product.previewPages.length} immagini)</button>`
                     : '';
                 const coverImage = product.previewImage 
                     ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; border-radius: 12px; margin-bottom: 12px; object-fit: cover; max-height: 220px;">`
@@ -298,24 +298,36 @@
         // Funzioni per la galleria di anteprima
         let currentPreviewData = null;
 
-        function openPreviewGallery(productId) {
-            const product = (window.products || []).find(p => p.id === productId);
-            if (!product || !product.previewPages || product.previewPages.length === 0) {
+        function openPreviewGallery(button) {
+            const imagesJson = button.getAttribute('data-images');
+            const title = button.getAttribute('data-title');
+            
+            if (!imagesJson) {
                 alert('Anteprima non disponibile');
                 return;
             }
 
-            currentPreviewData = {
-                productId: productId,
-                pages: product.previewPages,
-                currentPage: 0,
-                title: product.title
-            };
+            try {
+                const pages = JSON.parse(imagesJson);
+                if (!pages || pages.length === 0) {
+                    alert('Anteprima non disponibile');
+                    return;
+                }
 
-            const modal = document.getElementById('previewModal');
-            document.getElementById('previewTitle').textContent = 'Anteprima - ' + product.title;
-            updatePreviewImage();
-            modal.style.display = 'block';
+                currentPreviewData = {
+                    pages: pages,
+                    currentPage: 0,
+                    title: title
+                };
+
+                const modal = document.getElementById('previewModal');
+                document.getElementById('previewTitle').textContent = 'Anteprima - ' + title;
+                updatePreviewImage();
+                modal.style.display = 'block';
+            } catch (e) {
+                console.error('Errore nel parsing delle immagini:', e);
+                alert('Errore nel caricamento dell\'anteprima');
+            }
         }
 
         function closePreviewModal() {
