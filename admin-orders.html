@@ -290,8 +290,30 @@
         // Carica ordini (da localStorage e Supabase)
         async function loadOrders() {
             try {
-                // Carica da localStorage (fallback)
-                let localOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+                // Carica da localStorage (compatibilità: pendingOrders + orders)
+                const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+                const confirmedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+
+                const normalizedConfirmed = confirmedOrders.map(order => ({
+                    ...order,
+                    status: order.status || 'confirmed'
+                }));
+
+                const allOrders = [...pendingOrders, ...normalizedConfirmed];
+                const uniqueOrdersMap = new Map();
+
+                allOrders.forEach(order => {
+                    const key = order.id || order.orderId || order.timestamp || JSON.stringify(order);
+                    if (!uniqueOrdersMap.has(key)) {
+                        uniqueOrdersMap.set(key, order);
+                    }
+                });
+
+                const localOrders = Array.from(uniqueOrdersMap.values()).sort((a, b) => {
+                    const dateA = new Date(a.orderDate || a.timestamp || 0).getTime();
+                    const dateB = new Date(b.orderDate || b.timestamp || 0).getTime();
+                    return dateB - dateA;
+                });
                 
                 // TODO: Se hai Supabase configurato, carica anche da lì
                 // const supabaseOrders = await loadFromSupabase();
