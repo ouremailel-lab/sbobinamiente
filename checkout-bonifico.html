@@ -224,7 +224,9 @@
             pendingOrders.push(order);
             localStorage.setItem('pendingOrders', JSON.stringify(pendingOrders));
 
-            console.log('✅ Ordine salvato:', order);
+            console.log('✅ Ordine salvato in pendingOrders:', order);
+            console.log('📊 Totale ordini pendenti:', pendingOrders.length);
+            console.log('🗄️ localStorage.pendingOrders:', localStorage.getItem('pendingOrders'));
 
             // Mostra pagina scelta pagamento
             document.getElementById('bonificoForm').style.display = 'none';

@@ -359,6 +359,11 @@
                 };
                 window.__adminOrdersSourceStats = sourceStats;
                 console.log('📊 Source ordini:', sourceStats);
+                console.log('📦 Ordini totali prima deduplica:', allOrders.length);
+                console.log('🗄️ localStorage keys:', {
+                    pendingOrders: localStorage.getItem('pendingOrders')?.substring(0, 100),
+                    orders: localStorage.getItem('orders')?.substring(0, 100)
+                });
 
                 const uniqueOrdersMap = new Map();
                 allOrders.forEach(order => {
@@ -378,6 +383,9 @@
                     const dateB = new Date(b.orderDate || b.timestamp || 0).getTime();
                     return dateB - dateA;
                 });
+
+                console.log('✅ Ordini caricati dopo deduplica:', localOrders.length);
+                console.log('🔍 Primi 3 ordini:', localOrders.slice(0, 3));
                 
                 // TODO: Se hai Supabase configurato, carica anche da lì
                 // const supabaseOrders = await loadFromSupabase();
@@ -404,14 +412,30 @@
 
             if (filteredOrders.length === 0) {
                 const stats = window.__adminOrdersSourceStats || {};
+                const totalFromSources = (stats.pendingOrders || 0) + (stats.orders || 0) + (stats.completedOrders || 0) + (stats.orderHistory || 0);
                 container.innerHTML = `
                     <div class="empty-state">
-                        <p style="font-size: 1.2em; color: #888;">📭 Nessun ordine trovato</p>
-                        <p style="font-size: 0.95em; color: #94a3b8; margin-top: 8px;">Sorgenti: pendingOrders=${stats.pendingOrders || 0}, orders=${stats.orders || 0}, completedOrders=${stats.completedOrders || 0}, orderHistory=${stats.orderHistory || 0}</p>
+                        <p style="font-size: 1.2em; color: #888;">📭 Nessun ordine trovato${currentFilter !== 'all' ? ' per questo filtro' : ''}</p>
+                        <p style="font-size: 0.95em; color: #94a3b8; margin-top: 8px;">
+                            Totale ordini in localStorage: <strong>${totalFromSources}</strong><br>
+                            pendingOrders=${stats.pendingOrders || 0}, orders=${stats.orders || 0}, completedOrders=${stats.completedOrders || 0}, orderHistory=${stats.orderHistory || 0}
+                        </p>
+                        <button onclick="loadOrders()" style="margin-top: 16px; padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">🔄 Ricarica Ordini</button>
                     </div>
                 `;
                 return;
             }
+
+            // Mostra statistiche ordini in alto
+            const stats = window.__adminOrdersSourceStats || {};
+            const totalFromSources = (stats.pendingOrders || 0) + (stats.orders || 0) + (stats.completedOrders || 0) + (stats.orderHistory || 0);
+            const statsHTML = `
+                <div style="background: #f8fafc; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9em; color: #64748b;">
+                    <strong>📊 Ordini caricati:</strong> ${filteredOrders.length} mostrati / ${orders.length} totali / ${totalFromSources} in localStorage
+                    <span style="margin-left: 16px; color: #94a3b8;">(pendingOrders: ${stats.pendingOrders || 0}, orders: ${stats.orders || 0})</span>
+                </div>
+            `;
+            container.innerHTML = statsHTML;
 
             let html = '';
             filteredOrders.forEach(order => {
@@ -465,7 +489,7 @@
                 `;
             });
 
-            container.innerHTML = html;
+            container.innerHTML += html;
         }
 
         function filterOrders(status) {
