@@ -262,7 +262,6 @@
             const password = document.getElementById('adminPassword').value;
             
             if (password === ADMIN_PASSWORD) {
-                sessionStorage.setItem('adminAuth', 'true');
                 showAdminPanel();
             } else {
                 alert('❌ Password errata!');
@@ -276,20 +275,54 @@
         }
 
         function logout() {
-            sessionStorage.removeItem('adminAuth');
             location.reload();
         }
 
-        // Check auth on load
+        // Check auth on load (password richiesta ad ogni accesso)
         window.addEventListener('DOMContentLoaded', function() {
-            if (sessionStorage.getItem('adminAuth') === 'true') {
-                showAdminPanel();
-            }
+            document.getElementById('loginSection').style.display = 'flex';
+            document.getElementById('adminPanel').style.display = 'none';
         });
 
         // Carica ordini (da localStorage e Supabase)
         async function loadOrders() {
             try {
+                const normalizeOrder = (order, sourceKey) => {
+                    const itemsArray = Array.isArray(order.items)
+                        ? order.items
+                        : (order.items ? [order.items] : []);
+
+                    const customerInfo = order.deliveryInfo || order.delivery_info || {};
+                    const customerEmail = customerInfo.email || order.user_email || order.userEmail || order.email || '';
+                    const customerName =
+                        customerInfo.nome || order.user_name || order.userName || order.nome || '';
+
+                    const normalizedStatus =
+                        order.status === 'pagato' || order.status === 'completed'
+                            ? 'confirmed'
+                            : (order.status || (sourceKey === 'pendingOrders' ? 'pending' : 'confirmed'));
+
+                    return {
+                        ...order,
+                        id: order.id || order.orderId || order.order_id || order.session_id || `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                        orderId: order.orderId || order.order_id || order.id || order.session_id,
+                        orderDate: order.orderDate || order.order_date || order.date || order.timestamp || new Date().toISOString(),
+                        timestamp: order.timestamp || new Date(order.orderDate || order.order_date || order.date || Date.now()).getTime(),
+                        status: normalizedStatus,
+                        items: itemsArray,
+                        total: Number(order.total || order.amount || order.totale || 0),
+                        deliveryInfo: {
+                            nome: customerInfo.nome || customerName || 'N/A',
+                            cognome: customerInfo.cognome || '',
+                            email: customerEmail || 'N/A',
+                            cellulare: customerInfo.cellulare || customerInfo.telefono || 'N/A',
+                            indirizzo: customerInfo.indirizzo || 'N/A',
+                            citta: customerInfo.citta || 'N/A'
+                        },
+                        email: customerEmail || order.email || 'N/A'
+                    };
+                };
+
                 const parseOrdersFromKey = (key) => {
                     try {
                         const raw = localStorage.getItem(key);
@@ -303,25 +336,13 @@
                     }
                 };
 
-                const pendingOrders = parseOrdersFromKey('pendingOrders').map(order => ({
-                    ...order,
-                    status: order.status || 'pending'
-                }));
+                const pendingOrders = parseOrdersFromKey('pendingOrders').map(order => normalizeOrder(order, 'pendingOrders'));
 
-                const confirmedOrders = parseOrdersFromKey('orders').map(order => ({
-                    ...order,
-                    status: order.status || 'confirmed'
-                }));
+                const confirmedOrders = parseOrdersFromKey('orders').map(order => normalizeOrder(order, 'orders'));
 
-                const completedOrders = parseOrdersFromKey('completedOrders').map(order => ({
-                    ...order,
-                    status: order.status || 'confirmed'
-                }));
+                const completedOrders = parseOrdersFromKey('completedOrders').map(order => normalizeOrder(order, 'completedOrders'));
 
-                const orderHistory = parseOrdersFromKey('orderHistory').map(order => ({
-                    ...order,
-                    status: order.status || 'confirmed'
-                }));
+                const orderHistory = parseOrdersFromKey('orderHistory').map(order => normalizeOrder(order, 'orderHistory'));
 
                 const allOrders = [
                     ...pendingOrders,
@@ -330,13 +351,24 @@
                     ...orderHistory
                 ];
 
+                const sourceStats = {
+                    pendingOrders: pendingOrders.length,
+                    orders: confirmedOrders.length,
+                    completedOrders: completedOrders.length,
+                    orderHistory: orderHistory.length
+                };
+                window.__adminOrdersSourceStats = sourceStats;
+                console.log('📊 Source ordini:', sourceStats);
+
                 const uniqueOrdersMap = new Map();
                 allOrders.forEach(order => {
                     const key = [
                         order.id || order.orderId || '',
-                        order.timestamp || order.orderDate || '',
+                        order.timestamp || order.orderDate || order.date || '',
+                        order.session_id || '',
                         order.deliveryInfo?.email || order.userEmail || order.email || '',
-                        order.total || ''
+                        order.total || '',
+                        Array.isArray(order.items) ? order.items.length : 0
                     ].join('|');
                     if (!uniqueOrdersMap.has(key)) uniqueOrdersMap.set(key, order);
                 });
@@ -371,9 +403,11 @@
             }
 
             if (filteredOrders.length === 0) {
+                const stats = window.__adminOrdersSourceStats || {};
                 container.innerHTML = `
                     <div class="empty-state">
                         <p style="font-size: 1.2em; color: #888;">📭 Nessun ordine trovato</p>
+                        <p style="font-size: 0.95em; color: #94a3b8; margin-top: 8px;">Sorgenti: pendingOrders=${stats.pendingOrders || 0}, orders=${stats.orders || 0}, completedOrders=${stats.completedOrders || 0}, orderHistory=${stats.orderHistory || 0}</p>
                     </div>
                 `;
                 return;
