@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ordini - Admin SbobinaMente</title>
     <script>
+        sessionStorage.removeItem('adminAuth');
+        localStorage.removeItem('adminOrdersLoggedIn');
         window.location.replace('admin-orders.html');
     </script>
     <link rel="stylesheet" href="styles.css">

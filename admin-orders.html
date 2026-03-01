@@ -290,23 +290,55 @@
         // Carica ordini (da localStorage e Supabase)
         async function loadOrders() {
             try {
-                // Carica da localStorage (compatibilità: pendingOrders + orders)
-                const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
-                const confirmedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                const parseOrdersFromKey = (key) => {
+                    try {
+                        const raw = localStorage.getItem(key);
+                        if (!raw) return [];
+                        const parsed = JSON.parse(raw);
+                        if (Array.isArray(parsed)) return parsed;
+                        if (parsed && Array.isArray(parsed.orders)) return parsed.orders;
+                        return [];
+                    } catch {
+                        return [];
+                    }
+                };
 
-                const normalizedConfirmed = confirmedOrders.map(order => ({
+                const pendingOrders = parseOrdersFromKey('pendingOrders').map(order => ({
+                    ...order,
+                    status: order.status || 'pending'
+                }));
+
+                const confirmedOrders = parseOrdersFromKey('orders').map(order => ({
                     ...order,
                     status: order.status || 'confirmed'
                 }));
 
-                const allOrders = [...pendingOrders, ...normalizedConfirmed];
-                const uniqueOrdersMap = new Map();
+                const completedOrders = parseOrdersFromKey('completedOrders').map(order => ({
+                    ...order,
+                    status: order.status || 'confirmed'
+                }));
 
+                const orderHistory = parseOrdersFromKey('orderHistory').map(order => ({
+                    ...order,
+                    status: order.status || 'confirmed'
+                }));
+
+                const allOrders = [
+                    ...pendingOrders,
+                    ...confirmedOrders,
+                    ...completedOrders,
+                    ...orderHistory
+                ];
+
+                const uniqueOrdersMap = new Map();
                 allOrders.forEach(order => {
-                    const key = order.id || order.orderId || order.timestamp || JSON.stringify(order);
-                    if (!uniqueOrdersMap.has(key)) {
-                        uniqueOrdersMap.set(key, order);
-                    }
+                    const key = [
+                        order.id || order.orderId || '',
+                        order.timestamp || order.orderDate || '',
+                        order.deliveryInfo?.email || order.userEmail || order.email || '',
+                        order.total || ''
+                    ].join('|');
+                    if (!uniqueOrdersMap.has(key)) uniqueOrdersMap.set(key, order);
                 });
 
                 const localOrders = Array.from(uniqueOrdersMap.values()).sort((a, b) => {
