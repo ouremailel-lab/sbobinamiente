@@ -33,20 +33,22 @@ function showUniversitaCorsi() {
 
 function showAnniCorso(corso) {
     currentCorso = corso;
+    const corsoNome = corso === 'sdsg' ? 'Scienze dei Servizi Giuridici' : 'Giurisprudenza';
     document.getElementById('categoriesView').style.display = 'none';
     document.getElementById('universitaView').style.display = 'none';
     document.getElementById('anniView').style.display = 'grid';
     document.getElementById('productsGrid').style.display = 'none';
-    document.getElementById('breadcrumbPath').innerHTML = ' > Università > Scienze dei Servizi Giuridici';
+    document.getElementById('breadcrumbPath').innerHTML = ` > Università > ${corsoNome}`;
 }
 
 function showProductsByAnno(anno) {
-    const annoText = anno === 1 ? 'Primo' : anno === 2 ? 'Secondo' : 'Terzo';
+    const annoText = anno === 1 ? 'Primo' : anno === 2 ? 'Secondo' : anno === 3 ? 'Terzo' : 'Quarto';
+    const corsoNome = currentCorso === 'sdsg' ? 'Scienze dei Servizi Giuridici' : 'Giurisprudenza';
     document.getElementById('categoriesView').style.display = 'none';
     document.getElementById('universitaView').style.display = 'none';
     document.getElementById('anniView').style.display = 'none';
     document.getElementById('productsGrid').style.display = 'grid';
-    document.getElementById('breadcrumbPath').innerHTML = ` > Università > Scienze dei Servizi Giuridici > ${annoText} Anno`;
+    document.getElementById('breadcrumbPath').innerHTML = ` > Università > ${corsoNome} > ${annoText} Anno`;
     
     // Filtra prodotti per anno
     filteredProducts = products.filter(p => 
