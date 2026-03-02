@@ -570,48 +570,80 @@
             document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: Accesso non autorizzato</p>';
         }
 
+        let currentImageIndex = 0;
+        let allImageUrls = [];
+
         function loadImages(imageUrls) {
             const pdfContent = document.getElementById('pdfContent');
             pdfContent.innerHTML = '';
             
             console.log('Loading images:', imageUrls);
             
+            allImageUrls = imageUrls;
+            currentImageIndex = 0;
+            
             // Mostra max 10 immagini (anteprima)
             const maxImages = Math.min(imageUrls.length, 10);
             document.getElementById('totalPages').textContent = maxImages;
             
-            const container = document.createElement('div');
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            container.style.alignItems = 'center';
-            container.style.width = '100%';
+            // Mostra la prima immagine
+            displayCurrentImage();
             
-            imageUrls.slice(0, maxImages).forEach((imageUrl, index) => {
-                const img = document.createElement('img');
-                // Encode dei percorsi con spazi
-                const encodedUrl = imageUrl.split('/').map(part => encodeURIComponent(part)).join('/');
-                img.src = encodedUrl;
-                img.style.maxWidth = '100%';
-                img.style.height = 'auto';
-                img.style.marginBottom = '20px';
-                img.style.borderRadius = '8px';
-                img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                
-                img.onerror = function() {
-                    console.error('Errore caricamento immagine:', imageUrl);
-                    this.style.display = 'none';
-                };
-                
-                container.appendChild(img);
-            });
-            
-            pdfContent.appendChild(container);
-            document.getElementById('currentPage').textContent = '1';
-            // Nascondi i controlli di navigazione per la visualizzazione a scorrimento
+            // Mostra i controlli di navigazione
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
-            if (prevBtn) prevBtn.style.display = 'none';
-            if (nextBtn) nextBtn.style.display = 'none';
+            if (prevBtn) prevBtn.style.display = 'inline-block';
+            if (nextBtn) nextBtn.style.display = 'inline-block';
+        }
+
+        function displayCurrentImage() {
+            const pdfContent = document.getElementById('pdfContent');
+            pdfContent.innerHTML = '';
+            
+            if (allImageUrls.length === 0) {
+                pdfContent.innerHTML = '<p style="color: red; padding: 40px;">Nessuna immagine da visualizzare</p>';
+                return;
+            }
+            
+            const maxImages = Math.min(allImageUrls.length, 10);
+            currentImageIndex = Math.max(0, Math.min(currentImageIndex, maxImages - 1));
+            
+            const img = document.createElement('img');
+            const imageUrl = allImageUrls[currentImageIndex];
+            const encodedUrl = imageUrl.split('/').map(part => encodeURIComponent(part)).join('/');
+            img.src = encodedUrl;
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+            img.style.borderRadius = '8px';
+            img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+            img.style.marginBottom = '20px';
+            
+            img.onerror = function() {
+                console.error('Errore caricamento immagine:', imageUrl);
+                pdfContent.innerHTML = '<p style="color: red; padding: 40px;">Errore nel caricamento dell\'immagine</p>';
+            };
+            
+            pdfContent.appendChild(img);
+            document.getElementById('currentPage').textContent = currentImageIndex + 1;
+            
+            // Abilita/disabilita i pulsanti in base alla posizione
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.disabled = currentImageIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentImageIndex === maxImages - 1;
+        }
+
+        function changePage(direction) {
+            const maxImages = Math.min(allImageUrls.length, 10);
+            currentImageIndex += direction;
+            
+            if (currentImageIndex < 0) {
+                currentImageIndex = 0;
+            } else if (currentImageIndex >= maxImages) {
+                currentImageIndex = maxImages - 1;
+            }
+            
+            displayCurrentImage();
         }
 
         async function loadPDFWithToken(tokenValue, productIdValue) {

@@ -258,7 +258,8 @@
                 if (product.previewPages && product.previewPages.length > 0) {
                     previewButton = document.createElement('button');
                     previewButton.style.cssText = 'width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;';
-                    previewButton.textContent = '👁️ Vedi Anteprima (4 pagine)';
+                    const numPages = Math.min(product.previewPages.length, 10);
+                    previewButton.textContent = `👁️ Vedi Anteprima (${numPages} pagine)`;
                     previewButton.onclick = function() {
                         const imagesJson = JSON.stringify(product.previewPages);
                         window.open('viewer-pdf-preview.html?images=' + encodeURIComponent(imagesJson), '_blank');
