@@ -607,9 +607,11 @@
             
             pdfContent.appendChild(container);
             document.getElementById('currentPage').textContent = '1';
-            document.getElementById('pageInfo').style.display = 'none';
-            document.getElementById('prevBtn').style.display = 'none';
-            document.getElementById('nextBtn').style.display = 'none';
+            // Nascondi i controlli di navigazione per la visualizzazione a scorrimento
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
         }
 
         async function loadPDFWithToken(tokenValue, productIdValue) {
