@@ -178,7 +178,7 @@ const products = [
         dettagli: "Gli appunti offrono una panoramica completa sul diritto del lavoro, partendo dalle fonti normative nazionali ed europee e dagli orientamenti giurisprudenziali più rilevanti. Si analizzano le varie forme di contratto di lavoro, dalla subordinazione tipica al lavoro autonomo, con focus sulle zone grigie e sulle collaborazioni etero-organizzate. Ampio spazio è dedicato al contratto di lavoro subordinato: costituzione, obblighi delle parti, poteri del datore di lavoro (direttivo, di controllo, disciplinare), sanzioni e limiti normativi. Vengono poi trattate le singole cause di sospensione del rapporto (malattia, maternità, aspettativa, CIG) e le diverse modalità di estinzione, con particolare attenzione al licenziamento individuale e collettivo, alla disciplina delle tutele (art. 18 Statuto dei Lavoratori, Jobs Act) e alla procedura di impugnazione. Sono inoltre presenti approfondimenti su mansioni, qualifiche, inquadramento, retribuzione, orario di lavoro e ferie, con richiami alle principali norme del codice civile e dello Statuto dei Lavoratori. Il materiale è arricchito da schemi riepilogativi, esempi pratici e riferimenti normativi utili per lo studio e il ripasso, ideale per preparare esami universitari o concorsi pubblici.",
         pages: 115,
         pdfFile: "SECONDO ANNO/DIRITTO DEL LAVORO.pdf",
-        previewImage: "image/previews/diritto-lavoro-1.png",
+        previewImage: "image/diritto del lavoro.png",
         previewPages: [
             "image/previews/diritto-lavoro-1.png",
             "image/previews/diritto-lavoro-2.png",
