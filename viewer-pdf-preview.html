@@ -608,6 +608,13 @@
             const maxImages = Math.min(allImageUrls.length, 10);
             currentImageIndex = Math.max(0, Math.min(currentImageIndex, maxImages - 1));
             
+            // Contenitore con posizione relativa per la filigrana
+            const imageContainer = document.createElement('div');
+            imageContainer.style.position = 'relative';
+            imageContainer.style.display = 'inline-block';
+            imageContainer.style.maxWidth = '100%';
+            imageContainer.style.marginBottom = '20px';
+            
             const img = document.createElement('img');
             const imageUrl = allImageUrls[currentImageIndex];
             const encodedUrl = imageUrl.split('/').map(part => encodeURIComponent(part)).join('/');
@@ -616,14 +623,33 @@
             img.style.height = 'auto';
             img.style.borderRadius = '8px';
             img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-            img.style.marginBottom = '20px';
+            img.style.display = 'block';
             
             img.onerror = function() {
                 console.error('Errore caricamento immagine:', imageUrl);
                 pdfContent.innerHTML = '<p style="color: red; padding: 40px;">Errore nel caricamento dell\'immagine</p>';
             };
             
-            pdfContent.appendChild(img);
+            imageContainer.appendChild(img);
+            
+            // Aggiungi filigrana
+            const watermark = document.createElement('div');
+            watermark.className = 'pdf-page-watermark';
+            watermark.textContent = 'SbobinaMente';
+            watermark.style.position = 'absolute';
+            watermark.style.top = '50%';
+            watermark.style.left = '50%';
+            watermark.style.transform = 'translate(-50%, -50%) rotate(-45deg)';
+            watermark.style.fontSize = '60px';
+            watermark.style.color = 'rgba(200, 200, 200, 0.15)';
+            watermark.style.fontWeight = 'bold';
+            watermark.style.pointerEvents = 'none';
+            watermark.style.whiteSpace = 'nowrap';
+            watermark.style.zIndex = '1';
+            watermark.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.1)';
+            imageContainer.appendChild(watermark);
+            
+            pdfContent.appendChild(imageContainer);
             document.getElementById('currentPage').textContent = currentImageIndex + 1;
             
             // Abilita/disabilita i pulsanti in base alla posizione
@@ -784,6 +810,42 @@
 
         document.getElementById('checkoutModal').addEventListener('click', function(event) {
             if (event.target === this) closeCheckoutModal();
+        });
+
+        // ========== PROTEZIONE CONTENUTI ==========
+        // Blocca click destro
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('⚠️ Click destro disabilitato. Questa è un\'anteprima protetta.');
+            return false;
+        });
+
+        // Blocca copia
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            alert('⚠️ Copia disabilitata. Acquista il PDF per accedere ai contenuti completi.');
+            return false;
+        });
+
+        // Blocca selezione testo
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Blocca trascinamento
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Blocca stampa
+        document.addEventListener('keydown', function(e) {
+            // Disabilita Ctrl+P, Ctrl+S, Cmd+P, Cmd+S (print e save)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's' || e.key === 'P' || e.key === 'S')) {
+                e.preventDefault();
+                alert('⚠️ Stampa e salvataggio disabilitati. Questa è un\'anteprima protetta.');
+            }
         });
 
         // Protezione aggiuntiva per anteprima
