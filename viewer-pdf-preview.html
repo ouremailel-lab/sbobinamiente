@@ -660,19 +660,6 @@
             if (nextBtn) nextBtn.disabled = currentImageIndex === maxImages - 1;
         }
 
-        function changePage(direction) {
-            const maxImages = Math.min(allImageUrls.length, 10);
-            currentImageIndex += direction;
-            
-            if (currentImageIndex < 0) {
-                currentImageIndex = 0;
-            } else if (currentImageIndex >= maxImages) {
-                currentImageIndex = maxImages - 1;
-            }
-            
-            displayCurrentImage();
-        }
-
         async function loadPDFWithToken(tokenValue, productIdValue) {
             try {
                 const verifyResult = await verifyTokenAccess(tokenValue, productIdValue);
@@ -787,12 +774,32 @@
         }
 
         function changePage(delta) {
-            const totalPages = Math.min(pdfDoc.numPages, maxPreviewPages);
-            const newPage = currentPage + delta;
-            
-            if (newPage >= 1 && newPage <= totalPages) {
-                renderPage(newPage);
+            // Se stiamo visualizzando immagini (anteprima)
+            if (allImageUrls && allImageUrls.length > 0) {
+                changeImagePage(delta);
             }
+            // Se stiamo visualizzando un PDF
+            else if (pdfDoc) {
+                const totalPages = Math.min(pdfDoc.numPages, maxPreviewPages);
+                const newPage = currentPage + delta;
+                
+                if (newPage >= 1 && newPage <= totalPages) {
+                    renderPage(newPage);
+                }
+            }
+        }
+
+        function changeImagePage(direction) {
+            const maxImages = Math.min(allImageUrls.length, 10);
+            currentImageIndex += direction;
+            
+            if (currentImageIndex < 0) {
+                currentImageIndex = 0;
+            } else if (currentImageIndex >= maxImages) {
+                currentImageIndex = maxImages - 1;
+            }
+            
+            displayCurrentImage();
         }
 
         // ========== POPUP FUNCTIONS ==========
