@@ -574,6 +574,8 @@
             const pdfContent = document.getElementById('pdfContent');
             pdfContent.innerHTML = '';
             
+            console.log('Loading images:', imageUrls);
+            
             // Mostra max 10 immagini (anteprima)
             const maxImages = Math.min(imageUrls.length, 10);
             document.getElementById('totalPages').textContent = maxImages;
@@ -586,12 +588,20 @@
             
             imageUrls.slice(0, maxImages).forEach((imageUrl, index) => {
                 const img = document.createElement('img');
-                img.src = imageUrl;
+                // Encode dei percorsi con spazi
+                const encodedUrl = imageUrl.split('/').map(part => encodeURIComponent(part)).join('/');
+                img.src = encodedUrl;
                 img.style.maxWidth = '100%';
                 img.style.height = 'auto';
                 img.style.marginBottom = '20px';
                 img.style.borderRadius = '8px';
                 img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                
+                img.onerror = function() {
+                    console.error('Errore caricamento immagine:', imageUrl);
+                    this.style.display = 'none';
+                };
+                
                 container.appendChild(img);
             });
             
