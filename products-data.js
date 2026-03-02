@@ -189,6 +189,27 @@ const products = [
         anno: 2
     },
     {
+        id: 201.5,
+        title: "Diritto del Lavoro - 2° Anno - Appunti Stampati",
+        materia: "diritto",
+        tipo: "fisico",
+        prezzo: 35.00,
+        emoji: "💼",
+        descrizione: "Appunti presi dal W. Chiaromonte: 50 pagine di appunti completi su Diritto del Lavoro stampati e rilegati. Il documento ripercorre innanzitutto la storia del diritto del lavoro e il diritto sindacale, analizzandone fonti, organizzazione, pluralismo, tutela costituzionale e strutture di rappresentanza (RSA e RSU). Approfondisce la contrattazione collettiva, il fondamento costituzionale del CCNL, la sua efficacia e i limiti del Testo Unico, fino alla repressione della condotta antisindacale ex art. 28 Statuto dei lavoratori e al diritto di sciopero. Prosegue con la disciplina del lavoro subordinato (art. 2094 c.c.), delle forme di lavoro autonomo e parasubordinato, inclusa la collaborazione etero-organizzata, e le politiche di protezione nel mercato del lavoro. Analizza poi il contratto individuale, i poteri del datore di lavoro (direttivo, di controllo e disciplinare), gli obblighi del lavoratore, la sicurezza, il mobbing e le discriminazioni. Si chiude con il tema dell'accesso al lavoro degli stranieri, tra immigrazione, crisi dello Stato sociale e criticità delle procedure di ingresso.",
+        dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa. Appunti completi sul diritto del lavoro con schemi, tabelle e riferimenti normativi.",
+        pages: 50,
+        pdfFile: "SECONDO ANNO/DIRITTO DEL LAVORO.pdf",
+        previewImage: "image/diritto del lavoro.png",
+        previewPages: [
+            "image/previews/diritto-lavoro-1.png",
+            "image/previews/diritto-lavoro-2.png",
+            "image/previews/diritto-lavoro-3.png"
+        ],
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 2
+    },
+    {
         id: 202,
         title: "Infortuni sul Lavoro - 3° Anno",
         materia: "diritto",
