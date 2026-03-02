@@ -297,6 +297,34 @@ const products = [
         categoria: "universita",
         corso: "giurisprudenza",
         anno: 4
+    },
+    {
+        id: 401.5,
+        title: "Procedura Civile Parte Prima - 4° Anno - Appunti Stampati",
+        materia: "diritto",
+        tipo: "fisico",
+        prezzo: 60.00,
+        emoji: "📄",
+        descrizione: "194 pagine di appunti presi dalle lezioni di B. Gambineri UNIFI 2026 stampati e rilegati professionalmente. Un percorso completo sulla magistratura e sulla funzione giurisdizionale, che chiarisce cos'è la giurisdizione, come è composta la magistratura ordinaria e civile, e come si articolano i diversi organi giudiziari. Approfondiscono il processo civile, la struttura dei gradi di giudizio, le differenze tra appello e ricorso per Cassazione, con spiegazioni sistematiche, schemi riepilogativi e riferimenti normativi utili allo studio e al ripasso.",
+        dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa. Il presente lavoro offre un'analisi sistematica del processo civile, muovendo dalle coordinate costituzionali e ordinamentali della funzione giurisdizionale fino alla disciplina delle prove e dei mezzi di tutela. Include: magistratura e funzione giurisdizionale, garanzie costituzionali, Riforma Cartabia, giurisdizione civile, Codice di procedura civile, oggetto del processo, giudicato, processi a cognizione piena, rito ordinario, tutela giurisdizionale, principi fondamentali del processo civile, teoria delle prove, strumenti istruttori, requisiti degli atti processuali, giurisdizione e competenza.",
+        pages: 194,
+        pdfFile: "università/GIURISPRUDENZA/QUARTO ANNO/Procedura Civile parte uno.pdf",
+        previewImage: "image/proceduracivile2.png",
+        previewPages: [
+            "image/anteprima procedura 1/1.png",
+            "image/anteprima procedura 1/2.png",
+            "image/anteprima procedura 1/3.png",
+            "image/anteprima procedura 1/4.png",
+            "image/anteprima procedura 1/5.png",
+            "image/anteprima procedura 1/6.png",
+            "image/anteprima procedura 1/7.png",
+            "image/anteprima procedura 1/8.png",
+            "image/anteprima procedura 1/9.png",
+            "image/anteprima procedura 1/10.png"
+        ],
+        categoria: "universita",
+        corso: "giurisprudenza",
+        anno: 4
     }
 ];
 
