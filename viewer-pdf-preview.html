@@ -434,6 +434,7 @@
         const token = urlParams.get('token');
         const productId = urlParams.get('product');
         const pdfFile = urlParams.get('file');
+        const imagesParam = urlParams.get('images');
         const returnUrlParam = urlParams.get('returnUrl');
         const referrerUrl = document.referrer && document.referrer.startsWith(window.location.origin)
             ? document.referrer
@@ -548,16 +549,57 @@
             }
         }
 
-        // Inizializza il caricamento del PDF
+        // Inizializza il caricamento del PDF o delle immagini
         if (token && productId) {
             // Token-based access
             loadPDFWithToken(token, productId);
+        } else if (imagesParam) {
+            // Carica immagini invece di PDF
+            try {
+                const images = JSON.parse(decodeURIComponent(imagesParam));
+                loadImages(images);
+            } catch (e) {
+                console.error('Errore nel parsing immagini:', e);
+                document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: Impossibile caricare le immagini</p>';
+            }
         } else if (pdfFile) {
             // Legacy file-based access
             currentProductFile = pdfFile;
             loadPDF(pdfFile);
         } else {
             document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: Accesso non autorizzato</p>';
+        }
+
+        function loadImages(imageUrls) {
+            const pdfContent = document.getElementById('pdfContent');
+            pdfContent.innerHTML = '';
+            
+            // Mostra max 10 immagini (anteprima)
+            const maxImages = Math.min(imageUrls.length, 10);
+            document.getElementById('totalPages').textContent = maxImages;
+            
+            const container = document.createElement('div');
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+            container.style.width = '100%';
+            
+            imageUrls.slice(0, maxImages).forEach((imageUrl, index) => {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                img.style.marginBottom = '20px';
+                img.style.borderRadius = '8px';
+                img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                container.appendChild(img);
+            });
+            
+            pdfContent.appendChild(container);
+            document.getElementById('currentPage').textContent = '1';
+            document.getElementById('pageInfo').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
         }
 
         async function loadPDFWithToken(tokenValue, productIdValue) {

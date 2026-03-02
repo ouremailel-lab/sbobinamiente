@@ -424,6 +424,18 @@
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('mousedown', (e) => { if (e.button === 2) e.preventDefault(); });
         document.addEventListener('keydown', (e) => {
+            // Blocca screenshot su Mac (Cmd+Shift+3, Cmd+Shift+4, Cmd+Shift+5)
+            if (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key)) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            // Blocca screenshot su Windows (Print Screen, Win+Shift+S)
+            if (e.key === 'PrintScreen' || (e.metaKey && e.shiftKey && e.key === 's')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
             const disabledKeys = { 'F12': true, 'F11': true, 'PrintScreen': true, 'F2': true, 'I': e.ctrlKey && e.shiftKey, 'C': e.ctrlKey && e.shiftKey, 'J': e.ctrlKey && e.shiftKey, 'K': e.ctrlKey && e.shiftKey, 'U': e.ctrlKey, 's': e.ctrlKey, 'S': e.ctrlKey, 'p': e.ctrlKey, 'P': e.ctrlKey, 'a': e.ctrlKey, 'A': e.ctrlKey, 'c': e.ctrlKey, 'C': e.ctrlKey, 'x': e.ctrlKey, 'X': e.ctrlKey };
             if (disabledKeys[e.key]) e.preventDefault();
         });
@@ -589,11 +601,33 @@
                 window.currentProduct = product;
 
                 const fileName = product.pdfFile || product.file;
-                const pathParts = fileName.split('/');
-                const encodedPath = pathParts.map(part => encodeURIComponent(part)).join('/');
-                const pdfPath = `/PDF/${encodedPath}`;
-                
-                const response = await fetch(pdfPath);
+                let response;
+
+                if (!isPreview && (token || (sessionId && password))) {
+                    const securePayload = {
+                        productId: String(productId)
+                    };
+
+                    if (token) {
+                        securePayload.token = token;
+                        securePayload.deviceHash = await getDeviceFingerprint();
+                    } else {
+                        securePayload.sessionId = sessionId;
+                        securePayload.password = password;
+                    }
+
+                    response = await fetch('/api/secure-pdf', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(securePayload)
+                    });
+                } else {
+                    const pathParts = fileName.split('/');
+                    const encodedPath = pathParts.map(part => encodeURIComponent(part)).join('/');
+                    const pdfPath = `/PDF/${encodedPath}`;
+                    response = await fetch(pdfPath);
+                }
+
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const arrayBuffer = await response.arrayBuffer();
                 
