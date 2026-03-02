@@ -409,6 +409,10 @@
     <script src="pdf-protection.js"></script>
     <script src="products-data.js"></script>
     <script>
+        // Variabili globali per anteprima immagini
+        let currentImageIndex = 0;
+        let allImageUrls = [];
+
         // Inizializza protezione PDF
         document.addEventListener('DOMContentLoaded', function() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -569,9 +573,6 @@
         } else {
             document.getElementById('pdfContent').innerHTML = '<p style="color: red; padding: 40px;">Errore: Accesso non autorizzato</p>';
         }
-
-        let currentImageIndex = 0;
-        let allImageUrls = [];
 
         function loadImages(imageUrls) {
             const pdfContent = document.getElementById('pdfContent');
