@@ -73,26 +73,26 @@ Assicurati che il template accetti queste variabili:
 
 ### 6. Service ID
 
-Il Service ID è già configurato: `service_wfwk0hv`
+Il Service ID è già configurato: `service_r952gjr`
 
 Se vuoi cambiarlo:
 1. Vai su "Email Services" su EmailJS
 2. Copia il Service ID
 3. Aggiorna in `admin-orders.html` la riga:
    ```javascript
-   'service_wfwk0hv',  // <-- Sostituisci con il tuo Service ID
+   'service_r952gjr'
    ```
 
 ### 7. Public Key
 
-La Public Key è già configurata: `Bo-Kyor5W-Q_BRDf3`
+La Public Key è già configurata: `XhJ4ib2UUOt20rMxV`
 
 Se vuoi cambiarla:
 1. Vai su "Account" > "General"
 2. Copia la Public Key
 3. Aggiorna in `admin-orders.html` la riga:
    ```javascript
-   emailjs.init('Bo-Kyor5W-Q_BRDf3');  // <-- Sostituisci con la tua Public Key
+   emailjs.init('XhJ4ib2UUOt20rMxV');  
    ```
 
 ### 8. Password Admin
@@ -102,10 +102,8 @@ Se vuoi cambiarla:
 Nel file `admin-orders.html`, cerca questa riga:
 
 ```javascript
-const ADMIN_PASSWORD = 'admin123'; // ⚠️ CAMBIA QUESTA PASSWORD!
+const ADMIN_PASSWORD = 'ElisaLuigi2agosto!'; 
 ```
-
-E sostituisci `admin123` con una password sicura.
 
 ## Come Usare il Sistema
 
