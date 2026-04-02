@@ -210,6 +210,22 @@ const products = [
         anno: 2
     },
     {
+        id: 204,
+        title: "Diritto Amministrativo - 2° Anno",
+        materia: "diritto",
+        tipo: "digitale",
+        prezzo: 20.00,
+        emoji: "🏛️",
+        descrizione: "Appunti completi di Diritto Amministrativo per il secondo anno.",
+        dettagli: "PDF protetto con spiegazioni chiare, riferimenti normativi e contenuti utili per il ripasso.",
+        pages: 50,
+        pdfFile: "SECONDO ANNO/DIRITTO AMMINISTRATIVO.pdf",
+        previewImage: "image/DIRITTO AMMINISTRATIVO.png",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 2
+    },
+    {
         id: 202,
         title: "Infortuni sul Lavoro - 3° Anno",
         materia: "diritto",
