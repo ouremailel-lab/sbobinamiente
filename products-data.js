@@ -237,6 +237,12 @@ const products = [
         pages: 124,
         pdfFile: "SECONDO ANNO/DIRITTO AMMINISTRATIVO.pdf",
         previewImage: "image/DIRITTO AMMINISTRATIVO.png",
+        previewPages: [
+            "image/previews/diritto-amministrativo-1.png",
+            "image/previews/diritto-amministrativo-2.png",
+            "image/previews/diritto-amministrativo-3.png",
+            "image/previews/diritto-amministrativo-4.png"
+        ],
         categoria: "universita",
         corso: "sdsg",
         anno: 2
