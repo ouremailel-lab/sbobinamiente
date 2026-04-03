@@ -226,6 +226,22 @@ const products = [
         anno: 2
     },
     {
+        id: 204.5,
+        title: "Diritto Amministrativo - 2° Anno - Appunti Stampati",
+        materia: "diritto",
+        tipo: "fisico",
+        prezzo: 40.00,
+        emoji: "🏛️",
+        descrizione: "Il documento offre una trattazione sistematica del diritto amministrativo e dei suoi rapporti con le altre branche dell'ordinamento, quali diritto costituzionale, europeo e privato. Vengono analizzati i caratteri distintivi della materia, con particolare attenzione alla sua natura giurisprudenziale e alla distinzione tra diritto amministrativo generale e speciale. Ampio spazio è dedicato alle fonti del diritto, ai principi di legalità e alle diverse forme di regolazione. Il testo approfondisce inoltre il rapporto giuridico amministrativo, il procedimento e il provvedimento, nonché i profili di invalidità, controlli e responsabilità della pubblica amministrazione. Completano l'esposizione i temi dell'organizzazione, dei servizi pubblici, del personale, dei beni, dei contratti e della finanza pubblica.",
+        dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
+        pages: 124,
+        pdfFile: "SECONDO ANNO/DIRITTO AMMINISTRATIVO.pdf",
+        previewImage: "image/DIRITTO AMMINISTRATIVO.png",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 2
+    },
+    {
         id: 202,
         title: "Infortuni sul Lavoro - 3° Anno",
         materia: "diritto",
