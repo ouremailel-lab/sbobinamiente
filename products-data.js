@@ -247,6 +247,22 @@ const products = [
         corso: "sdsg",
         anno: 2
     },
+    {
+        id: 205,
+        title: "Diritto Tributario - 3° Anno",
+        materia: "diritto",
+        tipo: "digitale",
+        prezzo: 20.00,
+        emoji: "💰",
+        descrizione: "Appunti completi di Diritto Tributario per il terzo anno.",
+        dettagli: "PDF protetto con spiegazioni chiare, riferimenti normativi e contenuti utili per il ripasso.",
+        pages: 110,
+        pdfFile: "TERZO ANNO/DIRITTO TRIBUTARIO.pdf",
+        previewImage: "image/diritto tributario.png",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 3
+    },
     // Prodotti Universitari - Giurisprudenza
     {
         id: 401,
