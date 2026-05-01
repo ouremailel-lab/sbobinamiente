@@ -258,7 +258,7 @@ const products = [
         dettagli: "PDF protetto con spiegazioni chiare, riferimenti normativi e contenuti utili per il ripasso.",
         pages: 110,
         pdfFile: "TERZO ANNO/DIRITTO TRIBUTARIO.pdf",
-        previewImage: "image/diritto tributario.png",
+        previewImage: "image/DIRITTO TRIBUARIO.png",
         categoria: "universita",
         corso: "sdsg",
         anno: 3
@@ -274,7 +274,7 @@ const products = [
         dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
         pages: 110,
         pdfFile: "TERZO ANNO/DIRITTO TRIBUTARIO.pdf",
-        previewImage: "image/diritto tributario.png",
+        previewImage: "image/DIRITTO TRIBUARIO.png",
         previewPages: [
             "image/previews/diritto-tributario-1.png",
             "image/previews/diritto-tributario-2.png",
