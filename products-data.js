@@ -263,6 +263,28 @@ const products = [
         corso: "sdsg",
         anno: 3
     },
+    {
+        id: 205.5,
+        title: "Diritto Tributario - 3° Anno - Appunti Stampati",
+        materia: "diritto",
+        tipo: "fisico",
+        prezzo: 50.00,
+        emoji: "💰",
+        descrizione: "Appunti completi di Diritto Tributario per il terzo anno stampati e rilegati.",
+        dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
+        pages: 110,
+        pdfFile: "TERZO ANNO/DIRITTO TRIBUTARIO.pdf",
+        previewImage: "image/diritto tributario.png",
+        previewPages: [
+            "image/previews/diritto-tributario-1.png",
+            "image/previews/diritto-tributario-2.png",
+            "image/previews/diritto-tributario-3.png",
+            "image/previews/diritto-tributario-4.png"
+        ],
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 3
+    },
     // Prodotti Universitari - Giurisprudenza
     {
         id: 401,
