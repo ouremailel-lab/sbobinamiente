@@ -210,6 +210,38 @@ const products = [
         anno: 2
     },
     {
+        id: 202,
+        title: "Diritto del Lavoro 2 - 2° Anno",
+        materia: "diritto",
+        tipo: "digitale",
+        prezzo: 20.00,
+        emoji: "💼",
+        descrizione: "Sbobine del manuale 'Elementi di Diritto del Lavoro' di W. Chiaramonte - secondo materiale di approfondimento per il corso di secondo anno.",
+        dettagli: "PDF protetto con spiegazioni chiare, riferimenti normativi e contenuti utili per il ripasso. Appunti completi tratti dal manuale con schemi e analisi approfondita.",
+        pages: 58,
+        pdfFile: "diritto del lavoro2.pdf",
+        previewImage: "image/DIRITTO DEL LAVORO COPERTINA.jpg",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 2
+    },
+    {
+        id: 202.5,
+        title: "Diritto del Lavoro 2 - 2° Anno - Appunti Stampati",
+        materia: "diritto",
+        tipo: "fisico",
+        prezzo: 35.00,
+        emoji: "💼",
+        descrizione: "Sbobine del manuale 'Elementi di Diritto del Lavoro' di W. Chiaramonte stampate e riglate professionalmente - secondo materiale di approfondimento per il corso di secondo anno.",
+        dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa. Sbobine del manuale con schemi, tabelle e riferimenti normativi per lo studio completo del diritto del lavoro.",
+        pages: 58,
+        pdfFile: "diritto del lavoro2.pdf",
+        previewImage: "image/DIRITTO DEL LAVORO COPERTINA.jpg",
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 2
+    },
+    {
         id: 204,
         title: "Diritto Amministrativo - 2° Anno",
         materia: "diritto",
