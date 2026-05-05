@@ -220,7 +220,7 @@ const products = [
         dettagli: "PDF protetto con spiegazioni chiare, riferimenti normativi e contenuti utili per il ripasso. Appunti completi tratti dal manuale con schemi e analisi approfondita.",
         pages: 58,
         pdfFile: "diritto del lavoro2.pdf",
-        previewImage: "image/DIRITTO DEL LAVORO COPERTINA.jpg",
+        previewImage: "image/diritto del lavoro.png",
         categoria: "universita",
         corso: "sdsg",
         anno: 2
@@ -236,7 +236,7 @@ const products = [
         dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa. Sbobine del manuale con schemi, tabelle e riferimenti normativi per lo studio completo del diritto del lavoro.",
         pages: 58,
         pdfFile: "diritto del lavoro2.pdf",
-        previewImage: "image/DIRITTO DEL LAVORO COPERTINA.jpg",
+        previewImage: "image/diritto del lavoro.png",
         categoria: "universita",
         corso: "sdsg",
         anno: 2
