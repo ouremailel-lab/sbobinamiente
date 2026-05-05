@@ -219,7 +219,7 @@ const products = [
         descrizione: "Sbobine del manuale 'Elementi di Diritto del Lavoro' di W. Chiaramonte - secondo materiale di approfondimento per il corso di secondo anno.",
         dettagli: "PDF protetto con spiegazioni chiare, riferimenti normativi e contenuti utili per il ripasso. Appunti completi tratti dal manuale con schemi e analisi approfondita.",
         pages: 58,
-        pdfFile: "SECONDO ANNO/DIRITTO DEL LAVORO.pdf",
+        pdfFile: "SECONDO ANNO/diritto del lavoro2.pdf",
         previewImage: "image/diritto del lavoro.png",
         previewPages: [
             "image/previews/diritto-lavoro-1.png",
@@ -240,7 +240,7 @@ const products = [
         descrizione: "Sbobine del manuale 'Elementi di Diritto del Lavoro' di W. Chiaramonte stampate e riglate professionalmente - secondo materiale di approfondimento per il corso di secondo anno.",
         dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa. Sbobine del manuale con schemi, tabelle e riferimenti normativi per lo studio completo del diritto del lavoro.",
         pages: 58,
-        pdfFile: "SECONDO ANNO/DIRITTO DEL LAVORO.pdf",
+        pdfFile: "SECONDO ANNO/diritto del lavoro2.pdf",
         previewImage: "image/diritto del lavoro.png",
         previewPages: [
             "image/previews/diritto-lavoro-1.png",
