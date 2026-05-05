@@ -211,7 +211,7 @@ const products = [
     },
     {
         id: 202,
-        title: "Diritto del Lavoro 2 - 2° Anno",
+        title: "Sbobine Manuale Elementi di diritto del lavoro di W. Chiaramonte",
         materia: "diritto",
         tipo: "digitale",
         prezzo: 20.00,
@@ -227,7 +227,7 @@ const products = [
     },
     {
         id: 202.5,
-        title: "Diritto del Lavoro 2 - 2° Anno - Appunti Stampati",
+        title: "Sbobine Manuale Elementi di diritto del lavoro di W. Chiaramonte - Appunti Stampati",
         materia: "diritto",
         tipo: "fisico",
         prezzo: 35.00,
