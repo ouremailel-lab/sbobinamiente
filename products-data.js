@@ -221,6 +221,11 @@ const products = [
         pages: 58,
         pdfFile: "diritto del lavoro2.pdf",
         previewImage: "image/diritto del lavoro.png",
+        previewPages: [
+            "image/previews/diritto-lavoro-1.png",
+            "image/previews/diritto-lavoro-2.png",
+            "image/previews/diritto-lavoro-3.png"
+        ],
         categoria: "universita",
         corso: "sdsg",
         anno: 2
@@ -237,6 +242,11 @@ const products = [
         pages: 58,
         pdfFile: "diritto del lavoro2.pdf",
         previewImage: "image/diritto del lavoro.png",
+        previewPages: [
+            "image/previews/diritto-lavoro-1.png",
+            "image/previews/diritto-lavoro-2.png",
+            "image/previews/diritto-lavoro-3.png"
+        ],
         categoria: "universita",
         corso: "sdsg",
         anno: 2
