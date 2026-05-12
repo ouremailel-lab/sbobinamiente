@@ -316,7 +316,7 @@ const products = [
         dettagli: "PDF protetto con spiegazioni chiare, riferimenti normativi e contenuti utili per il ripasso.",
         pages: 26,
         pdfFile: "TERZO ANNO/DIRITTO DELLA SICUREZZA SOCIALE.pdf",
-        previewImage: "image/SICUREZZA SOCIALE COPERTINA.png",
+        previewImage: "image/SICUREZZA-SOCIALE-COPERTINA.png",
         previewPages: [
             "image/previews/scienze-dei-servizi-giuridici-1.png",
             "image/previews/scienze-dei-servizi-giuridici-2.png",
@@ -338,7 +338,7 @@ const products = [
         dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
         pages: 26,
         pdfFile: "TERZO ANNO/DIRITTO DELLA SICUREZZA SOCIALE.pdf",
-        previewImage: "image/SICUREZZA SOCIALE COPERTINA.png",
+        previewImage: "image/SICUREZZA-SOCIALE-COPERTINA.png",
         previewPages: [
             "image/previews/scienze-dei-servizi-giuridici-1.png",
             "image/previews/scienze-dei-servizi-giuridici-2.png",
