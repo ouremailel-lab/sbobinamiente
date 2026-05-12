@@ -307,7 +307,7 @@ const products = [
     },
     {
         id: 206,
-        title: "Scienze dei Servizi Giuridici - 3° Anno",
+        title: "Diritto della Sicurezza Sociale - 3° Anno",
         materia: "diritto",
         tipo: "digitale",
         prezzo: 15.00,
@@ -316,7 +316,29 @@ const products = [
         dettagli: "PDF protetto con spiegazioni chiare, riferimenti normativi e contenuti utili per il ripasso.",
         pages: 26,
         pdfFile: "TERZO ANNO/DIRITTO DELLA SICUREZZA SOCIALE.pdf",
-        previewImage: "image/SCIENZE DEI SERVIZI GIURIDICI.png",
+        previewImage: "image/SICUREZZA SOCIALE COPERTINA.png",
+        previewPages: [
+            "image/previews/scienze-dei-servizi-giuridici-1.png",
+            "image/previews/scienze-dei-servizi-giuridici-2.png",
+            "image/previews/scienze-dei-servizi-giuridici-3.png",
+            "image/previews/scienze-dei-servizi-giuridici-4.png"
+        ],
+        categoria: "universita",
+        corso: "sdsg",
+        anno: 3
+    },
+    {
+        id: 206.5,
+        title: "Diritto della Sicurezza Sociale - 3° Anno - Appunti Stampati",
+        materia: "diritto",
+        tipo: "fisico",
+        prezzo: 35.00,
+        emoji: "📘",
+        descrizione: "Appunti completi di Scienze dei Servizi Giuridici per il terzo anno stampati e rilegati.",
+        dettagli: "Formato A4, rilegatura a spirale, stampa a colori. Spedizione inclusa.",
+        pages: 26,
+        pdfFile: "TERZO ANNO/DIRITTO DELLA SICUREZZA SOCIALE.pdf",
+        previewImage: "image/SICUREZZA SOCIALE COPERTINA.png",
         previewPages: [
             "image/previews/scienze-dei-servizi-giuridici-1.png",
             "image/previews/scienze-dei-servizi-giuridici-2.png",
