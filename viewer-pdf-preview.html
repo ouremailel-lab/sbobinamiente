@@ -356,8 +356,10 @@
             }
 
             .controls button {
-                padding: 8px 12px;
-                font-size: 12px;
+                padding: 12px 16px;
+                font-size: 14px;
+                min-width: 100px;
+                -webkit-tap-highlight-color: rgba(74, 111, 165, 0.2);
             }
         }
     </style>
@@ -618,7 +620,7 @@
             
             const img = document.createElement('img');
             const imageUrl = allImageUrls[currentImageIndex];
-            const encodedUrl = imageUrl.split('/').map(part => encodeURIComponent(part)).join('/');
+            const encodedUrl = '/' + imageUrl.split('/').map(part => encodeURIComponent(part)).join('/');
             img.src = encodedUrl;
             img.style.maxWidth = '100%';
             img.style.height = 'auto';
