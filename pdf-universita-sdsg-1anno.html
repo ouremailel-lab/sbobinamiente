@@ -279,6 +279,19 @@
     <script src="products-data.js"></script>
     <script src="app.js"></script>
     <script>
+        function openPreview(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            let url = 'viewer-pdf-preview.html?';
+            if (product.previewPages && product.previewPages.length > 0) {
+                url += 'images=' + encodeURIComponent(JSON.stringify(product.previewPages));
+            } else {
+                url += 'file=' + encodeURIComponent(product.pdfFile);
+            }
+            window.open(url, '_blank');
+        }
+
         // Carica prodotti del primo anno
         document.addEventListener('DOMContentLoaded', function() {
             const grid = document.getElementById('productsGrid');
@@ -296,7 +309,7 @@
                 card.className = 'product-card';
                 
                 const previewButton = product.pdfFile 
-                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="window.open('viewer-pdf-preview.html?file=${product.pdfFile}', '_blank')">👁️ Vedi Anteprima (4 pagine)</button>`
+                    ? `<button style="width: 100%; padding: 10px; background: #e3f2fd; color: #4a90e2; border: 2px solid #4a90e2; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: all 0.3s;" onclick="openPreview(${product.id})">👁️ Vedi Anteprima (4 pagine)</button>`
                     : '';
                 const coverImage = product.previewImage 
                     ? `<img src="${product.previewImage}" alt="${product.title}" style="width: 100%; border-radius: 12px; margin-bottom: 12px; object-fit: cover; max-height: 220px;">`
